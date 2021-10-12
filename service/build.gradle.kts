@@ -7,6 +7,6 @@ tasks.getByName<Jar>("jar") {
 }
 
 dependencies {
-    implementation(project(":data:data-jdbc"))
+    implementation(project(":data-jdbc"))
     implementation("org.springframework:spring-context")
 }
