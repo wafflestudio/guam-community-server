@@ -1,14 +1,17 @@
-package waffle.guam.community.data.jdbc.comment
+package waffle.guam.community.data.jdbc.like
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.Table
 
+@Table(name = "post_likes")
 @Entity
-data class CommentEntity(
-    @Id
+data class PostLikeEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
-    val content: String
+    @Id
+    val id: Long,
+    val userId: Long,
+    val postId: Long
 )

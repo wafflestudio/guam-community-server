@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 1000
+    show-sql: true
