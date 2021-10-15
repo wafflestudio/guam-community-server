@@ -11,7 +11,7 @@ data class PostPreview(
     val title: String,
     val content: String,
     val status: String,
-//    val imagePaths: List<String>,
+    val isImageIncluded: Boolean,
 //    val viewCount: Int,
 //    val scrapCount: Int,
 //    val commentCount: Int,

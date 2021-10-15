@@ -20,8 +20,8 @@ class EventPublisher(
     fun doPublishEvent(jp: ProceedingJoinPoint): Any? {
         val event = jp.proceed()
 
-        if (event is Event.Result<*> && event.value is Result) {
-            eventPublisher.publishEvent(event.value)
+        if (event is Result) {
+            eventPublisher.publishEvent(event)
         }
 
         return event

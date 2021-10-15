@@ -9,10 +9,14 @@ data class Post(
     val userId: Long,
     val title: String,
     val content: String,
+    val imagePaths: List<String>,
     val status: String,
     val createdAt: Instant,
-    val updatedAt: Instant
+    val updatedAt: Instant,
 ) {
+    val isImageIncluded: Boolean
+        get() = imagePaths.isNotEmpty()
+
     companion object {
         fun of(e: PostEntity): Post = Post(
             id = e.id,
@@ -20,6 +24,7 @@ data class Post(
             userId = e.userId,
             title = e.title,
             content = e.content,
+            imagePaths = e.images,
             status = e.status.name,
             createdAt = e.createdAt,
             updatedAt = e.updatedAt

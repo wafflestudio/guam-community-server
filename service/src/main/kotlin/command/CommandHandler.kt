@@ -7,14 +7,10 @@ abstract class CommandHandler<C : Command, R : Result> {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     @Transactional
-    open fun handle(command: Command): Event<R, Exception> {
+    open fun handle(command: Command): R {
         if (!canHandle(command)) throw Exception()
 
-        return try {
-            Event.Result(internalHandle(command as C)).also { logger.info("${it.value}") }
-        } catch (e: Exception) {
-            Event.Error(e).also { logger.error("handler error", e) }
-        }
+        return (internalHandle(command as C)).also { logger.info("$it") }
     }
 
     abstract fun canHandle(command: Command): Boolean

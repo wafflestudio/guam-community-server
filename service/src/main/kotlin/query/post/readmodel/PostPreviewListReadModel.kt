@@ -38,6 +38,7 @@ class PostPreviewListReadModel(
                     user = userMap[it.userId]!!,
                     title = it.title,
                     content = it.content,
+                    isImageIncluded = it.isImageIncluded,
                     status = it.status,
                     tags = tagMap[it.id]?.content ?: emptyList(),
                     likeCount = likeMap[it.id]?.userIds?.size ?: 0,

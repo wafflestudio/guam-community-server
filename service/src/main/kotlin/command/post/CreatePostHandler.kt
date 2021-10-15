@@ -34,7 +34,9 @@ class CreatePostHandler(
         boardId = boardId,
         userId = userId,
         title = title,
-        content = content
+        content = content,
+        // TODO
+        images = emptyList()
     )
 }
 
