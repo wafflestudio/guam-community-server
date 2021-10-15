@@ -1,15 +1,8 @@
 package waffle.guam.community.service.domain.user
 
-import waffle.guam.community.data.jdbc.user.UserEntity
+import waffle.guam.community.service.UserId
 
 data class User(
-    val id: Long,
+    val id: UserId,
     val username: String
-) {
-    companion object {
-        fun of(e: UserEntity) = User(
-            id = e.id,
-            username = e.username
-        )
-    }
-}
+)

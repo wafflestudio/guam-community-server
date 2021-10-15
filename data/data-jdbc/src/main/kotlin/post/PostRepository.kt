@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface PostRepository : JpaRepository<PostEntity, Long> {
     fun findAll(spec: Specification<PostEntity>): List<PostEntity>
     fun findAll(spec: Specification<PostEntity>, pageable: Pageable): Page<PostEntity>
+    fun findOne(spec: Specification<PostEntity>): PostEntity?
 }

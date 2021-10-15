@@ -1,14 +1,16 @@
 package waffle.guam.community.data.jdbc.post
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
-import java.time.Instant
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType
 import javax.persistence.Convert
 import javax.persistence.Converter
 import javax.persistence.Entity
+import javax.persistence.EntityListeners
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
@@ -18,29 +20,38 @@ import javax.persistence.Id
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
+@EntityListeners(AuditingEntityListener::class)
 @Table(name = "posts")
 @Entity
 class PostEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Long = 0L,
+
     val boardId: Long,
+
     val userId: Long,
+
     val title: String,
+
     val content: String,
+
     @Convert(converter = ImagePathsConverter::class)
     var images: List<String>,
+
     @Enumerated(value = EnumType.STRING)
     var status: Status = Status.VALID,
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val tags: MutableSet<PostTagEntity> = mutableSetOf(),
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val comments: MutableList<PostCommentEntity> = mutableListOf(),
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val likes: MutableSet<PostLikeEntity> = mutableSetOf(),
-    val createdAt: Instant = Instant.now(),
-    var updatedAt: Instant = createdAt,
-) {
+) : BaseTimeEntity() {
+
     enum class Status {
         VALID, DELETED
     }

@@ -16,8 +16,10 @@ data class PostLikeEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Long = 0L,
+
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     val post: PostEntity,
+
     val userId: Long
 )

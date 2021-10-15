@@ -16,9 +16,11 @@ data class PostTagEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Long = 0L,
+
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     val post: PostEntity,
+
     @JoinColumn(name = "tag_id")
     @ManyToOne(fetch = FetchType.LAZY)
     val tag: TagEntity

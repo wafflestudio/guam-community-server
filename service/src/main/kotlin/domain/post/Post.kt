@@ -1,12 +1,15 @@
 package waffle.guam.community.service.domain.post
 
 import waffle.guam.community.data.jdbc.post.PostEntity
+import waffle.guam.community.service.BoardId
+import waffle.guam.community.service.PostId
+import waffle.guam.community.service.UserId
 import java.time.Instant
 
 data class Post(
-    val id: Long,
-    val boardId: Long,
-    val userId: Long,
+    val id: PostId,
+    val boardId: BoardId,
+    val userId: UserId,
     val title: String,
     val content: String,
     val imagePaths: List<String>,
@@ -18,7 +21,7 @@ data class Post(
         get() = imagePaths.isNotEmpty()
 
     companion object {
-        fun of(e: PostEntity): Post = Post(
+        fun of(e: PostEntity) = Post(
             id = e.id,
             boardId = e.boardId,
             userId = e.userId,

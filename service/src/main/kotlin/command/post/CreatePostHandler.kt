@@ -2,6 +2,7 @@ package waffle.guam.community.service.command.post
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
@@ -14,20 +15,16 @@ import waffle.guam.community.service.command.Result
 class CreatePostHandler(
     private val postRepository: PostRepository,
     private val tagRepository: TagRepository,
-) : CommandHandler<CreatePost, PostCreated>() {
-    override fun canHandle(command: Command): Boolean = command is CreatePost
+) : CommandHandler<CreatePost, PostCreated> {
 
-    override fun internalHandle(command: CreatePost): PostCreated {
+    @Transactional
+    override fun handle(command: CreatePost): PostCreated {
         val tag = tagRepository.findByIdOrNull(command.tagId) ?: throw Exception()
         val post = postRepository.save(command.toEntity())
 
         post.tags.add(PostTagEntity(post = post, tag = tag))
 
-        return PostCreated(
-            postId = post.id,
-            boardId = post.boardId,
-            userId = post.userId
-        )
+        return PostCreated(postId = post.id, boardId = post.boardId, userId = post.userId)
     }
 
     private fun CreatePost.toEntity() = PostEntity(

@@ -2,6 +2,7 @@ package waffle.guam.community.service.command.like
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.command.Command
@@ -11,19 +12,22 @@ import waffle.guam.community.service.command.Result
 @Service
 class DeletePostLikeHandler(
     private val postRepository: PostRepository,
-) : CommandHandler<DeletePostLike, PostLikeDeleted>() {
-    override fun canHandle(command: Command): Boolean = command is DeletePostLike
+) : CommandHandler<DeletePostLike, PostLikeDeleted> {
+    @Transactional
+    override fun handle(command: DeletePostLike): PostLikeDeleted {
+        val (postId, userId) = command
 
-    override fun internalHandle(command: DeletePostLike): PostLikeDeleted {
-        val post = postRepository.findByIdOrNull(command.postId) ?: throw Exception()
+        val post = postRepository.findByIdOrNull(postId) ?: throw Exception()
 
-        post.removeLikeBy(command.userId)
+        post.removeLikeBy(userId)
 
-        return PostLikeDeleted(postId = post.id, userId = command.userId)
+        return PostLikeDeleted(postId = postId, userId = userId)
     }
 
     private fun PostEntity.removeLikeBy(userId: Long) {
-        likes.find { it.userId == userId }?.let { likes.remove(it) } ?: throw Exception()
+        val targetLike = likes.find { it.userId == userId } ?: throw Exception("LIKE NOT FOUND")
+
+        likes.remove(targetLike)
     }
 }
 

@@ -2,34 +2,35 @@ package waffle.guam.community.service.command.post
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
-import java.time.Instant
 
 @Service
 class DeletePostHandler(
     private val postRepository: PostRepository,
-) : CommandHandler<DeletePost, PostDeleted>() {
-    override fun canHandle(command: Command): Boolean = command is DeletePost
+) : CommandHandler<DeletePost, PostDeleted> {
 
-    override fun internalHandle(command: DeletePost): PostDeleted {
-        val post = postRepository.findByIdOrNull(command.postId) ?: throw Exception()
+    @Transactional
+    override fun handle(command: DeletePost): PostDeleted {
+        val (postId, userId) = command
 
-        if (post.userId != command.userId) {
-            throw Exception()
+        val post = postRepository.findByIdOrNull(postId) ?: throw Exception("POST NOT FOUND $postId")
+
+        post.deleteBy(userId)
+
+        return PostDeleted(postId = post.id, boardId = post.boardId, userId = post.userId)
+    }
+
+    private fun PostEntity.deleteBy(userId: Long) {
+        if (this.userId != userId) {
+            throw Exception("USER $userId NOT AUTHORIZED TO POST $id")
         }
 
-        post.status = PostEntity.Status.DELETED
-        post.updatedAt = Instant.now()
-
-        return PostDeleted(
-            postId = post.id,
-            boardId = post.boardId,
-            userId = post.userId
-        )
+        status = PostEntity.Status.DELETED
     }
 }
 

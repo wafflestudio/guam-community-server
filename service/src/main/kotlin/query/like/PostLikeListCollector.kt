@@ -3,49 +3,47 @@ package waffle.guam.community.service.query.like
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
-import waffle.guam.community.data.jdbc.like.PostLikeRepository
+import waffle.guam.community.data.jdbc.post.PostQueryGenerator
+import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.service.PostId
 import waffle.guam.community.service.command.like.PostLikeCreated
 import waffle.guam.community.service.command.like.PostLikeDeleted
-import waffle.guam.community.service.domain.like.PostLike
 import waffle.guam.community.service.domain.like.PostLikeList
 import waffle.guam.community.service.query.Cache
-import waffle.guam.community.service.query.Collector
+import waffle.guam.community.service.query.MultiCollector
 import java.time.Duration
 
 @Service
 class PostLikeListCollector(
-    private val postLikeRepository: PostLikeRepository,
-) : Collector<PostLikeList, Long> {
-    override fun get(postId: Long): PostLikeList =
-        PostLikeList(
-            postId = postId,
-            content = postLikeRepository.findAllByPostId(postId).map { PostLike.of(it) }
-        )
+    private val postRepository: PostRepository,
+) : MultiCollector<PostLikeList, PostId>, PostQueryGenerator {
+    override fun get(id: PostId): PostLikeList =
+        postRepository.findOne(spec = postId(id) * fetchLikes())
+            ?.let { PostLikeList.of(it) }
+            ?: throw Exception("POST NOT FOUND ($id)")
 
-    fun multiGet(postIds: Collection<Long>): Map<Long, PostLikeList> {
-        val likeMap = postLikeRepository.findAllByPostIdIn(postIds)
-            .groupBy { it.post.id }
-            .mapValues { it.value.map { PostLike.of(it) } }
-
-        return postIds.map { it to PostLikeList(postId = it, content = likeMap[it] ?: emptyList()) }.toMap()
-    }
+    override fun multiGet(ids: Collection<PostId>): Map<PostId, PostLikeList> =
+        postRepository.findAll(spec = postIds(ids) * fetchLikes())
+            .also { posts -> posts.throwIfNotContainIds(ids) }
+            .map { post -> post.id to PostLikeList.of(post) }
+            .toMap()
 
     @Service
     class CacheImpl(
-        postLikeRepository: PostLikeRepository,
-    ) : PostLikeListCollector(postLikeRepository) {
+        postRepository: PostRepository,
+    ) : PostLikeListCollector(postRepository) {
         private val logger = LoggerFactory.getLogger(this::class.java)
 
-        private val cache = Cache<PostLikeList, Long>(
+        private val cache = Cache<PostLikeList, PostId>(
             maximumSize = 1000,
-            duration = Duration.ofMinutes(1),
+            duration = Duration.ofSeconds(30),
             loader = { super.get(it) },
             multiLoader = { super.multiGet(it) }
         )
 
-        override fun get(postId: Long): PostLikeList = cache.get(postId)
+        override fun get(id: PostId): PostLikeList = cache.get(id)
 
-        override fun multiGet(postIds: Collection<Long>): Map<Long, PostLikeList> = cache.multiGet(postIds)
+        override fun multiGet(ids: Collection<PostId>): Map<PostId, PostLikeList> = cache.multiGet(ids)
 
         @EventListener
         fun reload(event: PostLikeCreated) {

@@ -2,6 +2,7 @@ package waffle.guam.community.service.command.like
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -12,13 +13,15 @@ import waffle.guam.community.service.command.Result
 @Service
 class CreatePostLikeHandler(
     private val postRepository: PostRepository,
-) : CommandHandler<CreatePostLike, PostLikeCreated>() {
-    override fun canHandle(command: Command): Boolean = command is CreatePostLike
+) : CommandHandler<CreatePostLike, PostLikeCreated> {
 
-    override fun internalHandle(command: CreatePostLike): PostLikeCreated {
-        val post = postRepository.findByIdOrNull(command.postId) ?: throw Exception()
+    @Transactional
+    override fun handle(command: CreatePostLike): PostLikeCreated {
+        val (postId, userId) = command
 
-        post.addLikeBy(command.userId)
+        val post = postRepository.findByIdOrNull(postId) ?: throw Exception()
+
+        post.addLikeBy(userId)
 
         return PostLikeCreated(postId = post.id, userId = command.userId)
     }

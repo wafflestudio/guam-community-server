@@ -2,35 +2,55 @@ package waffle.guam.community.service.query.user
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
+import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.user.User
 import waffle.guam.community.service.query.Cache
-import waffle.guam.community.service.query.Collector
+import waffle.guam.community.service.query.MultiCollector
 import java.time.Duration
 
 @Service
 class UserCollector(
     private val userRepository: UserRepository,
-) : Collector<User, Long> {
-    override fun get(id: Long): User =
-        userRepository.findByIdOrNull(id)?.let { User.of(it) } ?: throw Exception()
+) : MultiCollector<User, UserId> {
+    override fun get(id: UserId): User =
+        userRepository.findByIdOrNull(id)
+            ?.toUser()
+            ?: throw Exception("USER NOT FOUND ($id)")
 
-    fun multiGet(ids: Collection<Long>): Map<Long, User> =
-        userRepository.findAllById(ids).map { it.id to User.of(it) }.toMap()
+    override fun multiGet(ids: Collection<UserId>): Map<UserId, User> =
+        userRepository.findAllById(ids)
+            .also { it.throwIfNotContainIds(ids) }
+            .map { it.id to it.toUser() }
+            .toMap()
+
+    private fun UserEntity.toUser() = User(
+        id = id,
+        username = username
+    )
+
+    fun Collection<UserEntity>.throwIfNotContainIds(ids: Collection<Long>) = apply {
+        val missed = ids - map { it.id }
+
+        if (missed.isNotEmpty()) {
+            throw Exception("USER NOT FOUND $missed")
+        }
+    }
 
     @Service
     class CacheImpl(
         userRepository: UserRepository,
     ) : UserCollector(userRepository) {
-        private val cache = Cache<User, Long>(
+        private val cache = Cache<User, UserId>(
             maximumSize = 2000,
-            duration = Duration.ofMinutes(1),
+            duration = Duration.ofMinutes(5),
             loader = { super.get(it) },
             multiLoader = { super.multiGet(it) }
         )
 
-        override fun get(id: Long): User = cache.get(id)
+        override fun get(id: UserId): User = cache.get(id)
 
-        override fun multiGet(ids: Collection<Long>): Map<Long, User> = cache.multiGet(ids)
+        override fun multiGet(ids: Collection<UserId>): Map<UserId, User> = cache.multiGet(ids)
     }
 }

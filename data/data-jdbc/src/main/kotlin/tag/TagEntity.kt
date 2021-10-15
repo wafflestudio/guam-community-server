@@ -12,5 +12,6 @@ data class TagEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Long = 0L,
+
     val title: String
 )

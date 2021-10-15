@@ -12,5 +12,6 @@ class UserEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Long,
+
     val username: String,
 )

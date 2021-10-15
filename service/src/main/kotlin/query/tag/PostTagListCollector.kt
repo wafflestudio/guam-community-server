@@ -1,45 +1,57 @@
 package waffle.guam.community.service.query.tag
 
 import org.springframework.stereotype.Service
-import waffle.guam.community.data.jdbc.tag.PostTagRepository
+import waffle.guam.community.data.jdbc.post.PostEntity
+import waffle.guam.community.data.jdbc.post.PostQueryGenerator
+import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.tag.PostTagEntity
+import waffle.guam.community.service.PostId
 import waffle.guam.community.service.domain.tag.PostTag
 import waffle.guam.community.service.domain.tag.PostTagList
 import waffle.guam.community.service.query.Cache
-import waffle.guam.community.service.query.Collector
+import waffle.guam.community.service.query.MultiCollector
 import java.time.Duration
 
 @Service
 class PostTagListCollector(
-    private val postTagRepository: PostTagRepository,
-) : Collector<PostTagList, Long> {
-    override fun get(postId: Long): PostTagList =
-        postTagRepository.findAllByPostId(postId)
-            .map { PostTag(it.tag.id, it.tag.title) }
-            .let { PostTagList(postId = postId, content = it) }
+    private val postRepository: PostRepository,
+) : MultiCollector<PostTagList, PostId>, PostQueryGenerator {
+    override fun get(id: PostId): PostTagList =
+        postRepository.findOne(spec = postId(id) * fetchTags())
+            ?.toPostTagList()
+            ?: throw Exception("POST NOT FOUND ($id)")
 
-    fun multiGet(postIds: Collection<Long>): Map<Long, PostTagList> {
-        val tagMap = postTagRepository.findAllByPostIdIn(postIds)
-            .groupBy { it.post.id }
-            .mapValues { it.value.map { PostTag(it.tag.id, it.tag.title) } }
-
-        return postIds.map { it to PostTagList(postId = it, content = tagMap[it] ?: emptyList()) }
+    override fun multiGet(ids: Collection<PostId>): Map<PostId, PostTagList> =
+        postRepository.findAll(spec = postIds(ids) * fetchTags())
+            .also { posts -> posts.throwIfNotContainIds(ids) }
+            .map { post -> post.id to post.toPostTagList() }
             .toMap()
-    }
+
+    private fun PostEntity.toPostTagList() = PostTagList(
+        postId = id,
+        content = tags.map { it.toPostTag() }
+    )
+
+    private fun PostTagEntity.toPostTag() = PostTag(
+        postId = post.id,
+        tagId = tag.id,
+        title = tag.title
+    )
 
     @Service
     class CacheImpl(
-        postTagRepository: PostTagRepository,
-    ) : PostTagListCollector(postTagRepository) {
-        private val cache = Cache<PostTagList, Long>(
+        postRepository: PostRepository,
+    ) : PostTagListCollector(postRepository) {
+        private val cache = Cache<PostTagList, PostId>(
             maximumSize = 1000,
             duration = Duration.ofMinutes(10),
             loader = { super.get(it) },
             multiLoader = { super.multiGet(it) }
         )
 
-        override fun get(postId: Long): PostTagList = cache.get(postId)
+        override fun get(id: PostId): PostTagList = cache.get(id)
 
-        override fun multiGet(postIds: Collection<Long>): Map<Long, PostTagList> = cache.multiGet(postIds)
+        override fun multiGet(ids: Collection<PostId>): Map<PostId, PostTagList> = cache.multiGet(ids)
 
         // TODO: reload when post updated
     }
