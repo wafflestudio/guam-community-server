@@ -1,6 +1,6 @@
 package waffle.guam.community.service.domain.like
 
-data class PostLikes(
+data class PostLikeList(
     val postId: Long,
-    val userIds: List<Long>
+    val content: List<PostLike>,
 )

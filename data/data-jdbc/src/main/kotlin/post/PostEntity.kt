@@ -1,5 +1,6 @@
 package waffle.guam.community.data.jdbc.post
 
+import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import java.time.Instant
@@ -33,6 +34,8 @@ class PostEntity(
     var status: Status = Status.VALID,
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val tags: MutableSet<PostTagEntity> = mutableSetOf(),
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val comments: MutableList<PostCommentEntity> = mutableListOf(),
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val likes: MutableSet<PostLikeEntity> = mutableSetOf(),
     val createdAt: Instant = Instant.now(),
