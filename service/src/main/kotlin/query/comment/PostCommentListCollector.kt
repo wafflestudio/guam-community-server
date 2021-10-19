@@ -8,6 +8,7 @@ import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.command.comment.PostCommentCreated
 import waffle.guam.community.service.command.comment.PostCommentDeleted
+import waffle.guam.community.service.command.comment.PostCommentUpdated
 import waffle.guam.community.service.domain.comment.PostCommentList
 import waffle.guam.community.service.query.Cache
 import waffle.guam.community.service.query.MultiCollector
@@ -57,6 +58,10 @@ class PostCommentListCollector(
             logger.info("Cache reloaded with $event")
         }
 
-        // TODO: reload when comment updated
+        @EventListener
+        fun reload(event: PostCommentUpdated) {
+            cache.reload(event.postId)
+            logger.info("Cache reloaded with $event")
+        }
     }
 }

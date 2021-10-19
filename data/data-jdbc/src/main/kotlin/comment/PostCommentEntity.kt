@@ -32,7 +32,7 @@ data class PostCommentEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     val user: UserEntity,
 
-    val content: String,
+    var content: String,
 
     @Convert(converter = ImagePathsConverter::class)
     val images: List<String> = mutableListOf(),

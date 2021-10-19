@@ -32,9 +32,9 @@ class PostEntity(
 
     val userId: Long,
 
-    val title: String,
+    var title: String,
 
-    val content: String,
+    var content: String,
 
     @Convert(converter = ImagePathsConverter::class)
     var images: List<String>,
