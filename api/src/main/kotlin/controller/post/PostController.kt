@@ -6,19 +6,20 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.controller.post.req.CreatePostRequest
 import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
-import waffle.guam.community.service.query.post.readmodel.PostPreviewListReadModel
+import waffle.guam.community.service.query.post.readmodel.PostReadModel
 
 @RequestMapping("api/v1/posts")
 @RestController
 class PostController(
     private val createPostHandler: CreatePostHandler,
     private val deletePostHandler: DeletePostHandler,
-    private val postPreviewListReadModel: PostPreviewListReadModel,
+    private val postReadModel: PostReadModel,
 ) {
     @PostMapping("")
     fun createPost(
@@ -31,5 +32,13 @@ class PostController(
     ) = deletePostHandler.handle(DeletePost(postId = postId, userId = 1L))
 
     @GetMapping("")
-    fun getPosts() = postPreviewListReadModel.initData(1L)
+    fun getPosts(
+        @RequestParam boardId: Long,
+        @RequestParam(required = false) afterPostId: Long?,
+    ) = postReadModel.getPostPreviewList(boardId = 1L, afterPostId = afterPostId)
+
+    @GetMapping("/{postId}")
+    fun getPost(
+        @PathVariable postId: Long
+    ) = postReadModel.getPostDetail(postId = postId)
 }

@@ -19,6 +19,14 @@ interface QueryGenerator<E> {
         }
     }
 
+    fun <F : Comparable<F>> ge(refName: String, targetValue: F?): Specification<E> {
+        return Specification { root, _, criteriaBuilder ->
+            if (targetValue != null) {
+                criteriaBuilder.greaterThan(root.get(refName), targetValue)
+            } else null
+        }
+    }
+
     operator fun Specification<E>.times(spec: Specification<E>): Specification<E> {
         return and(spec)
     }

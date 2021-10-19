@@ -39,4 +39,6 @@ class Cache<V, K>(
     }
 
     fun reload(key: K) = caffeineCache.put(key, loader.invoke(key))
+
+    fun invalidate(key: K) = caffeineCache.invalidate(key)
 }

@@ -15,8 +15,8 @@ class PostListCollector(
     private val postRepository: PostRepository,
 ) : Collector<PostList, PostListQuery>, PostQueryGenerator {
     override fun get(id: PostListQuery): PostList {
-        val spec = boardId(id.boardId) * status(PostEntity.Status.VALID)
-        val pageable = PageRequest.of(id.page, id.size, Sort.by(Sort.Direction.DESC, PostEntity_.ID))
+        val spec = boardId(id.boardId) * status(PostEntity.Status.VALID) * afterPostId(id.afterPostId)
+        val pageable = PageRequest.of(0, id.size, Sort.by(Sort.Direction.DESC, PostEntity_.ID))
 
         return postRepository.findAll(spec, pageable)
             .let { PostList.of(it) }
@@ -25,6 +25,6 @@ class PostListCollector(
 
 data class PostListQuery(
     val boardId: Long,
-    val page: Int,
+    val afterPostId: Long,
     val size: Int,
 )

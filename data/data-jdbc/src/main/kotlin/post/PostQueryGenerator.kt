@@ -11,6 +11,8 @@ interface PostQueryGenerator : QueryGenerator<PostEntity> {
 
     fun postIds(postIds: Collection<Long>): Specification<PostEntity> = `in`(PostEntity_.ID, postIds)
 
+    fun afterPostId(postId: Long): Specification<PostEntity> = ge(PostEntity_.ID, postId)
+
     fun status(status: PostEntity.Status): Specification<PostEntity> = eq(PostEntity_.STATUS, status)
 
     fun statusIn(statuses: List<PostEntity.Status>): Specification<PostEntity> = `in`(PostEntity_.STATUS, statuses)
