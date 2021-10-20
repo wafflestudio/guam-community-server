@@ -28,7 +28,7 @@ class CreatePostLikeHandler(
 
     private fun PostEntity.addLikeBy(userId: Long) {
         if (likes.map { it.userId }.contains(userId)) {
-            throw Exception()
+            throw Exception("USER $userId ALREADY LIKED POST $id")
         }
 
         likes.add(PostLikeEntity(post = this, userId = userId))

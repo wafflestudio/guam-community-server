@@ -14,3 +14,5 @@ insert into post_likes (post_id, user_id) values (1, 1), (1, 3), (1, 4), (2, 2),
 insert into post_comments (post_id, user_id, content, images, created_at, updated_at) values
 (3, 1, 'wassup', '/comment/1/1.png,/comment/1/2.png', '2021-10-10 09:10:00', '2021-10-10 09:10:00'),
 (3, 2, 'sssup', null, '2021-10-10 09:09:00', '2021-10-10 09:12:00');
+
+insert into post_comment_likes (post_comment_id, user_id) values (1, 2), (1, 3);

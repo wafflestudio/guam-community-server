@@ -1,6 +1,7 @@
 package waffle.guam.community.data.jdbc.comment
 
 import waffle.guam.community.data.jdbc.BaseTimeEntity
+import waffle.guam.community.data.jdbc.like.PostCommentLikeEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
 import javax.persistence.AttributeConverter
@@ -15,6 +16,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Table(name = "post_comments")
@@ -36,6 +38,9 @@ data class PostCommentEntity(
 
     @Convert(converter = ImagePathsConverter::class)
     val images: List<String> = mutableListOf(),
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment")
+    val likes: MutableList<PostCommentLikeEntity> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)
     var status: Status = Status.VALID,

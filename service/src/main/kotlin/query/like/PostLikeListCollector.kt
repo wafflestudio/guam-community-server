@@ -36,7 +36,7 @@ class PostLikeListCollector(
 
         private val cache = Cache<PostLikeList, PostId>(
             maximumSize = 1000,
-            duration = Duration.ofSeconds(30),
+            duration = Duration.ofMinutes(1),
             loader = { super.get(it) },
             multiLoader = { super.multiGet(it) }
         )
