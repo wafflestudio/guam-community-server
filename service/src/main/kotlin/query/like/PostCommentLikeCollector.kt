@@ -8,8 +8,6 @@ import waffle.guam.community.data.jdbc.comment.PostCommentRepository
 import waffle.guam.community.service.CommentId
 import waffle.guam.community.service.command.like.PostCommentLikeCreated
 import waffle.guam.community.service.command.like.PostCommentLikeDeleted
-import waffle.guam.community.service.command.like.PostLikeCreated
-import waffle.guam.community.service.command.like.PostLikeDeleted
 import waffle.guam.community.service.domain.like.PostCommentLikeList
 import waffle.guam.community.service.query.Cache
 import waffle.guam.community.service.query.MultiCollector

@@ -24,7 +24,7 @@ data class Post(
         fun of(e: PostEntity) = Post(
             id = e.id,
             boardId = e.boardId,
-            userId = e.userId,
+            userId = e.user.id,
             title = e.title,
             content = e.content,
             imagePaths = e.images,

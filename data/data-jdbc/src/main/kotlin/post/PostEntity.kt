@@ -5,6 +5,7 @@ import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
+import waffle.guam.community.data.jdbc.user.UserEntity
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType
 import javax.persistence.Convert
@@ -17,6 +18,7 @@ import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -30,7 +32,8 @@ class PostEntity(
 
     val boardId: Long,
 
-    val userId: Long,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val user: UserEntity,
 
     var title: String,
 

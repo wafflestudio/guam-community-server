@@ -7,6 +7,9 @@ import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.tag.TagRepository
+import waffle.guam.community.service.InvalidArgumentException
+import waffle.guam.community.service.PostNotFound
+import waffle.guam.community.service.UnAuthorized
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
@@ -19,12 +22,11 @@ class UpdatePostHandler(
     override fun handle(command: UpdatePost): PostUpdated {
         val (postId, userId, title, content, tagId) = command
 
-        val post = postRepository.findOne(postId(postId) * fetchTags())
-            ?: throw Exception("POST NOT FOUND $postId")
+        val post = postRepository.findOne(postId(postId) * fetchTags()) ?: throw PostNotFound(postId)
 
         post.updateBy(userId = userId, title = title, content = content, tagId = tagId)
 
-        return PostUpdated(postId = post.id, boardId = post.boardId, userId = post.userId)
+        return PostUpdated(postId = post.id, boardId = post.boardId, userId = post.user.id)
     }
 
     private fun PostEntity.updateBy(
@@ -33,8 +35,8 @@ class UpdatePostHandler(
         content: String? = null,
         tagId: Long? = null,
     ) {
-        if (this.userId != userId) {
-            throw Exception("USER $userId NOT AUTHORIZED TO UPDATE POST $id")
+        if (this.user.id != userId) {
+            throw UnAuthorized("USER $userId NOT AUTHORIZED TO UPDATE POST $id")
         }
         if (title != null) {
             updateTitle(title)
@@ -72,7 +74,7 @@ data class UpdatePost(
 ) : Command {
     init {
         if (title == null && content == null && tagId == null) {
-            throw Exception("At least one property should be non-null value")
+            throw InvalidArgumentException("적어도 한 개 이상의 필드값을 변경해야합니다.")
         }
     }
 }

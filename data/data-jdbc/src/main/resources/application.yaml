@@ -1,6 +1,6 @@
 spring:
   jpa:
-    defer-datasource-initialization: true
+#    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true

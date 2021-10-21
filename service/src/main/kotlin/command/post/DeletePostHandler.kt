@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.service.PostNotFound
+import waffle.guam.community.service.UnAuthorized
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
@@ -18,16 +20,16 @@ class DeletePostHandler(
     override fun handle(command: DeletePost): PostDeleted {
         val (postId, userId) = command
 
-        val post = postRepository.findByIdOrNull(postId) ?: throw Exception("POST NOT FOUND $postId")
+        val post = postRepository.findByIdOrNull(postId) ?: throw PostNotFound("POST NOT FOUND $postId")
 
         post.deleteBy(userId)
 
-        return PostDeleted(postId = post.id, boardId = post.boardId, userId = post.userId)
+        return PostDeleted(postId = post.id, boardId = post.boardId, userId = post.user.id)
     }
 
     private fun PostEntity.deleteBy(userId: Long) {
-        if (this.userId != userId) {
-            throw Exception("USER $userId NOT AUTHORIZED TO POST $id")
+        if (this.user.id != userId) {
+            throw UnAuthorized("USER $userId NOT AUTHORIZED TO POST $id")
         }
 
         status = PostEntity.Status.DELETED
