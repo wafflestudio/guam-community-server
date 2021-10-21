@@ -11,7 +11,7 @@ data class PostLike(
     companion object {
         fun of(e: PostLikeEntity) = PostLike(
             postId = e.post.id,
-            userId = e.userId
+            userId = e.user.id
         )
     }
 }
