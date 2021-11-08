@@ -40,7 +40,7 @@ class PostEntity(
     var content: String,
 
     @Convert(converter = ImagePathsConverter::class)
-    var images: List<String>,
+    var images: List<String> = emptyList(),
 
     @Enumerated(value = EnumType.STRING)
     var status: Status = Status.VALID,

@@ -4,6 +4,9 @@ import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
@@ -13,6 +16,9 @@ import waffle.guam.community.data.jdbc.tag.TagRepository
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.TagNotFound
 import waffle.guam.community.service.UserNotFound
+import waffle.guam.community.service.command.image.ImageListUploaded
+import waffle.guam.community.service.command.image.UploadImageList
+import waffle.guam.community.service.command.image.UploadImageListHandler
 import waffle.guam.community.service.command.post.CreatePost
 import waffle.guam.community.service.command.post.CreatePostHandler
 
@@ -24,16 +30,27 @@ class CreatePostHandlerSpec(
     tagRepository: TagRepository,
     userRepository: UserRepository,
 ) : FeatureSpec() {
-    private val handler = CreatePostHandler(postRepository, tagRepository, userRepository)
+    private val mockImageHandler: UploadImageListHandler = mockk()
+    private val handler = CreatePostHandler(postRepository, tagRepository, userRepository, mockImageHandler)
     private val command = CreatePost(
         boardId = 1L,
         userId = 2L,
         title = "Test Post",
         content = "This is Post Test",
+        images = emptyList(),
         tagId = 2L
     )
 
     init {
+        val imageCommandSlot = slot<UploadImageList>()
+
+        every {
+            mockImageHandler.handle(capture(imageCommandSlot))
+        } answers {
+            val captured = imageCommandSlot.captured
+            ImageListUploaded(captured.images.mapIndexed { i, _ -> "TEST/$i" })
+        }
+
         feature("포스트 생성 실패") {
             scenario("해당 유저가 존재하지 않으면 에러가 발생한다.") {
                 shouldThrowExactly<UserNotFound> {
