@@ -11,7 +11,7 @@ import javax.persistence.Table
 class UserEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    val id: Long,
-
+    val id: Long = 0L,
+    val firebaseUid: String,
     val username: String,
 )
