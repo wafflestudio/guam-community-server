@@ -18,7 +18,6 @@ class WebConfig(
     private val activeProfile: String = ""
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
-        print(activeProfile)
         when (activeProfile) {
             "test" -> resolvers.add(UserContextResolverForTest(userRepository))
             else -> resolvers.add(UserContextResolver(sessionService))
