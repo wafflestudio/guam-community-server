@@ -10,8 +10,8 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.service.Forbidden
 import waffle.guam.community.service.PostNotFound
-import waffle.guam.community.service.UnAuthorized
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
 
@@ -33,7 +33,7 @@ class DeletePostHandlerSpec(
             }
 
             scenario("요청자가 해당 포스트의 작성자가 아니면 에러가 발생한다.") {
-                shouldThrowExactly<UnAuthorized> {
+                shouldThrowExactly<Forbidden> {
                     handler.handle(command.copy(userId = 401L))
                 }
             }

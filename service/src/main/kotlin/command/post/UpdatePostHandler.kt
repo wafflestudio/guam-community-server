@@ -7,9 +7,9 @@ import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.tag.TagRepository
+import waffle.guam.community.service.Forbidden
 import waffle.guam.community.service.InvalidArgumentException
 import waffle.guam.community.service.PostNotFound
-import waffle.guam.community.service.UnAuthorized
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
@@ -36,7 +36,7 @@ class UpdatePostHandler(
         tagId: Long? = null,
     ) {
         if (this.user.id != userId) {
-            throw UnAuthorized("USER $userId NOT AUTHORIZED TO UPDATE POST $id")
+            throw Forbidden("USER $userId NOT AUTHORIZED TO UPDATE POST $id")
         }
         if (title != null) {
             updateTitle(title)

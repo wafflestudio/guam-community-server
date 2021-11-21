@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.service.Forbidden
 import waffle.guam.community.service.PostNotFound
-import waffle.guam.community.service.UnAuthorized
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
@@ -29,7 +29,7 @@ class DeletePostHandler(
 
     private fun PostEntity.deleteBy(userId: Long) {
         if (this.user.id != userId) {
-            throw UnAuthorized("USER $userId NOT AUTHORIZED TO POST $id")
+            throw Forbidden("USER $userId NOT AUTHORIZED TO POST $id")
         }
 
         status = PostEntity.Status.DELETED
