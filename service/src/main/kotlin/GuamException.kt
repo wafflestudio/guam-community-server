@@ -1,3 +1,5 @@
+package waffle.guam.community.service
+
 import org.springframework.http.HttpStatus
 
 abstract class GuamException(message: String, val status: HttpStatus) : Exception(message)
