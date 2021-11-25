@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.core.MethodParameter
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -13,7 +12,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 import waffle.guam.community.common.InvalidFirebaseTokenException
 import waffle.guam.community.common.UserContext
-import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
 import javax.servlet.http.HttpServletRequest
 
@@ -54,20 +52,26 @@ class UserContextResolver(
     }
 }
 
+/**
+ * Test 에서 UserContext 제공하는 법
+ * Header 항목에 아래 추가
+ * Authorization: {expectingId}
+ */
 @Component
 @Profile("test")
 class UserContextResolverForTest(
     private val userRepository: UserRepository
 ) : GuamUserContextResolver {
-
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
     ): UserContext {
-        // TODO 로직 고도화
-        val user = userRepository.findByIdOrNull(1) ?: userRepository.save(UserEntity(firebaseUid = "", username = "test"))
+        val req = (webRequest.nativeRequest as HttpServletRequest)
+        val user = req.getHeader(HttpHeaders.AUTHORIZATION)
+            ?.let { uid -> userRepository.findByFirebaseUid(uid).orElseGet { null } }
+            ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
         return UserContext(user.id)
     }
 }
