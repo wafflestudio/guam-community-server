@@ -3,6 +3,7 @@ package waffle.guam.community.service.query.user
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.user.UserEntity
+import waffle.guam.community.data.jdbc.user.UserQueryGenerator
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.user.User
@@ -13,7 +14,7 @@ import java.time.Duration
 @Service
 class UserCollector(
     private val userRepository: UserRepository,
-) : MultiCollector<User, UserId> {
+) : MultiCollector<User, UserId>, UserQueryGenerator {
     override fun get(id: UserId): User =
         userRepository.findByIdOrNull(id)
             ?.toUser()
@@ -27,6 +28,7 @@ class UserCollector(
 
     private fun UserEntity.toUser() = User(
         id = id,
+        firebaseUid = firebaseUid,
         username = username
     )
 
