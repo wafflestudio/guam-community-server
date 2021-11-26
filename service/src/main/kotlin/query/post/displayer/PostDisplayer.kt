@@ -1,4 +1,4 @@
-package waffle.guam.community.service.query.post.readmodel
+package waffle.guam.community.service.query.post.displayer
 
 import org.springframework.stereotype.Service
 import waffle.guam.community.service.domain.post.Post
@@ -16,7 +16,7 @@ import waffle.guam.community.service.query.tag.PostTagListCollector
 import waffle.guam.community.service.query.user.UserCollector
 
 @Service
-class PostReadModel(
+class PostDisplayer(
     private val postListCollector: PostListCollector,
     private val recentPostListCollector: RecentPostListCollector.CacheImpl,
     private val postCollector: PostCollector.CacheImpl,
