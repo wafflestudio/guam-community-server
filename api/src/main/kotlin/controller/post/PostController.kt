@@ -12,14 +12,14 @@ import waffle.guam.community.controller.post.req.CreatePostRequest
 import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
-import waffle.guam.community.service.query.post.readmodel.PostReadModel
+import waffle.guam.community.service.query.post.displayer.PostDisplayer
 
 @RequestMapping("api/v1/posts")
 @RestController
 class PostController(
     private val createPostHandler: CreatePostHandler,
     private val deletePostHandler: DeletePostHandler,
-    private val postReadModel: PostReadModel,
+    private val postDisplayer: PostDisplayer,
 ) {
     @PostMapping("")
     fun createPost(
@@ -35,10 +35,10 @@ class PostController(
     fun getPosts(
         @RequestParam boardId: Long,
         @RequestParam(required = false) afterPostId: Long?,
-    ) = postReadModel.getPostPreviewList(boardId = 1L, afterPostId = afterPostId)
+    ) = postDisplayer.getPostPreviewList(boardId = 1L, afterPostId = afterPostId)
 
     @GetMapping("/{postId}")
     fun getPost(
         @PathVariable postId: Long
-    ) = postReadModel.getPostDetail(postId = postId)
+    ) = postDisplayer.getPostDetail(postId = postId)
 }

@@ -12,6 +12,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 import waffle.guam.community.common.InvalidFirebaseTokenException
 import waffle.guam.community.common.UserContext
+import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
 import javax.servlet.http.HttpServletRequest
 
@@ -70,7 +71,10 @@ class UserContextResolverForTest(
     ): UserContext {
         val req = (webRequest.nativeRequest as HttpServletRequest)
         val user = req.getHeader(HttpHeaders.AUTHORIZATION)
-            ?.let { uid -> userRepository.findByFirebaseUid(uid).orElseGet { null } }
+            ?.let { uid ->
+                userRepository.findByFirebaseUid(firebaseUid = uid).orElseGet { null }
+                    ?: userRepository.save(UserEntity(firebaseUid = uid, username = "TEST USER #$uid"))
+            }
             ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
         return UserContext(user.id)
     }
