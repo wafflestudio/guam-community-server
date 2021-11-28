@@ -1,10 +1,5 @@
 package waffle.guam.community.service
 
-import GuamBadRequest
-import GuamConflict
-import GuamForbidden
-import GuamNotFound
-
 // HTTP 400
 class InvalidArgumentException(message: String = "잘못된 인자입니다.") :
     GuamBadRequest(message)
