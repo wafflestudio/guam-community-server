@@ -37,8 +37,16 @@ class PostController(
         @RequestParam(required = false) afterPostId: Long?,
     ) = postDisplayer.getPostPreviewList(boardId = 1L, afterPostId = afterPostId)
 
+    @GetMapping("", params = ["keyword"])
+    fun searchPosts(
+        @RequestParam boardId: Long,
+        @RequestParam tag: String,
+        @RequestParam keyword: String,
+        @RequestParam(required = false) afterPostId: Long?,
+    ) = postDisplayer.getSearchedPostPreviewList(boardId = 1L, tag = tag, keyword = keyword, afterPostId = afterPostId)
+
     @GetMapping("/{postId}")
     fun getPost(
-        @PathVariable postId: Long
+        @PathVariable postId: Long,
     ) = postDisplayer.getPostDetail(postId = postId)
 }

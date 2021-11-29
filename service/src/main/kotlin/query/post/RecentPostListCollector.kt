@@ -21,7 +21,9 @@ class RecentPostListCollector(
     }
 
     override fun get(id: BoardId): PostList =
-        postListCollector.get(PostListQuery(boardId = id, size = RECENT_POSTS_SIZE, afterPostId = -1L))
+        postListCollector.get(
+            PostListCollector.Query(boardId = id, size = RECENT_POSTS_SIZE, afterPostId = 0L)
+        )
 
     @Service
     class CacheImpl(
