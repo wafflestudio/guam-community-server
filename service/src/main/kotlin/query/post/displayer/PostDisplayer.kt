@@ -10,14 +10,15 @@ import waffle.guam.community.service.query.comment.PostCommentListCollector
 import waffle.guam.community.service.query.like.PostLikeListCollector
 import waffle.guam.community.service.query.post.PostCollector
 import waffle.guam.community.service.query.post.PostListCollector
-import waffle.guam.community.service.query.post.PostListQuery
 import waffle.guam.community.service.query.post.RecentPostListCollector
+import waffle.guam.community.service.query.post.SearchedPostListCollector
 import waffle.guam.community.service.query.tag.PostTagListCollector
 import waffle.guam.community.service.query.user.UserCollector
 
 @Service
 class PostDisplayer(
     private val postListCollector: PostListCollector,
+    private val searchedPostListCollector: SearchedPostListCollector,
     private val recentPostListCollector: RecentPostListCollector.CacheImpl,
     private val postCollector: PostCollector.CacheImpl,
     private val userCollector: UserCollector.CacheImpl,
@@ -31,8 +32,27 @@ class PostDisplayer(
             recentPostListCollector.get(boardId).fillData()
         } else {
             // No cache for old posts
-            postListCollector.get(PostListQuery(boardId = boardId, afterPostId = afterPostId, size = 20)).fillData()
+            postListCollector.get(
+                PostListCollector.Query(boardId = boardId, afterPostId = afterPostId, size = 20)
+            ).fillData()
         }
+
+    fun getSearchedPostPreviewList(
+        boardId: Long,
+        tag: String,
+        keyword: String,
+        afterPostId: Long? = null,
+    ): PostPreviewList =
+        // No cache for searched posts
+        searchedPostListCollector.get(
+            SearchedPostListCollector.Query(
+                boardId = boardId,
+                tag = tag,
+                keyword = keyword,
+                afterPostId = afterPostId ?: 0L,
+                size = 20
+            )
+        ).fillData()
 
     fun getPostDetail(postId: Long): PostDetail =
         postCollector.get(postId).fillData()
