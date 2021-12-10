@@ -1,0 +1,3 @@
+GET {{ host }}/api/v1/auth?token={{ accessToken }}
+Content-Type: application/json
+
