@@ -1,5 +1,5 @@
 insert into boards (title) values ('chat'), ('study');
-insert into users (username, firebase_uid) values ('jon', 'test1'), ('snow', 'test2'), ('tony', 'test3'), ('whitty', 'test4');
+insert into users (nickname, firebase_uid) values ('jon', 'test1'), ('snow', 'test2'), ('tony', 'test3'), ('whitty', 'test4');
 insert into tags (title) values ('Programming'), ('Data Science');
 
 insert into posts (board_id, user_id, title, content, images, status, created_at, updated_at) values

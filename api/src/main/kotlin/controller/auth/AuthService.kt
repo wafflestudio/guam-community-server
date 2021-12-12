@@ -39,20 +39,26 @@ class AuthService(
 
     @Transactional
     fun verify(token: String): UserContext {
-        val firebaseUid = getFirebaseUid(token)
-        val userId = getOrCreateUser(firebaseUid = firebaseUid).id
+        val firebaseInfo = getFirebaseInfo(token)
+        val userId = getOrCreateUser(firebaseInfo = firebaseInfo).id
         return UserContext(id = userId)
     }
 
     @Transactional
-    fun getOrCreateUser(firebaseUid: String): UserEntity =
-        userRepository.findByFirebaseUid(firebaseUid = firebaseUid)
-            ?: userRepository.save(UserEntity(firebaseUid = firebaseUid))
-                .also { logger.info("${UserCreated(it.id, it.firebaseUid)}") }
+    fun getOrCreateUser(firebaseInfo: FirebaseInfo): UserEntity {
+        val email = firebaseInfo.email?.takeUnless { it == "null" }
+        val username = firebaseInfo.username?.takeUnless { it == "null" }
 
-    private fun getFirebaseUid(token: String): String =
+        return userRepository.findByFirebaseUid(firebaseUid = firebaseInfo.uid)
+            ?: createUser(UserEntity(firebaseUid = firebaseInfo.uid, email = email, nickname = username))
+    }
+
+    private fun getFirebaseInfo(token: String): FirebaseInfo =
         runCatching {
-            firebaseAuth().verifyIdToken(token).uid
+            val res = firebaseAuth().verifyIdToken(token)
+            val username = (res.claims["name"] as? String)
+            val email = (res.claims["email"] as? String)
+            return FirebaseInfo(res.uid, email, username)
         }.getOrElse { exc ->
             when ((exc as? FirebaseAuthException)?.authErrorCode) {
                 AuthErrorCode.EXPIRED_ID_TOKEN ->
@@ -62,13 +68,30 @@ class AuthService(
             }
         }
 
+    /**
+     * 카카오 기본 제공 정보 이메일, 유저네임 가져오기
+     * if null -> 파이어베이스에도 문자 그대로 null 저장
+     */
     private fun getOrCreateUID(res: KaKaoRequestMeResponse): String =
         runCatching {
             firebaseAuthInstance.getUser("guam:${res.id}").uid
         }.onFailure { exc ->
             logger.error("GET FIREBASE USER FAILED: UID [guam:${res.id}]", exc)
         }.getOrElse {
-            val createRequest = UserRecord.CreateRequest().setUid("guam:${res.id}")
+            val createRequest = UserRecord.CreateRequest()
+                .setUid("guam:${res.id}")
+                .setDisplayName(res.properties?.nickname.toString())
+                .setEmail(res.kakao_account.email.toString())
             firebaseAuthInstance.createUser(createRequest).uid
         }
+
+    private fun createUser(user: UserEntity): UserEntity =
+        userRepository.save(user)
+            .also { logger.info("${UserCreated(it.id, it.firebaseUid)}") }
 }
+
+class FirebaseInfo(
+    val uid: String,
+    val email: String?,
+    val username: String?
+)

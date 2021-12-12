@@ -19,7 +19,7 @@ data class PostComment(
         fun of(e: PostCommentEntity, likeCount: Int? = null) = PostComment(
             postId = e.post.id,
             id = e.id,
-            user = User(id = e.user.id, firebaseUid = e.user.firebaseUid, username = e.user.username),
+            user = User.of(e.user),
             content = e.content,
             imagePaths = e.images,
             likeCount = likeCount ?: e.likes.size,

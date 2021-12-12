@@ -12,6 +12,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 import waffle.guam.community.common.InvalidFirebaseTokenException
 import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.auth.AuthService
+import waffle.guam.community.controller.auth.FirebaseInfo
 import javax.servlet.http.HttpServletRequest
 
 interface GuamUserContextResolver : HandlerMethodArgumentResolver {
@@ -62,8 +63,9 @@ class UserContextResolverForTest(
     ): UserContext {
         val req = (webRequest.nativeRequest as HttpServletRequest)
         val user = req.getHeader(HttpHeaders.AUTHORIZATION)
-            ?.let { firebaseUid -> authService.getOrCreateUser(firebaseUid = firebaseUid) }
-            ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
+            ?.let { firebaseUid ->
+                authService.getOrCreateUser(FirebaseInfo(uid = firebaseUid, email = null, username = "test user"))
+            } ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
         return UserContext(user.id)
     }
 }

@@ -29,7 +29,8 @@ class UserCollector(
     private fun UserEntity.toUser() = User(
         id = id,
         firebaseUid = firebaseUid,
-        username = username
+        nickname = nickname,
+        email = email
     )
 
     fun Collection<UserEntity>.throwIfNotContainIds(ids: Collection<Long>) = apply {
