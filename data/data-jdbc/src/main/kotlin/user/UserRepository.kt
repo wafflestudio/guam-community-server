@@ -4,10 +4,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.Optional
 
 interface UserRepository : JpaRepository<UserEntity, Long> {
-    fun findByFirebaseUid(firebaseUid: String): Optional<UserEntity>
+    fun findByFirebaseUid(firebaseUid: String): UserEntity?
     fun findAll(spec: Specification<UserEntity>, pageable: Pageable): Page<UserEntity>
     fun findOne(spec: Specification<UserEntity>): UserEntity?
 }
