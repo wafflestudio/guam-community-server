@@ -1,5 +1,7 @@
 package waffle.guam.community.service
 
+import waffle.guam.community.data.jdbc.stack.StackId
+
 // HTTP 400
 class InvalidArgumentException(message: String = "잘못된 인자입니다.") :
     GuamBadRequest(message)
@@ -11,6 +13,10 @@ class Forbidden(message: String = "허용되지 않은 요청입니다.") :
 // HTTP 404
 class UserNotFound(message: String = "해당 유저를 찾을 수 없습니다.") : GuamNotFound(message) {
     constructor(userId: Long) : this("해당 유저를 찾을 수 없습니다 [ID : $userId]")
+}
+
+class StackNotFound(message: String = "해당 스택을 찾을 수 없습니다.") : GuamNotFound(message) {
+    constructor(id: StackId) : this("해당 스택을 찾을 수 없습니다 [USER_ID : ${id.userId}, NAME : ${id.name}]")
 }
 
 class TagNotFound(message: String = "해당 태그를 찾을 수 없습니다.") : GuamNotFound(message) {

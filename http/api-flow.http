@@ -27,5 +27,19 @@ Authorization: {{ token }}
   "nickname": "steve"
 }
 
-###
+### ADD STACK - ID: 1
+
+POST {{ base_url }}/users/1/stack
+Content-Type: application/json
+Authorization: {{ token }}
+
+{
+  "name": "스프링"
+}
+
+### DELETE STACK - ID: 1
+
+DELETE {{ base_url }}/users/1/stack?name=스프링
+Content-Type: application/json
+Authorization: {{ token }}
 
