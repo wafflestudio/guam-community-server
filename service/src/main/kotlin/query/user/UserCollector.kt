@@ -29,12 +29,7 @@ class UserCollector(
             .map { it.id to it.toUser() }
             .toMap()
 
-    private fun UserEntity.toUser() = User(
-        id = id,
-        firebaseUid = firebaseUid,
-        nickname = nickname,
-        email = email
-    )
+    private fun UserEntity.toUser() = User.of(this)
 
     fun Collection<UserEntity>.throwIfNotContainIds(ids: Collection<Long>) = apply {
         val missed = ids - map { it.id }

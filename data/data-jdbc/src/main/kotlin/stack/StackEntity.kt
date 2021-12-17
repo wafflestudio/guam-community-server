@@ -1,25 +1,28 @@
 package waffle.guam.community.data.jdbc.stack
 
-import waffle.guam.community.data.jdbc.user.UserEntity
+import java.io.Serializable
 import javax.persistence.Column
+import javax.persistence.Embeddable
+import javax.persistence.EmbeddedId
 import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Table(name = "stacks")
 @Entity
-class StackEntity(
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    val id: Long = 0L,
+class StackEntity private constructor(
+    @EmbeddedId
+    val data: StackId,
+) {
+    constructor(userId: Long, name: String) : this(StackId(userId, name))
+}
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    val user: UserEntity,
+val StackEntity.name
+    get() = this.data.name
+
+@Embeddable
+class StackId(
+    val userId: Long,
 
     @Column(length = 10)
     val name: String,
-)
+) : Serializable

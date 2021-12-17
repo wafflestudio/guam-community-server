@@ -20,9 +20,9 @@ class UpdateUserHandler(
 ) : CommandHandler<UpdateUser, UserUpdated> {
 
     @Transactional
-    override fun handle(cmd: UpdateUser): UserUpdated {
-        val user = userAPIRepository.find(cmd.userId, fetchStacks = true) ?: throw UserNotFound(cmd.userId)
-        user.updateBy(cmd)
+    override fun handle(command: UpdateUser): UserUpdated {
+        val user = userAPIRepository.find(command.userId) ?: throw UserNotFound(command.userId)
+        user.updateBy(command)
         return UserUpdated.from(user)
     }
 

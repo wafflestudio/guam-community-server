@@ -38,7 +38,7 @@ class UserEntity(
     @Convert(converter = ImagePathConverter::class)
     var profileImage: String? = null,
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "data.userId", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val stacks: MutableList<StackEntity> = mutableListOf(),
 ) {
     fun checkName() =
