@@ -40,8 +40,8 @@ class AuthService(
     @Transactional
     fun verify(token: String): UserContext {
         val firebaseInfo = getFirebaseInfo(token)
-        val userId = getOrCreateUser(firebaseInfo = firebaseInfo).id
-        return UserContext(id = userId)
+        val user = getOrCreateUser(firebaseInfo = firebaseInfo)
+        return UserContext.of(user)
     }
 
     @Transactional
