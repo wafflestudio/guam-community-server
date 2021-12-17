@@ -1,3 +1,31 @@
-GET {{ host }}/api/v1/auth?token={{ accessToken }}
+GET {{ base_url }}/auth?token={{ accessToken }}
 Content-Type: application/json
+
+### USER_ME
+
+GET {{ base_url }}/users/me
+Content-Type: application/json
+Authorization: {{ token }}
+
+### USER_DETAIL - ID: 1
+
+GET {{ base_url }}/users/1
+Content-Type: application/json
+Authorization: {{ token }}
+
+### POST_DETAIL - ID: 1
+
+GET {{ base_url }}/posts/1
+
+### UPDATE_USER - ID: 1
+
+PATCH  {{ base_url }}/users/1
+Content-Type: application/json
+Authorization: {{ token }}
+
+{
+  "nickname": "steve"
+}
+
+###
 
