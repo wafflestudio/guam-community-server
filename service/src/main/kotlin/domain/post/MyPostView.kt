@@ -17,23 +17,21 @@ data class MyPostView(
     val status: PostEntity.Status,
     val createdAt: Instant,
     val updatedAt: Instant,
-) {
-    companion object {
-        fun of(projection: Projection): MyPostView =
-            MyPostView(
-                id = projection.id,
-                boardId = projection.boardId,
-                title = projection.title,
-                content = projection.content,
-                imageCount = projection.imagePaths.size,
-                likeCount = projection.likeCount,
-                commentCount = projection.commentCount,
-                status = projection.status,
-                createdAt = projection.createdAt,
-                updatedAt = projection.updatedAt,
-            )
+)
 
-        fun listOf(l: List<Projection>): List<MyPostView> =
-            l.map { projectionData -> MyPostView.of(projectionData) }
-    }
-}
+fun MyPostView(projection: Projection): MyPostView =
+    MyPostView(
+        id = projection.id,
+        boardId = projection.boardId,
+        title = projection.title,
+        content = projection.content,
+        imageCount = projection.imagePaths.size,
+        likeCount = projection.likeCount,
+        commentCount = projection.commentCount,
+        status = projection.status,
+        createdAt = projection.createdAt,
+        updatedAt = projection.updatedAt,
+    )
+
+fun MyPostViewList(list: List<Projection>): List<MyPostView> =
+    list.map { projectionData -> MyPostView(projectionData) }

@@ -40,10 +40,4 @@ class UserEntity(
 
     @OneToMany(mappedBy = "data.userId", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val stacks: MutableList<StackEntity> = mutableListOf(),
-) {
-    fun checkName() =
-        if (nickname.isNullOrBlank()) throw NickNameNotSet()
-        else Unit
-}
-
-class NickNameNotSet : Exception("")
+)

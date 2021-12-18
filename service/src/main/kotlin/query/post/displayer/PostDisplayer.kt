@@ -3,6 +3,7 @@ package waffle.guam.community.service.query.post.displayer
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostAPIRepository
 import waffle.guam.community.service.domain.post.MyPostView
+import waffle.guam.community.service.domain.post.MyPostViewList
 import waffle.guam.community.service.domain.post.Post
 import waffle.guam.community.service.domain.post.PostDetail
 import waffle.guam.community.service.domain.post.PostList
@@ -66,7 +67,7 @@ class PostDisplayer(
         sortByLikes: Boolean,
     ): List<MyPostView> {
         val data = postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
-        return MyPostView.listOf(data)
+        return MyPostViewList(data)
     }
 
     private fun PostList.fillData(): PostPreviewList {
