@@ -9,6 +9,10 @@ data class User(
     val firebaseUid: String,
     val nickname: String?,
     val email: String?,
+    val introduction: String?,
+    val githubId: String?,
+    val blogUrl: String?,
+    val profileImage: String?,
     val stacks: List<Stack>,
 ) {
     companion object {
@@ -16,8 +20,12 @@ data class User(
             User(
                 id = e.id,
                 firebaseUid = e.firebaseUid,
+                introduction = e.introduction,
                 nickname = e.nickname,
                 email = e.email,
+                githubId = e.githubId,
+                blogUrl = e.blogUrl,
+                profileImage = e.profileImage,
                 stacks = e.stacks.map { Stack(it.name) }
             )
     }

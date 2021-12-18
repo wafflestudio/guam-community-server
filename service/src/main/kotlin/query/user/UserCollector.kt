@@ -26,13 +26,12 @@ class UserCollector(
     override fun multiGet(ids: Collection<UserId>): Map<UserId, User> =
         userRepository.findAllById(ids)
             .also { it.throwIfNotContainIds(ids) }
-            .map { it.id to it.toUser() }
-            .toMap()
+            .associate { it.id to it.toUser() }
 
     private fun UserEntity.toUser() = User.of(this)
 
     fun Collection<UserEntity>.throwIfNotContainIds(ids: Collection<Long>) = apply {
-        val missed = ids - map { it.id }
+        val missed = ids - map { it.id }.toSet()
 
         if (missed.isNotEmpty()) {
             throw Exception("USER NOT FOUND $missed")
