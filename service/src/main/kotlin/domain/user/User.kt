@@ -9,26 +9,16 @@ data class User(
     val firebaseUid: String,
     val nickname: String?,
     val email: String?,
-    val introduction: String?,
-    val githubId: String?,
-    val blogUrl: String?,
-    val profileImage: String?,
     val stacks: List<Stack>,
 ) {
-    companion object {
-        fun of(e: UserEntity): User =
-            User(
-                id = e.id,
-                firebaseUid = e.firebaseUid,
-                introduction = e.introduction,
-                nickname = e.nickname,
-                email = e.email,
-                githubId = e.githubId,
-                blogUrl = e.blogUrl,
-                profileImage = e.profileImage,
-                stacks = e.stacks.map { Stack(it.name) }
-            )
-    }
+    data class Stack(val name: String)
 }
 
-data class Stack(val name: String)
+fun User(e: UserEntity) =
+    User(
+        id = e.id,
+        firebaseUid = e.firebaseUid,
+        nickname = e.nickname,
+        email = e.email,
+        stacks = e.stacks.map { User.Stack(it.name) }
+    )

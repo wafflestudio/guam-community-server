@@ -11,20 +11,18 @@ data class MyCommentView(
     val likeCount: Long,
     val createdAt: Instant,
     val updatedAt: Instant,
-) {
-    companion object {
-        fun of(p: Projection): MyCommentView =
-            MyCommentView(
-                id = p.id,
-                postId = p.postId,
-                content = p.content,
-                imageCount = p.imagePaths.size,
-                likeCount = p.likeCount,
-                createdAt = p.createdAt,
-                updatedAt = p.updatedAt,
-            )
+)
 
-        fun listOf(l: List<Projection>): List<MyCommentView> =
-            l.map { data -> MyCommentView.of(data) }
-    }
-}
+fun MyCommentView(p: Projection) =
+    MyCommentView(
+        id = p.id,
+        postId = p.postId,
+        content = p.content,
+        imageCount = p.imagePaths.size,
+        likeCount = p.likeCount,
+        createdAt = p.createdAt,
+        updatedAt = p.updatedAt,
+    )
+
+fun MyCommentViewList(list: List<Projection>) =
+    list.map { data -> MyCommentView(data) }

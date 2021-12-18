@@ -14,17 +14,16 @@ data class PostComment(
     val likeCount: Int,
     val createdAt: Instant,
     val updatedAt: Instant,
-) {
-    companion object {
-        fun of(e: PostCommentEntity, likeCount: Int? = null) = PostComment(
-            postId = e.post.id,
-            id = e.id,
-            user = User.of(e.user),
-            content = e.content,
-            imagePaths = e.images,
-            likeCount = likeCount ?: e.likes.size,
-            createdAt = e.createdAt,
-            updatedAt = e.updatedAt,
-        )
-    }
-}
+)
+
+fun PostComment(e: PostCommentEntity, likeCount: Int? = null) =
+    PostComment(
+        postId = e.post.id,
+        id = e.id,
+        user = User(e.user),
+        content = e.content,
+        imagePaths = e.images,
+        likeCount = likeCount ?: e.likes.size,
+        createdAt = e.createdAt,
+        updatedAt = e.updatedAt,
+    )
