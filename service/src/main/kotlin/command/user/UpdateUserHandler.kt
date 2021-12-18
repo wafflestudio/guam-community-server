@@ -26,17 +26,16 @@ class UpdateUserHandler(
         return UserUpdated.from(user)
     }
 
-    private fun UserEntity.updateBy(cmd: UpdateUser) =
-        this.apply {
-            nickname = cmd.nickname ?: nickname
-            introduction = cmd.introduction ?: introduction
-            githubId = cmd.githubId ?: githubId
-            blogUrl = cmd.blogUrl ?: blogUrl
-            profileImage = cmd.profileImage?.let { img ->
-                val images = imageHandler.handle(UploadImageList(id, ImageType.PROFILE, listOf(img)))
-                images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
-            }
+    private fun UserEntity.updateBy(cmd: UpdateUser) {
+        nickname = cmd.nickname ?: nickname
+        introduction = cmd.introduction ?: introduction
+        githubId = cmd.githubId ?: githubId
+        blogUrl = cmd.blogUrl ?: blogUrl
+        profileImage = cmd.profileImage?.let { img ->
+            val images = imageHandler.handle(UploadImageList(id, ImageType.PROFILE, listOf(img)))
+            images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
         }
+    }
 }
 
 data class UpdateUser(
