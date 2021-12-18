@@ -43,3 +43,8 @@ DELETE {{ base_url }}/users/1/stack?name=스프링
 Content-Type: application/json
 Authorization: {{ token }}
 
+### GET USER'S POSTS
+
+GET {{ base_url }}/users/1/posts
+Content-Type: application/json
+Authorization: {{ token }}
