@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.UserContext
+import waffle.guam.community.controller.user.UserUriConstants.USER_COMMENTS
 import waffle.guam.community.controller.user.UserUriConstants.USER_DETAIL
 import waffle.guam.community.controller.user.UserUriConstants.USER_ME
 import waffle.guam.community.controller.user.UserUriConstants.USER_POSTS
@@ -71,4 +72,12 @@ class UserController(
         @RequestParam(required = false) afterPostId: Long?,
         @RequestParam(required = false) sortByLikes: Boolean?,
     ) = postDisplay.getUserPostList(userId, afterPostId, sortByLikes ?: false)
+
+    @GetMapping(USER_COMMENTS)
+    fun userComments(
+        userContext: UserContext,
+        @PathVariable userId: Long,
+        @RequestParam(required = false) afterCommentId: Long?,
+        @RequestParam(required = false) sortByLikes: Boolean?,
+    ) = userDisplay.getUserComments(userId, afterCommentId, sortByLikes ?: false)
 }

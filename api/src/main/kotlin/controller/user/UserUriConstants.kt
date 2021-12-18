@@ -7,4 +7,6 @@ object UserUriConstants {
     const val USER_DETAIL = "$BASE_URI/{userId}"
     const val USER_STACK = "$USER_DETAIL/stack"
     const val USER_POSTS = "$USER_DETAIL/posts"
+    const val USER_COMMENTS = "$USER_DETAIL/comments"
+    const val USER_SCRAP = "$USER_DETAIL/scraps"
 }

@@ -48,3 +48,9 @@ Authorization: {{ token }}
 GET {{ base_url }}/users/1/posts
 Content-Type: application/json
 Authorization: {{ token }}
+
+### GET USER'S COMMENTS
+
+GET {{ base_url }}/users/2/comments
+Content-Type: application/json
+Authorization: {{ token }}
