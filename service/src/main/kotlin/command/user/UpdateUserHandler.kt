@@ -21,22 +21,21 @@ class UpdateUserHandler(
 
     @Transactional
     override fun handle(command: UpdateUser): UserUpdated {
-        val user = userAPIRepository.find(command.userId) ?: throw UserNotFound(command.userId)
-        user.updateBy(command)
-        return UserUpdated.from(user)
+        val userEntity = userAPIRepository.find(command.userId) ?: throw UserNotFound(command.userId)
+        userEntity.updateBy(command)
+        return UserUpdated(userEntity)
     }
 
-    private fun UserEntity.updateBy(cmd: UpdateUser) =
-        this.apply {
-            nickname = cmd.nickname ?: nickname
-            introduction = cmd.introduction ?: introduction
-            githubId = cmd.githubId ?: githubId
-            blogUrl = cmd.blogUrl ?: blogUrl
-            profileImage = cmd.profileImage?.let { img ->
-                val images = imageHandler.handle(UploadImageList(id, ImageType.PROFILE, listOf(img)))
-                images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
-            }
+    private fun UserEntity.updateBy(cmd: UpdateUser) {
+        nickname = cmd.nickname ?: nickname
+        introduction = cmd.introduction ?: introduction
+        githubId = cmd.githubId ?: githubId
+        blogUrl = cmd.blogUrl ?: blogUrl
+        profileImage = cmd.profileImage?.let { img ->
+            val images = imageHandler.handle(UploadImageList(id, ImageType.PROFILE, listOf(img)))
+            images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
         }
+    }
 }
 
 data class UpdateUser(
@@ -54,15 +53,13 @@ data class UserUpdated(
     val introduction: String?,
     val githubId: String?,
     val blogUrl: String?,
-) : Result {
-    companion object {
-        fun from(e: UserEntity) =
-            UserUpdated(
-                userId = e.id,
-                nickname = e.nickname,
-                introduction = e.introduction,
-                githubId = e.githubId,
-                blogUrl = e.blogUrl,
-            )
-    }
-}
+) : Result
+
+fun UserUpdated(e: UserEntity) =
+    UserUpdated(
+        userId = e.id,
+        nickname = e.nickname,
+        introduction = e.introduction,
+        githubId = e.githubId,
+        blogUrl = e.blogUrl,
+    )

@@ -18,7 +18,7 @@ class PostCollector(
 ) : Collector<Post, PostId> {
     override fun get(id: PostId): Post =
         postRepository.findById(id).orElseThrow { Exception("POST NOT FOUND $id") }
-            .let { Post.of(it) }
+            .let { Post(it) }
 
     @Service
     class CacheImpl(

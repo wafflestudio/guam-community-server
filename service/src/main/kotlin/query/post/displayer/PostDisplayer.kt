@@ -1,6 +1,9 @@
 package waffle.guam.community.service.query.post.displayer
 
 import org.springframework.stereotype.Service
+import waffle.guam.community.data.jdbc.post.PostAPIRepository
+import waffle.guam.community.service.domain.post.MyPostView
+import waffle.guam.community.service.domain.post.MyPostViewList
 import waffle.guam.community.service.domain.post.Post
 import waffle.guam.community.service.domain.post.PostDetail
 import waffle.guam.community.service.domain.post.PostList
@@ -17,6 +20,7 @@ import waffle.guam.community.service.query.user.UserCollector
 
 @Service
 class PostDisplayer(
+    private val postAPIRepository: PostAPIRepository,
     private val postListCollector: PostListCollector,
     private val searchedPostListCollector: SearchedPostListCollector,
     private val recentPostListCollector: RecentPostListCollector.CacheImpl,
@@ -56,6 +60,15 @@ class PostDisplayer(
 
     fun getPostDetail(postId: Long): PostDetail =
         postCollector.get(postId).fillData()
+
+    fun getUserPostList(
+        userId: Long,
+        afterPostId: Long?,
+        sortByLikes: Boolean,
+    ): List<MyPostView> {
+        val data = postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
+        return MyPostViewList(data)
+    }
 
     private fun PostList.fillData(): PostPreviewList {
         // TODO: apply async

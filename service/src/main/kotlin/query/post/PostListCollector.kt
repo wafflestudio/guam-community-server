@@ -18,8 +18,7 @@ class PostListCollector(
         val spec = boardId(id.boardId) * status(PostEntity.Status.VALID) * afterPostId(id.afterPostId)
         val pageable = PageRequest.of(0, id.size, Sort.by(Sort.Direction.DESC, PostEntity_.ID))
 
-        return postRepository.findAll(spec, pageable)
-            .let { PostList.of(it) }
+        return PostList(postRepository.findAll(spec, pageable))
     }
 
     data class Query(

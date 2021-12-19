@@ -22,7 +22,7 @@ class SearchedPostListCollector(
             }
 
         return PostList(
-            content = searchedPosts.take(id.size).map { Post.of(it) },
+            content = searchedPosts.take(id.size).map { Post(it) },
             hasNext = searchedPosts.size > id.size
         )
     }

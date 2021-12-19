@@ -19,14 +19,13 @@ class PostLikeListCollector(
 ) : MultiCollector<PostLikeList, PostId>, PostQueryGenerator {
     override fun get(id: PostId): PostLikeList =
         postRepository.findOne(spec = postId(id) * fetchLikes())
-            ?.let { PostLikeList.of(it) }
+            ?.let { PostLikeList(it) }
             ?: throw Exception("POST NOT FOUND ($id)")
 
     override fun multiGet(ids: Collection<PostId>): Map<PostId, PostLikeList> =
         postRepository.findAll(spec = postIds(ids) * fetchLikes())
             .also { posts -> posts.throwIfNotContainIds(ids) }
-            .map { post -> post.id to PostLikeList.of(post) }
-            .toMap()
+            .associate { post -> post.id to PostLikeList(post) }
 
     @Service
     class CacheImpl(

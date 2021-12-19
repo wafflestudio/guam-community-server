@@ -20,15 +20,13 @@ class UserCollector(
 ) : MultiCollector<User, UserId>, UserQueryGenerator {
     override fun get(id: UserId): User =
         userRepository.findByIdOrNull(id)
-            ?.toUser()
+            ?.let(::User)
             ?: throw Exception("USER NOT FOUND ($id)")
 
     override fun multiGet(ids: Collection<UserId>): Map<UserId, User> =
         userRepository.findAllById(ids)
             .also { it.throwIfNotContainIds(ids) }
-            .associate { it.id to it.toUser() }
-
-    private fun UserEntity.toUser() = User.of(this)
+            .associate { it.id to User(it) }
 
     fun Collection<UserEntity>.throwIfNotContainIds(ids: Collection<Long>) = apply {
         val missed = ids - map { it.id }.toSet()

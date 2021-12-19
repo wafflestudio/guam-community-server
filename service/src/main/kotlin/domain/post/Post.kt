@@ -19,18 +19,16 @@ data class Post(
 ) {
     val isImageIncluded: Boolean
         get() = imagePaths.isNotEmpty()
-
-    companion object {
-        fun of(e: PostEntity) = Post(
-            id = e.id,
-            boardId = e.boardId,
-            userId = e.user.id,
-            title = e.title,
-            content = e.content,
-            imagePaths = e.images,
-            status = e.status.name,
-            createdAt = e.createdAt,
-            updatedAt = e.updatedAt
-        )
-    }
 }
+
+fun Post(e: PostEntity) = Post(
+    id = e.id,
+    boardId = e.boardId,
+    userId = e.user.id,
+    title = e.title,
+    content = e.content,
+    imagePaths = e.images,
+    status = e.status.name,
+    createdAt = e.createdAt,
+    updatedAt = e.updatedAt
+)
