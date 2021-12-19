@@ -1,6 +1,5 @@
 package waffle.guam.community.config
 
-import com.google.firebase.auth.FirebaseAuthException
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.core.MethodParameter
@@ -12,8 +11,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 import waffle.guam.community.common.InvalidFirebaseTokenException
 import waffle.guam.community.common.UserContext
-import waffle.guam.community.data.jdbc.user.UserEntity
-import waffle.guam.community.data.jdbc.user.UserRepository
+import waffle.guam.community.controller.auth.AuthService
+import waffle.guam.community.controller.auth.FirebaseInfo
 import javax.servlet.http.HttpServletRequest
 
 interface GuamUserContextResolver : HandlerMethodArgumentResolver {
@@ -25,7 +24,7 @@ interface GuamUserContextResolver : HandlerMethodArgumentResolver {
 @Component
 @Profile("dev & prod")
 class UserContextResolver(
-    private val sessionService: SessionService,
+    private val authService: AuthService,
 ) : GuamUserContextResolver {
 
     private val logger = LoggerFactory.getLogger(this::javaClass.name)
@@ -37,16 +36,9 @@ class UserContextResolver(
         binderFactory: WebDataBinderFactory?,
     ): UserContext {
         val req = (webRequest.nativeRequest as HttpServletRequest)
-        val userContext = req.getHeader(HttpHeaders.AUTHORIZATION)?.let {
-            kotlin.runCatching {
-                sessionService.getUserContext(it)
-            }.getOrElse {
-                if (it is FirebaseAuthException && it.message?.contains("expired") == true) {
-                    throw InvalidFirebaseTokenException("만료된 토큰입니다.")
-                }
-                throw InvalidFirebaseTokenException("잘못된 토큰입니다.")
-            }
-        } ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
+        val userContext = req.getHeader(HttpHeaders.AUTHORIZATION)
+            ?.let { token -> authService.verify(token) }
+            ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
 
         logger.info("[USER-${userContext.id}] ${req.method} : ${req.requestURI}")
         return userContext
@@ -61,7 +53,7 @@ class UserContextResolver(
 @Component
 @Profile("test")
 class UserContextResolverForTest(
-    private val userRepository: UserRepository
+    private val authService: AuthService
 ) : GuamUserContextResolver {
     override fun resolveArgument(
         parameter: MethodParameter,
@@ -71,11 +63,9 @@ class UserContextResolverForTest(
     ): UserContext {
         val req = (webRequest.nativeRequest as HttpServletRequest)
         val user = req.getHeader(HttpHeaders.AUTHORIZATION)
-            ?.let { uid ->
-                userRepository.findByFirebaseUid(firebaseUid = uid).orElseGet { null }
-                    ?: userRepository.save(UserEntity(firebaseUid = uid, username = "TEST USER #$uid"))
-            }
-            ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
+            ?.let { firebaseUid ->
+                authService.getOrCreateUser(FirebaseInfo(uid = firebaseUid, email = null, username = "test user"))
+            } ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
         return UserContext(user.id)
     }
 }

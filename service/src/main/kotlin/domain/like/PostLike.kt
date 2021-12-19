@@ -7,11 +7,9 @@ import waffle.guam.community.service.UserId
 data class PostLike(
     val postId: PostId,
     val userId: UserId,
-) {
-    companion object {
-        fun of(e: PostLikeEntity) = PostLike(
-            postId = e.post.id,
-            userId = e.user.id
-        )
-    }
-}
+)
+
+fun PostLike(e: PostLikeEntity) = PostLike(
+    postId = e.post.id,
+    userId = e.user.id
+)

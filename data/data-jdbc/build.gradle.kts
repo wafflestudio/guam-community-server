@@ -25,4 +25,17 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     kapt("org.hibernate:hibernate-jpamodelgen")
     implementation("org.hibernate:hibernate-jpamodelgen")
+
+    // QueryDSL
+    val querydslVersion = "5.0.0"
+    implementation("com.querydsl:querydsl-jpa:$querydslVersion")
+    kapt("com.querydsl:querydsl-apt:$querydslVersion:jpa")
+    kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+}
+
+// QueryDSL
+sourceSets {
+    named("main") {
+        java.srcDir("$buildDir/generated/source/kapt/main")
+    }
 }

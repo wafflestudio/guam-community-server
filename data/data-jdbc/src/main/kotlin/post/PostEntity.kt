@@ -3,13 +3,12 @@ package waffle.guam.community.data.jdbc.post
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
+import waffle.guam.community.data.jdbc.common.ImagePathsConverter
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
-import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType
 import javax.persistence.Convert
-import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.EnumType
@@ -57,19 +56,5 @@ class PostEntity(
 
     enum class Status {
         VALID, DELETED
-    }
-
-    @Converter
-    private class ImagePathsConverter : AttributeConverter<List<String>, String> {
-
-        override fun convertToDatabaseColumn(submitContents: List<String>?): String? =
-            if (submitContents.isNullOrEmpty()) {
-                null
-            } else {
-                submitContents.joinToString(",")
-            }
-
-        override fun convertToEntityAttribute(dbData: String?): List<String> =
-            dbData?.split(",") ?: emptyList()
     }
 }

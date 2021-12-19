@@ -21,14 +21,13 @@ class PostCommentLikeCollector(
         val comment = postCommentRepository.findOne(commentId(id) * fetchCommentLikes())
             ?: throw Exception("COMMENT NOT FOUND $id")
 
-        return PostCommentLikeList.of(comment)
+        return PostCommentLikeList(comment)
     }
 
     override fun multiGet(ids: Collection<CommentId>): Map<CommentId, PostCommentLikeList> =
         postCommentRepository.findAll(commentIdIn(ids) * fetchCommentLikes())
             .also { comments -> comments.throwIfNotContainIds(ids) }
-            .map { comment -> comment.id to PostCommentLikeList.of(comment) }
-            .toMap()
+            .associate { comment -> comment.id to PostCommentLikeList(comment) }
 
     @Service
     class CacheImpl(

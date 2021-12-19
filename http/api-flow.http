@@ -1,0 +1,56 @@
+GET {{ base_url }}/auth?token={{ accessToken }}
+Content-Type: application/json
+
+### USER_ME
+
+GET {{ base_url }}/users/me
+Content-Type: application/json
+Authorization: {{ token }}
+
+### USER_DETAIL - ID: 1
+
+GET {{ base_url }}/users/1
+Content-Type: application/json
+Authorization: {{ token }}
+
+### POST_DETAIL - ID: 1
+
+GET {{ base_url }}/posts/1
+
+### UPDATE_USER - ID: 1
+
+PATCH  {{ base_url }}/users/1
+Content-Type: application/json
+Authorization: {{ token }}
+
+{
+  "nickname": "steve"
+}
+
+### ADD STACK - ID: 1
+
+POST {{ base_url }}/users/1/stack
+Content-Type: application/json
+Authorization: {{ token }}
+
+{
+  "name": "스프링"
+}
+
+### DELETE STACK - ID: 1
+
+DELETE {{ base_url }}/users/1/stack?name=스프링
+Content-Type: application/json
+Authorization: {{ token }}
+
+### GET USER'S POSTS
+
+GET {{ base_url }}/users/1/posts
+Content-Type: application/json
+Authorization: {{ token }}
+
+### GET USER'S COMMENTS
+
+GET {{ base_url }}/users/2/comments
+Content-Type: application/json
+Authorization: {{ token }}

@@ -1,12 +1,11 @@
 package waffle.guam.community.data.jdbc.comment
 
 import waffle.guam.community.data.jdbc.BaseTimeEntity
+import waffle.guam.community.data.jdbc.common.ImagePathsConverter
 import waffle.guam.community.data.jdbc.like.PostCommentLikeEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
-import javax.persistence.AttributeConverter
 import javax.persistence.Convert
-import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -48,19 +47,5 @@ data class PostCommentEntity(
 
     enum class Status {
         VALID, DELETED
-    }
-
-    @Converter
-    private class ImagePathsConverter : AttributeConverter<List<String>, String> {
-
-        override fun convertToDatabaseColumn(submitContents: List<String>?): String? =
-            if (submitContents.isNullOrEmpty()) {
-                null
-            } else {
-                submitContents.joinToString(",")
-            }
-
-        override fun convertToEntityAttribute(dbData: String?): List<String> =
-            dbData?.split(",") ?: emptyList()
     }
 }

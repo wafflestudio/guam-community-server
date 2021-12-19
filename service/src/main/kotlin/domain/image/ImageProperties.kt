@@ -14,5 +14,5 @@ enum class ImageStorage {
 }
 
 enum class ImageType {
-    POST, COMMENT
+    POST, COMMENT, PROFILE
 }
