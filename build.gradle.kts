@@ -12,22 +12,23 @@ group = "waffle.guam"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-repositories {
-    mavenCentral()
-}
-
-subprojects {
+allprojects {
     repositories {
         mavenCentral()
     }
 
     apply {
         plugin("org.jetbrains.kotlin.jvm")
-        plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
         plugin("kotlin-allopen")
         plugin("kotlin-spring")
         plugin("org.jlleitschuh.gradle.ktlint")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.5")
+        }
     }
 
     dependencies {
