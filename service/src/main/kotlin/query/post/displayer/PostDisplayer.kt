@@ -1,7 +1,12 @@
 package waffle.guam.community.service.query.post.displayer
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostAPIRepository
+import waffle.guam.community.service.domain.comment.PostCommentList
+import waffle.guam.community.service.domain.like.PostLikeList
 import waffle.guam.community.service.domain.post.MyPostView
 import waffle.guam.community.service.domain.post.MyPostViewList
 import waffle.guam.community.service.domain.post.Post
@@ -9,6 +14,8 @@ import waffle.guam.community.service.domain.post.PostDetail
 import waffle.guam.community.service.domain.post.PostList
 import waffle.guam.community.service.domain.post.PostPreview
 import waffle.guam.community.service.domain.post.PostPreviewList
+import waffle.guam.community.service.domain.tag.PostTagList
+import waffle.guam.community.service.domain.user.User
 import waffle.guam.community.service.query.comment.PostCommentListCollector
 import waffle.guam.community.service.query.like.PostLikeListCollector
 import waffle.guam.community.service.query.post.PostCollector
@@ -66,30 +73,35 @@ class PostDisplayer(
         afterPostId: Long?,
         sortByLikes: Boolean,
     ): List<MyPostView> {
-        val data = postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
+        val data =
+            postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
         return MyPostViewList(data)
     }
 
     private fun PostList.fillData(): PostPreviewList {
-        // TODO: apply async
-        val userMap = userCollector.multiGet(content.map { it.userId })
-        val tagMap = postTagListCollector.multiGet(content.map { it.id })
-        val likeMap = postLikeListCollector.multiGet(content.map { it.id })
-        val commentMap = postCommentListCollector.multiGet(content.map { it.id })
+
+        val (userMap, tagMap, likeMap, commentMap) = runBlocking {
+            listOf(
+                async { userCollector.multiGet(content.map { it.userId }) },
+                async { postTagListCollector.multiGet(content.map { it.id }) },
+                async { postLikeListCollector.multiGet(content.map { it.id }) },
+                async { postCommentListCollector.multiGet(content.map { it.id }) }
+            ).awaitAll()
+        }
 
         return PostPreviewList(
             content = content.map {
                 PostPreview(
                     id = it.id,
                     boardId = it.boardId,
-                    user = userMap[it.userId]!!,
+                    user = (userMap[it.userId]!! as User),
                     title = it.title,
                     content = it.content,
                     isImageIncluded = it.isImageIncluded,
                     status = it.status,
-                    tags = tagMap[it.id]?.content ?: emptyList(),
-                    likeCount = likeMap[it.id]?.content?.size ?: 0,
-                    commentCount = commentMap[it.id]?.content?.size ?: 0,
+                    tags = (tagMap[it.id] as? PostTagList)?.content ?: emptyList(),
+                    likeCount = (likeMap[it.id] as? PostLikeList)?.content?.size ?: 0,
+                    commentCount = (commentMap[it.id] as? PostCommentList)?.content?.size ?: 0,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt
                 )
