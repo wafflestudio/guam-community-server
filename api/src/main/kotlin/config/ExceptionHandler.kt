@@ -1,5 +1,6 @@
 package waffle.guam.community.config
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,7 +14,7 @@ import javax.persistence.EntityExistsException
 class ExceptionHandler {
     companion object : Log
 
-    @ExceptionHandler(value = [EntityExistsException::class])
+    @ExceptionHandler(value = [EntityExistsException::class, DataIntegrityViolationException::class])
     fun entityExists(e: EntityExistsException) =
         ResponseEntity("이미 존재하는 값입니다.", HttpStatus.CONFLICT)
 

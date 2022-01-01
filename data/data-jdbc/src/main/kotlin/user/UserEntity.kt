@@ -24,7 +24,7 @@ class UserEntity(
 
     val email: String? = null,
 
-    @Column(length = 10)
+    @Column(length = 10, unique = true)
     // TODO Null인 경우 API 사용 불가
     var nickname: String? = null,
 
