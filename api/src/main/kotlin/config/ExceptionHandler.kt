@@ -1,17 +1,17 @@
 package waffle.guam.community.config
 
-import org.slf4j.LoggerFactory
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import waffle.guam.community.Log
 import waffle.guam.community.service.GuamException
 import javax.persistence.EntityExistsException
 
 @ControllerAdvice
 class ExceptionHandler {
-    private val logger = LoggerFactory.getLogger(this::javaClass.name)
+    companion object : Log
 
     @ExceptionHandler(value = [EntityExistsException::class])
     fun entityExists(e: EntityExistsException) =
