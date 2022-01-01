@@ -9,7 +9,7 @@ abstract class GuamCacheFactory {
     @OptIn(ExperimentalStdlibApi::class)
     inline fun <K : Any, reified V : Any> getCache(
         name: String,
-        ttl: Duration,
+        ttl: Duration = Duration.ofMinutes(1),
         noinline loader: (K) -> V,
         noinline multiLoader: ((Collection<K>) -> Map<K, V>)? = null,
     ): GuamCache<V, K> =
