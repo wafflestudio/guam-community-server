@@ -3,15 +3,14 @@ package waffle.guam.community.service.query.like
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
+import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.comment.PostCommentQueryGenerator
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
 import waffle.guam.community.service.CommentId
 import waffle.guam.community.service.command.like.PostCommentLikeCreated
 import waffle.guam.community.service.command.like.PostCommentLikeDeleted
 import waffle.guam.community.service.domain.like.PostCommentLikeList
-import waffle.guam.community.service.query.Cache
 import waffle.guam.community.service.query.MultiCollector
-import java.time.Duration
 
 @Service
 class PostCommentLikeCollector(
@@ -32,14 +31,14 @@ class PostCommentLikeCollector(
     @Service
     class CacheImpl(
         private val impl: PostCommentLikeCollector,
+        cacheFactory: GuamCacheFactory,
     ) : MultiCollector<PostCommentLikeList, CommentId> {
         private val logger = LoggerFactory.getLogger(this::class.java)
 
-        private val cache = Cache<PostCommentLikeList, CommentId>(
-            maximumSize = 2000,
-            duration = Duration.ofMinutes(1),
-            loader = { impl.get(it) },
-            multiLoader = { impl.multiGet(it) }
+        private val cache = cacheFactory.getCache(
+            name = "POST_COMMENT_LIKES_CACHE",
+            loader = impl::get,
+            multiLoader = impl::multiGet
         )
 
         override fun get(id: CommentId): PostCommentLikeList = cache.get(id)
