@@ -1,5 +1,7 @@
 package waffle.guam.community.service.query.post.displayer
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostAPIRepository
 import waffle.guam.community.service.domain.post.MyPostView
@@ -66,30 +68,30 @@ class PostDisplayer(
         afterPostId: Long?,
         sortByLikes: Boolean,
     ): List<MyPostView> {
-        val data = postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
+        val data =
+            postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
         return MyPostViewList(data)
     }
 
-    private fun PostList.fillData(): PostPreviewList {
-        // TODO: apply async
-        val userMap = userCollector.multiGet(content.map { it.userId })
-        val tagMap = postTagListCollector.multiGet(content.map { it.id })
-        val likeMap = postLikeListCollector.multiGet(content.map { it.id })
-        val commentMap = postCommentListCollector.multiGet(content.map { it.id })
+    private fun PostList.fillData(): PostPreviewList = runBlocking {
+        val userMap = async { userCollector.multiGet(content.map { it.userId }) }
+        val tagMap = async { postTagListCollector.multiGet(content.map { it.id }) }
+        val likeMap = async { postLikeListCollector.multiGet(content.map { it.id }) }
+        val commentMap = async { postCommentListCollector.multiGet(content.map { it.id }) }
 
-        return PostPreviewList(
+        PostPreviewList(
             content = content.map {
                 PostPreview(
                     id = it.id,
                     boardId = it.boardId,
-                    user = userMap[it.userId]!!,
+                    user = userMap.await()[it.userId]!!,
                     title = it.title,
                     content = it.content,
                     isImageIncluded = it.isImageIncluded,
                     status = it.status,
-                    tags = tagMap[it.id]?.content ?: emptyList(),
-                    likeCount = likeMap[it.id]?.content?.size ?: 0,
-                    commentCount = commentMap[it.id]?.content?.size ?: 0,
+                    tags = tagMap.await()[it.id]?.content ?: emptyList(),
+                    likeCount = likeMap.await()[it.id]?.content?.size ?: 0,
+                    commentCount = commentMap.await()[it.id] ?.content?.size ?: 0,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt
                 )
