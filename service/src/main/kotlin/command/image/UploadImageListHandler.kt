@@ -25,7 +25,7 @@ class UploadImageListHandler(
 
         val files = command.images.mapIndexed { i, it ->
             it.inputStream.use { inputStream ->
-                val filename = "$i.${getExtension(it.originalFilename)}"
+                val filename = "$i.${getExtension(it.originalFilename!!)}"
 
                 dirPath.resolve(filename).let {
                     Files.copy(inputStream, it, StandardCopyOption.REPLACE_EXISTING)
