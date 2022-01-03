@@ -6,7 +6,6 @@ plugins {
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
-    id("io.kotest") version "0.3.8"
 }
 
 group = "waffle.guam"
@@ -39,15 +38,8 @@ allprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 
-    val kotestVersion = "4.4.+"
     val mockkVersion = "1.10.+"
-
     dependencies {
-        testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-        testImplementation("io.kotest:kotest-property:$kotestVersion")
-        testImplementation("io.kotest:kotest-extensions-spring:$kotestVersion")
-        testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
-        testImplementation("io.kotest:kotest-framework-engine-jvm:$kotestVersion")
         testImplementation("io.mockk:mockk:$mockkVersion")
     }
 
