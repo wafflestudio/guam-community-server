@@ -24,7 +24,7 @@ interface HibernateQueryCounter {
 
 class HibernateQueryCounterImpl : EmptyInterceptor(), HibernateQueryCounter {
     private val isCounting: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-    private val queryCount: ThreadLocal<Int> = ThreadLocal()
+    private val queryCount: ThreadLocal<Int> = ThreadLocal.withInitial { 0 }
 
     override fun onPrepareStatement(sql: String?): String {
         if (isCounting.get()) {
