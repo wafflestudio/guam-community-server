@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.HibernateQueryCounter
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.PostLikeConflict
@@ -22,7 +23,8 @@ import waffle.guam.community.service.command.like.CreatePostLikeHandler
 @Transactional
 class CreatePostLikeHandlerSpec @Autowired constructor(
     private val postRepository: PostRepository,
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    private val hibernateQueryCounter: HibernateQueryCounter,
 ) {
     val handler = CreatePostLikeHandler(postRepository, userRepository)
     val command = CreatePostLike(postId = 1L, userId = 1L)
@@ -54,7 +56,12 @@ class CreatePostLikeHandlerSpec @Autowired constructor(
     @DisplayName("요청이 유효하면 좋아요에 성공한다.")
     @Test
     fun likeSuccessfully() {
-        val result = handler.handle(command)
+        val (result, queryCount) = hibernateQueryCounter.count {
+            handler.handle(command)
+        }
+
+        println(queryCount)
+
         val likedPost = postRepository.findByIdOrNull(command.postId)!!
         val userIdsWhoLikedPost = likedPost.likes.map { it.user.id }
 
