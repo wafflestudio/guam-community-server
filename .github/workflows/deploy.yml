@@ -37,7 +37,7 @@ jobs:
         run: docker push ${{ secrets.DCR_NAME }}
 
   deploy_container:
-
+    needs: build_and_push_container
     runs-on: [ self-hosted, guam ]
 
     steps:
