@@ -55,7 +55,7 @@ class AuthService(
 
     private fun getFirebaseInfo(token: String): FirebaseInfo =
         runCatching {
-            val res = firebaseAuth().verifyIdToken(token)
+            val res = firebaseAuthInstance.verifyIdToken(token)
             val username = (res.claims["name"] as? String)
             val email = (res.claims["email"] as? String)
             return FirebaseInfo(res.uid, email, username)
