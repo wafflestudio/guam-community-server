@@ -2,7 +2,8 @@ package waffle.guam.community.config
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
-import io.swagger.v3.oas.models.parameters.Parameter
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springdoc.core.GroupedOpenApi
 import org.springdoc.core.SpringDocUtils
 import org.springframework.context.annotation.Bean
@@ -26,22 +27,19 @@ class SwaggerConfig {
 
         return GroupedOpenApi
             .builder()
-            .group("guam")
-            .pathsToMatch("/**")
+            .group("GUAM API")
             .addOpenApiCustomiser { openApi ->
-                // auth 관련 API 빼고 Operation (API)에 인증 헤더를 추가해서 보여준다.
-                // https://github.com/springdoc/springdoc-openapi/issues/708
-                openApi.paths
-                    .filterNot { (pathName, _) -> pathName.contains("/auth") }
-                    .flatMap { (_, pathItem) -> pathItem.readOperations() }
-                    .forEach { operation ->
-                        operation.addParametersItem(
-                            Parameter()
-                                .`in`("header")
-                                .name("Authorization")
-                                .required(true)
-                        )
-                    }
+                openApi
+                    .addSecurityItem(SecurityRequirement().addList("FCM Token"))
+                    .components.addSecuritySchemes(
+                        "FCM Token",
+                        SecurityScheme()
+                            .name("Authorization")
+                            .type(SecurityScheme.Type.HTTP)
+                            .`in`(SecurityScheme.In.HEADER)
+                            .bearerFormat("JWT")
+                            .scheme("bearer")
+                    )
             }
             .build()
     }
