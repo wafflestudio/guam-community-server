@@ -37,7 +37,13 @@ class UserContextResolver(
     ): UserContext {
         val req = (webRequest.nativeRequest as HttpServletRequest)
         val userContext = req.getHeader(HttpHeaders.AUTHORIZATION)
-            ?.let { token -> authService.verify(token) }
+            ?.split(' ')
+            ?.takeIf { parsedHeader ->
+                "Bearer" == parsedHeader.first()
+            }?.let { parsedHeader ->
+                val token = parsedHeader.last()
+                authService.verify(token)
+            }
             ?: throw InvalidFirebaseTokenException("토큰 정보를 찾을 수 없습니다.")
 
         logger.info("[USER-${userContext.id}] ${req.method} : ${req.requestURI}")
