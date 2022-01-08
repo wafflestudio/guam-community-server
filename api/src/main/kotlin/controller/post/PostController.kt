@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.post.req.CreatePostRequest
 import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
@@ -23,22 +24,26 @@ class PostController(
 ) {
     @PostMapping("")
     fun createPost(
+        userContext: UserContext,
         @ModelAttribute req: CreatePostRequest,
     ) = createPostHandler.handle(req.toCommand(1L))
 
     @DeleteMapping("/{postId}")
     fun deletePost(
+        userContext: UserContext,
         @PathVariable postId: Long,
     ) = deletePostHandler.handle(DeletePost(postId = postId, userId = 1L))
 
     @GetMapping("")
     fun getPosts(
+        userContext: UserContext,
         @RequestParam boardId: Long,
         @RequestParam(required = false) afterPostId: Long?,
     ) = postDisplayer.getPostPreviewList(boardId = 1L, afterPostId = afterPostId)
 
     @GetMapping("", params = ["keyword"])
     fun searchPosts(
+        userContext: UserContext,
         @RequestParam boardId: Long,
         @RequestParam tag: String,
         @RequestParam keyword: String,
@@ -47,6 +52,7 @@ class PostController(
 
     @GetMapping("/{postId}")
     fun getPost(
+        userContext: UserContext,
         @PathVariable postId: Long,
     ) = postDisplayer.getPostDetail(postId = postId)
 }
