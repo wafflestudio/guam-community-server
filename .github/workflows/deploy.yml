@@ -29,6 +29,9 @@ jobs:
         with:
           arguments: build
 
+      - name: Add Firebase Secret File
+        run: echo ${{ secrets.FIREBASE_SDK }} | base64 --decode > ${{ secrets.FIREBASE_SDK_PATH }}
+
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DCR_NAME }} .
         # NO Tag Versioning Now
