@@ -24,6 +24,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Add Firebase Secret File
+        run: echo ${{ secrets.FIREBASE_SDK }} | base64 --decode > ${{ secrets.FIREBASE_SDK_PATH }}
+
       - name: Build Code
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
