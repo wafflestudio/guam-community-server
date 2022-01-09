@@ -27,7 +27,7 @@ class SwaggerConfig {
 
         return GroupedOpenApi
             .builder()
-            .group("GUAM API")
+            .group("Guam")
             .addOpenApiCustomiser { openApi ->
                 openApi
                     .addSecurityItem(SecurityRequirement().addList("FCM Token"))
