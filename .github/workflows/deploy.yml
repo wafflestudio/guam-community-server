@@ -30,7 +30,7 @@ jobs:
       - name: Build Code
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
-          arguments: build -x test
+          arguments: build
 
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DCR_NAME }} .
