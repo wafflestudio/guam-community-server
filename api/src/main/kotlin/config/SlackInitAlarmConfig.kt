@@ -1,8 +1,10 @@
-package waffle.guam.community.slack
+package waffle.guam.community.config
 
 import org.springframework.context.annotation.Profile
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
+import waffle.guam.community.slack.SlackChannel
+import waffle.guam.community.slack.SlackUtils
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
