@@ -3,7 +3,7 @@ version = "0.0.1-SNAPSHOT"
 
 // slack
 dependencies {
-    implementation(project(":utils"))
+    implementation(project(":community:utils"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.slack.api:slack-api-client:1.+")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")

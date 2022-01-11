@@ -1,11 +1,11 @@
-rootProject.name = "community"
+rootProject.name = "guam"
 
-include("data-jdbc")
-project(":data-jdbc").projectDir = file("data/data-jdbc")
-include("data-redis")
-project(":data-redis").projectDir = file("data/data-redis")
-include("data")
-include("service")
-include("api")
-include("utils")
-include("slack")
+include(":community:data-jdbc")
+project(":community:data-jdbc").projectDir = file("community/data/data-jdbc")
+include(":community:data-redis")
+project(":community:data-redis").projectDir = file("community/data/data-redis")
+include(":community:data")
+include(":community:service")
+include(":community:api")
+include(":community:utils")
+include(":community:slack")
