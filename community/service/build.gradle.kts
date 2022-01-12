@@ -1,7 +1,7 @@
 dependencies {
-    api(project(":data-jdbc"))
-    api(project(":data-redis"))
-    implementation(project(":utils"))
+    api(project(":community:data-jdbc"))
+    api(project(":community:data-redis"))
+    implementation(project(":community:utils"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-cache")
