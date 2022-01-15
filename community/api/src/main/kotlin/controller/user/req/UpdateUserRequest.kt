@@ -9,6 +9,7 @@ data class UpdateUserRequest(
     val githubId: String? = null,
     val blogUrl: String? = null,
     val profileImage: MultipartFile? = null,
+    val deviceToken: String? = null,
 ) {
     fun toCommand(userId: Long): UpdateUser =
         UpdateUser(
@@ -18,5 +19,6 @@ data class UpdateUserRequest(
             githubId = githubId,
             blogUrl = blogUrl,
             profileImage = profileImage,
+            deviceToken = deviceToken,
         )
 }

@@ -3,6 +3,7 @@ package waffle.guam.community.service.command.user
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import waffle.guam.community.Log
 import waffle.guam.community.data.jdbc.user.UserAPIRepository
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.service.UserNotFound
@@ -12,12 +13,14 @@ import waffle.guam.community.service.command.Result
 import waffle.guam.community.service.command.image.UploadImageList
 import waffle.guam.community.service.command.image.UploadImageListHandler
 import waffle.guam.community.service.domain.image.ImageType
+import java.time.Instant
 
 @Service
 class UpdateUserHandler(
     private val userAPIRepository: UserAPIRepository,
     private val imageHandler: UploadImageListHandler,
 ) : CommandHandler<UpdateUser, UserUpdated> {
+    companion object : Log
 
     @Transactional
     override fun handle(command: UpdateUser): UserUpdated {
@@ -35,7 +38,14 @@ class UpdateUserHandler(
             val images = imageHandler.handle(UploadImageList(id, ImageType.PROFILE, listOf(img)))
             images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
         }
+        updateDeviceToken(cmd.deviceToken)
     }
+
+    private fun UserEntity.updateDeviceToken(newDeviceToken: String?) =
+        newDeviceToken?.run {
+            deviceToken = newDeviceToken
+            log.info("DEVICE TOKEN UPDATED(USER=$id, TOKEN=$newDeviceToken): ${Instant.now()}")
+        }
 }
 
 data class UpdateUser(
@@ -45,6 +55,7 @@ data class UpdateUser(
     val githubId: String?,
     val blogUrl: String?,
     val profileImage: MultipartFile?,
+    val deviceToken: String?,
 ) : Command
 
 data class UserUpdated(
