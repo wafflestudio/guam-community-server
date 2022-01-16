@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.user.req.AddUserStackRequest
+import waffle.guam.community.controller.user.req.UpdateDeviceTokenRequest
 import waffle.guam.community.controller.user.req.UpdateUserRequest
 import waffle.guam.community.service.command.user.UpdateUserHandler
 import waffle.guam.community.service.command.user.stack.CreateUserStackHandler
@@ -32,6 +33,12 @@ class UserController(
     fun userMe(
         userContext: UserContext,
     ) = userDisplay.getUser(userContext.id)
+
+    @PatchMapping("/deviceToken")
+    fun userUpdate(
+        userContext: UserContext,
+        @RequestBody request: UpdateDeviceTokenRequest,
+    ) = updateUserHandler.updateToken(userContext.id, request.deviceToken)
 
     @GetMapping("/{userId}")
     fun userDetail(
