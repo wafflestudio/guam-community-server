@@ -21,6 +21,7 @@ class UserEntity(
     val id: Long = 0L,
 
     val firebaseUid: String,
+    var deviceToken: String? = null,
 
     val email: String? = null,
 
