@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import waffle.guam.community.Log
 import waffle.guam.community.service.GuamException
+import waffle.guam.community.slack.SlackUtils
 import javax.persistence.EntityExistsException
 
 @ControllerAdvice
-class ExceptionHandler {
+class ExceptionHandler(
+    private val slackUtils: SlackUtils,
+) {
     companion object : Log
 
     @ExceptionHandler(value = [EntityExistsException::class, DataIntegrityViolationException::class])
@@ -25,4 +28,10 @@ class ExceptionHandler {
     @ExceptionHandler(value = [GuamException::class])
     fun guamError(e: GuamException) =
         ResponseEntity(e.message, e.status)
+
+    @ExceptionHandler(value = [Exception::class])
+    fun uncaughtException(exc: Exception) {
+        slackUtils.sendErrorLog(exc)
+        throw exc
+    }
 }

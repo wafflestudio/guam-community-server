@@ -6,6 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.time.Instant
 
 @EnableConfigurationProperties(SlackProperties::class)
 @Component
@@ -20,6 +23,40 @@ class SlackUtils(
                 .attachments(attachments)
         }
     }
+
+    fun sendFile(
+        channels: List<SlackChannel>,
+        filename: String,
+        content: String,
+        title: String? = null,
+        initialComment: String? = null,
+        fileType: String = "text",
+    ) {
+        Slack.getInstance().methods(slackProperties.token).filesUpload { filesUploadRequestBuilder ->
+            filesUploadRequestBuilder
+                .channels(channels.map { it.chName })
+                .filetype(fileType)
+                .filename(filename)
+                .content(content)
+                .title(title ?: filename)
+                .initialComment(initialComment ?: filename)
+        }
+    }
+
+    fun sendErrorLog(exception: Throwable) {
+        val stacktrace =
+            StringWriter()
+                .apply { exception.printStackTrace(PrintWriter(this)) }
+                .toString()
+
+        sendFile(
+            channels = listOf(SlackChannel.ERROR),
+            filename = "log-${Instant.now()}.txt",
+            content = stacktrace,
+            fileType = "text",
+            initialComment = ":exclamation: Exception 발생: *${exception.message}*"
+        )
+    }
 }
 
 @ConstructorBinding
@@ -31,4 +68,5 @@ data class SlackProperties(
 enum class SlackChannel(val chName: String) {
     DEPLOY("#team-괌_guam"),
     SERVER_TEAM("#team-괌_server"),
+    ERROR("#team-괌_guam-log")
 }

@@ -1,3 +1,8 @@
+GET {{ base_url }}/auth/kakao?token={{ kakaoToken }}
+Content-Type: application/json
+
+###
+
 GET {{ base_url }}/auth?token={{ accessToken }}
 Content-Type: application/json
 
