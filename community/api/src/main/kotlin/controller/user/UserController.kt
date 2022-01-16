@@ -67,7 +67,7 @@ class UserController(
         @RequestParam(required = true) name: String,
     ) = deleteUserStackHandler.handle(DeleteUserStack(userId, name))
 
-    @GetMapping("{userId}/comments")
+    @GetMapping("{userId}/posts")
     fun userPosts(
         userContext: UserContext,
         @PathVariable userId: Long,
