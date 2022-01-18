@@ -1,4 +1,4 @@
-package waffle.guam.community.config
+package waffle.guam.community.exception
 
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
@@ -7,14 +7,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import waffle.guam.community.Log
+import waffle.guam.community.event.ExceptionOccurred
 import waffle.guam.community.service.GuamException
-import waffle.guam.community.slack.SlackUtils
 import javax.persistence.EntityExistsException
 
 @ControllerAdvice
-class ExceptionHandler(
-    private val slackUtils: SlackUtils,
-) {
+class ExceptionHandler {
     companion object : Log
 
     @ExceptionHandler(value = [EntityExistsException::class, DataIntegrityViolationException::class])
@@ -30,8 +28,6 @@ class ExceptionHandler(
         ResponseEntity(e.message, e.status)
 
     @ExceptionHandler(value = [Exception::class])
-    fun uncaughtException(exc: Exception) {
-        slackUtils.sendErrorLog(exc)
-        throw exc
-    }
+    fun uncaughtException(exc: Exception): ExceptionOccurred =
+        ExceptionOccurred(exc)
 }
