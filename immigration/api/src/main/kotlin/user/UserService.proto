@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package waffle.guam.immigration.api.user;
+
+option java_outer_classname = "UserServiceProto";
+
+import "user/User.proto";
+
+// service
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// request
+message GetUserRequest {
+  string token = 1;
+}
+
+// response
+message GetUserResponse {
+  User user = 1;
+}
