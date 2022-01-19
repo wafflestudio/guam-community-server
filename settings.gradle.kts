@@ -9,3 +9,8 @@ include(":community:service")
 include(":community:api")
 include(":community:utils")
 include(":community:slack")
+
+include(":immigration:app")
+include(":immigration:api")
+include(":immigration:server")
+include(":immigration:client")
