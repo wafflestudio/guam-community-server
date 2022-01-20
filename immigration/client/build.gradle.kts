@@ -1,6 +1,7 @@
 plugins {
 // https://grpc.io/docs/languages/kotlin/quickstart/
     id("com.google.protobuf")
+    id("org.unbroken-dome.test-sets") version "4.0.0"
 }
 
 dependencies {
@@ -12,4 +13,8 @@ dependencies {
     implementation("io.grpc:grpc-netty")
     implementation("com.linecorp.armeria:armeria-spring-boot2-webflux-starter")
     implementation("com.linecorp.armeria:armeria-grpc")
+}
+
+testSets {
+    register("clientTest")
 }
