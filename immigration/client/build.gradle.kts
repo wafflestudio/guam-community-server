@@ -3,20 +3,13 @@ plugins {
     id("com.google.protobuf")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("io.micrometer:micrometer-bom:1.7.6")
-        mavenBom("io.netty:netty-bom:4.1.70.Final")
-        mavenBom("com.linecorp.armeria:armeria-bom:1.13.4")
-    }
-}
-
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     api(project(":immigration:api"))
-    implementation("io.grpc:grpc-netty:1.41.1")
+    testImplementation(project(":immigration:app"))
 
-    api("com.linecorp.armeria:armeria-bom:1.13.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+
+    implementation("io.grpc:grpc-netty")
     implementation("com.linecorp.armeria:armeria-spring-boot2-webflux-starter")
     implementation("com.linecorp.armeria:armeria-grpc")
 }
