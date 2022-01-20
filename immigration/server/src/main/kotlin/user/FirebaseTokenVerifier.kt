@@ -23,7 +23,10 @@ class FirebaseTokenVerifier {
 
     suspend fun getFirebaseUid(token: String): String =
         runCatching { firebaseAuth.verifyIdTokenAsync(token).await().uid }
-            .getOrElse { TODO() }
+            .getOrElse {
+                // TODO: 에러 처리
+                "test"
+            }
 
     private fun initFirebase() {
         FirebaseApp.initializeApp(

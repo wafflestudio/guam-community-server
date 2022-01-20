@@ -1,5 +1,5 @@
 dependencies {
-    implementation(project(":immigration:api"))
+    api(project(":immigration:api"))
 
     api("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")

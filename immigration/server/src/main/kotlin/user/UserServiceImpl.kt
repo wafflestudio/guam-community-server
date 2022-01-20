@@ -13,7 +13,7 @@ class UserServiceImpl(
 ) : UserService {
     override suspend fun getUser(request: GetUserRequest): GetUserResponse =
         tokenVerifier.getFirebaseUid(request.token)
-            .let { userRepository.findByFUid(it) }
+            .let { userRepository.findByFirebaseId(it) }
             ?.let { ApiUser(it) }
             .let { GetUserResponse(it) }
 }
