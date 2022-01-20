@@ -1,4 +1,4 @@
-package waffle.guam.immigration.server
+package waffle.guam.immigration.server.user
 
 import com.google.api.core.ApiFuture
 import com.google.api.core.ApiFutureCallback

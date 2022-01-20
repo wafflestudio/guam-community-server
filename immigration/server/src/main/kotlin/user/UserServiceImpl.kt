@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service
 import waffle.guam.immigration.api.user.GetUserRequest
 import waffle.guam.immigration.api.user.GetUserResponse
 import waffle.guam.immigration.api.user.UserService
-import waffle.guam.immigration.server.FirebaseTokenVerifier
 import waffle.guam.immigration.server.user.domain.UserRepository
 
 @Service
