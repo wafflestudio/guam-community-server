@@ -1,5 +1,6 @@
 package waffle.guam.immigration.app
 
+import com.linecorp.armeria.common.HttpResponse
 import com.linecorp.armeria.common.logging.LogLevel
 import com.linecorp.armeria.server.docs.DocService
 import com.linecorp.armeria.server.grpc.GrpcService
@@ -11,6 +12,10 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import java.time.Duration
 
+fun main() {
+    runApplication<ImmigrationApplication>()
+}
+
 @SpringBootApplication
 class ImmigrationApplication {
     @Bean
@@ -20,6 +25,7 @@ class ImmigrationApplication {
         builder
             .requestTimeout(Duration.ofSeconds(5))
             .serviceUnder("/docs", DocService.builder().build())
+            .service("/") { _, _ -> HttpResponse.of(200) }
             .service(
                 GrpcService.builder()
                     .addServices(grpcServices)
@@ -35,8 +41,4 @@ class ImmigrationApplication {
                     .newDecorator()
             )
     }
-}
-
-fun main() {
-    runApplication<ImmigrationApplication>()
 }

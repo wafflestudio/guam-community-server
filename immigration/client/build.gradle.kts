@@ -9,10 +9,7 @@ dependencies {
     testImplementation(project(":immigration:app"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-
-    implementation("io.grpc:grpc-netty")
-    implementation("com.linecorp.armeria:armeria-spring-boot2-webflux-starter")
-    implementation("com.linecorp.armeria:armeria-grpc")
+    api("io.grpc:grpc-netty")
 }
 
 testSets {

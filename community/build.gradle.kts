@@ -8,13 +8,14 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
-group = "waffle.guam"
+group = "waffle.guam.community"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 allprojects {
     repositories {
         mavenCentral()
+        maven("https://jitpack.io")
     }
 
     apply {

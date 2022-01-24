@@ -1,4 +1,4 @@
-rootProject.name = "guam"
+rootProject.name = "guam-community"
 
 include(":community:data-jdbc")
 project(":community:data-jdbc").projectDir = file("community/data/data-jdbc")

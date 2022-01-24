@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("users")
 data class User(
     @Id
-    val id: Long,
+    val id: Long = 0L,
     val firebaseId: String,
-    val deviceId: String?,
+    val deviceId: String? = null,
 )
