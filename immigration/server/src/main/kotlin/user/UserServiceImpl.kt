@@ -9,11 +9,11 @@ import waffle.guam.immigration.server.user.domain.UserRepository
 
 @Service
 class UserServiceImpl(
-    private val tokenVerifier: FirebaseTokenVerifier,
+    private val tokenHandler: FirebaseTokenHandler,
     private val userRepository: UserRepository,
 ) : UserService {
     override suspend fun getUser(request: GetUserRequest): GetUserResponse =
-        tokenVerifier.getFirebaseUid(request.token)
+        tokenHandler.getFirebaseUid(request.token)
             .let { userRepository.findByFirebaseId(it) ?: userRepository.save(User(firebaseId = it)) }
             .let { ApiUser(it) }
             .let { GetUserResponse(it) }

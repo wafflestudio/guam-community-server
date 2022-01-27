@@ -1,5 +1,5 @@
 package waffle.guam.community.common
 import waffle.guam.community.service.GuamUnAuthorized
 
-class InvalidFirebaseTokenException(message: String = "잘못된 토큰입니다.") :
+class MissingHeaderException(message: String = "헤더 정보를 찾을 수 없습니다.") :
     GuamUnAuthorized(message)

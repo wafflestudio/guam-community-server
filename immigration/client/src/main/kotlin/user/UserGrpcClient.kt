@@ -27,5 +27,4 @@ class UserGrpcClient internal constructor(channel: Channel) : UserService {
 
     override suspend fun getUser(request: GetUserRequest): GetUserResponse =
         GetUserResponse(stub.getUser(request.toProto()))
-
 }
