@@ -14,3 +14,5 @@ include(":immigration:app")
 include(":immigration:api")
 include(":immigration:server")
 include(":immigration:client")
+
+include(":gateway")
