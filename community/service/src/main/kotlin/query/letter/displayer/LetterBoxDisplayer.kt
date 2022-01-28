@@ -15,4 +15,8 @@ class LetterBoxDisplayer(
         return userLetterBoxCollector.get(userId)
     }
 
+//    fun getLettersOf(letterBoxId: LetterBoxId, pageable: Pageable) {
+//        // TODO
+//        // 우편함 확인하기, 진입 시 letterBox 갱신
+//    }
 }
