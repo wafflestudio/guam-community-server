@@ -5,3 +5,4 @@ typealias PostId = Long
 typealias TagId = Long
 typealias UserId = Long
 typealias CommentId = Long
+typealias LetterId = Long

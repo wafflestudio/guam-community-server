@@ -27,6 +27,10 @@ class PostNotFound(message: String = "해당 게시물을 찾을 수 없습니�
     constructor(postId: Long) : this("해당 게시물을 찾을 수 없습니다 [ID : $postId]")
 }
 
+class LetterNotFound(message: String = "해당 쪽지를 찾을 수 없습니다.") : GuamNotFound(message) {
+    constructor(letterId: Long) : this("해당 쪽지를 찾을 수 없습니다 [ID : $letterId]")
+}
+
 // HTTP 409
 class PostLikeConflict(message: String = "이미 좋아요를 누른 게시물입니다.") : GuamConflict(message) {
     constructor(postId: Long, userId: Long) : this("이미 좋아요를 누른 게시물 입니다. [USER_ID: $userId, POST_ID: $postId]")
