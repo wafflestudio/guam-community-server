@@ -1,6 +1,7 @@
 package waffle.guam.community.service.query.tag
 
 import org.springframework.stereotype.Service
+import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -8,7 +9,6 @@ import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.domain.tag.PostTag
 import waffle.guam.community.service.domain.tag.PostTagList
-import waffle.guam.community.service.query.Cache
 import waffle.guam.community.service.query.MultiCollector
 import java.time.Duration
 
@@ -40,13 +40,14 @@ class PostTagListCollector(
 
     @Service
     class CacheImpl(
-        postRepository: PostRepository,
-    ) : PostTagListCollector(postRepository) {
-        private val cache = Cache<PostTagList, PostId>(
-            maximumSize = 1000,
-            duration = Duration.ofMinutes(10),
-            loader = { super.get(it) },
-            multiLoader = { super.multiGet(it) }
+        val impl: PostTagListCollector,
+        cacheFactory: GuamCacheFactory,
+    ) : MultiCollector<PostTagList, PostId> {
+        private val cache = cacheFactory.getCache(
+            name = "POST_TAGS_CACHE",
+            ttl = Duration.ofMinutes(10),
+            loader = impl::get,
+            multiLoader = impl::multiGet
         )
 
         override fun get(id: PostId): PostTagList = cache.get(id)

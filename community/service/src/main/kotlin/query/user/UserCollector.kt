@@ -4,13 +4,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserQueryGenerator
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.command.user.UserUpdated
 import waffle.guam.community.service.domain.user.User
-import waffle.guam.community.service.query.Cache
 import waffle.guam.community.service.query.MultiCollector
 import java.time.Duration
 
@@ -38,15 +38,16 @@ class UserCollector(
 
     @Service
     class CacheImpl(
-        userRepository: UserRepository,
-    ) : UserCollector(userRepository) {
+        val impl: UserCollector,
+        cacheFactory: GuamCacheFactory,
+    ) : MultiCollector<User, UserId> {
         private val logger = LoggerFactory.getLogger(this::class.java)
 
-        private val cache = Cache<User, UserId>(
-            maximumSize = 2000,
-            duration = Duration.ofMinutes(5),
-            loader = { super.get(it) },
-            multiLoader = { super.multiGet(it) }
+        private val cache = cacheFactory.getCache(
+            name = "USER_CACHE",
+            ttl = Duration.ofMinutes(5),
+            loader = impl::get,
+            multiLoader = impl::multiGet
         )
 
         override fun get(id: UserId): User = cache.get(id)

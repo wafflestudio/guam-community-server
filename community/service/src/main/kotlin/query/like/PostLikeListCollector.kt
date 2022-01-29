@@ -3,15 +3,14 @@ package waffle.guam.community.service.query.like
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
+import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.command.like.PostLikeCreated
 import waffle.guam.community.service.command.like.PostLikeDeleted
 import waffle.guam.community.service.domain.like.PostLikeList
-import waffle.guam.community.service.query.Cache
 import waffle.guam.community.service.query.MultiCollector
-import java.time.Duration
 
 @Service
 class PostLikeListCollector(
@@ -29,15 +28,15 @@ class PostLikeListCollector(
 
     @Service
     class CacheImpl(
-        postRepository: PostRepository,
-    ) : PostLikeListCollector(postRepository) {
+        val impl: PostLikeListCollector,
+        cacheFactory: GuamCacheFactory,
+    ) : MultiCollector<PostLikeList, PostId> {
         private val logger = LoggerFactory.getLogger(this::class.java)
 
-        private val cache = Cache<PostLikeList, PostId>(
-            maximumSize = 1000,
-            duration = Duration.ofMinutes(1),
-            loader = { super.get(it) },
-            multiLoader = { super.multiGet(it) }
+        private val cache = cacheFactory.getCache(
+            name = "POST_LIKES_CACHE",
+            loader = impl::get,
+            multiLoader = impl::multiGet
         )
 
         override fun get(id: PostId): PostLikeList = cache.get(id)

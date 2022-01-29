@@ -44,7 +44,7 @@ class RedisConfig {
     }
 
     // registered only when properties missing
-    @ConditionalOnProperty("spring.redis.host", matchIfMissing = true, havingValue = "value_that_never_appears")
+    @ConditionalOnProperty("spring.redis.host", matchIfMissing = true, havingValue = "value_never_matched")
     @Component
     class LocalRedis(
         lettuceConnectionFactory: LettuceConnectionFactory
