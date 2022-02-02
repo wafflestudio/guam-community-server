@@ -2,8 +2,7 @@ package waffle.guam.community.config
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
-import io.swagger.v3.oas.models.security.SecurityRequirement
-import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.parameters.Parameter
 import org.springdoc.core.GroupedOpenApi
 import org.springdoc.core.SpringDocUtils
 import org.springframework.context.annotation.Bean
@@ -28,18 +27,13 @@ class SwaggerConfig {
         return GroupedOpenApi
             .builder()
             .group("Guam")
-            .addOpenApiCustomiser { openApi ->
-                openApi
-                    .addSecurityItem(SecurityRequirement().addList("FCM Token"))
-                    .components.addSecuritySchemes(
-                        "FCM Token",
-                        SecurityScheme()
-                            .name("Authorization")
-                            .type(SecurityScheme.Type.HTTP)
-                            .`in`(SecurityScheme.In.HEADER)
-                            .bearerFormat("JWT")
-                            .scheme("bearer")
-                    )
+            .addOperationCustomizer { operation, _ ->
+                operation.addParametersItem(
+                    Parameter()
+                        .`in`("header")
+                        .required(false)
+                        .name(GATEWAY_HEADER_NAME)
+                )
             }
             .build()
     }
