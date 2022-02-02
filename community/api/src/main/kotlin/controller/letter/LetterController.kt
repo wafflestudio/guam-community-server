@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.letter.req.SendLetterRequest
@@ -14,12 +15,14 @@ import waffle.guam.community.service.command.letter.CreateLetter
 import waffle.guam.community.service.command.letter.CreateLetterHandler
 import waffle.guam.community.service.command.letter.DeleteLetter
 import waffle.guam.community.service.command.letter.DeleteLetterHandler
+import waffle.guam.community.service.query.letter.displayer.LetterBoxDisplayer
 
 @RequestMapping("/api/v1/letters")
 @RestController
 class LetterController(
     private val createLetterHandler: CreateLetterHandler,
     private val deleteLetterHandler: DeleteLetterHandler,
+    private val letterBoxDisplayer: LetterBoxDisplayer,
 ) {
     @PostMapping("")
     fun sendLetter(
@@ -40,9 +43,16 @@ class LetterController(
         @PathVariable letterId: LetterId,
     ) = deleteLetterHandler.handle(DeleteLetter(letterId, userContext.id))
 
-    @GetMapping("/my/received")
-    fun myLetters(
+    @GetMapping("/letters")
+    fun getLetterBoxes(
         userContext: UserContext,
-    ) {
-    }
+    ) = letterBoxDisplayer.getMyLetterBoxes(userContext.id)
+
+    @GetMapping("/letters/{letterBoxId}")
+    fun getLetters(
+        userContext: UserContext,
+        @PathVariable letterBoxId: Long,
+        @RequestParam(defaultValue = "0") afterLetterId: Long,
+        @RequestParam(defaultValue = "50") size: Long,
+    ) = letterBoxDisplayer.getLetters(userContext.id, letterBoxId, afterLetterId, size)
 }

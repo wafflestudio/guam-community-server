@@ -1,22 +1,30 @@
 package waffle.guam.community.service.query.letter.displayer
 
 import org.springframework.stereotype.Service
-import waffle.guam.community.data.jdbc.letter.LetterBoxRepository
+import waffle.guam.community.service.LetterBoxId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.query.letter.LetterBoxList
+import waffle.guam.community.service.query.letter.LetterList
+import waffle.guam.community.service.query.letter.LetterListCollector
 import waffle.guam.community.service.query.letter.UserLetterBoxCollector
 
 @Service
 class LetterBoxDisplayer(
-    private val letterBoxRepository: LetterBoxRepository,
     private val userLetterBoxCollector: UserLetterBoxCollector,
+    private val letterListCollector: LetterListCollector,
 ) {
     fun getMyLetterBoxes(userId: UserId): LetterBoxList {
         return userLetterBoxCollector.get(userId)
     }
 
-//    fun getLettersOf(letterBoxId: LetterBoxId, pageable: Pageable) {
-//        // TODO
-//        // 우편함 확인하기, 진입 시 letterBox 갱신
-//    }
+    fun getLetters(userId: UserId, letterBoxId: LetterBoxId, afterLetterId: Long, size: Long): LetterList {
+        return letterListCollector.get(
+            LetterListCollector.Query(
+                userId = userId,
+                letterBoxId = letterBoxId,
+                afterLetterId = afterLetterId,
+                size = size
+            )
+        )
+    }
 }
