@@ -61,9 +61,9 @@ class LetterBoxRepositoryImpl(
                 )
                 .fetch()
                 .associateBy { it.letterBoxId }
-            return boxes.map { letterBox ->
-                LetterBoxPreview(letterBox, letters[letterBox.id]!!)
-            }
+            return boxes
+                .filter { letterBox -> letters[letterBox.id] != null }
+                .map { letterBox -> LetterBoxPreview(letterBox, letters[letterBox.id]!!) }
         }
     }
 }

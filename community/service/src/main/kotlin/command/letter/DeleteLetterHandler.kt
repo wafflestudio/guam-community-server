@@ -3,7 +3,6 @@ package waffle.guam.community.service.command.letter
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.community.data.jdbc.letter.LetterBoxRepository
 import waffle.guam.community.data.jdbc.letter.LetterEntity
 import waffle.guam.community.data.jdbc.letter.LetterRepository
 import waffle.guam.community.service.Forbidden
@@ -13,9 +12,11 @@ import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
 
 @Service
+/**
+ * Not Used
+ */
 class DeleteLetterHandler(
     private val letterRepository: LetterRepository,
-    private val letterBoxRepository: LetterBoxRepository,
 ) : CommandHandler<DeleteLetter, LetterDeleted> {
 
     @Transactional
