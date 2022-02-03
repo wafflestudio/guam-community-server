@@ -8,3 +8,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("com.google.firebase:firebase-admin:7.1.0")
 }
+
+// spring-retry
+dependencies {
+    api("org.springframework.retry:spring-retry")
+    api("org.springframework:spring-aspects")
+}

@@ -2,6 +2,7 @@ package waffle.guam.community.controller.letter
 
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -10,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.letter.req.SendLetterRequest
+import waffle.guam.community.controller.letter.req.UpdateLetterBoxRequest
 import waffle.guam.community.service.LetterId
 import waffle.guam.community.service.command.letter.CreateLetter
 import waffle.guam.community.service.command.letter.CreateLetterHandler
 import waffle.guam.community.service.command.letter.DeleteLetter
 import waffle.guam.community.service.command.letter.DeleteLetterHandler
+import waffle.guam.community.service.command.letter.UpdateLetterBox
+import waffle.guam.community.service.command.letter.UpdateLetterBoxHandler
 import waffle.guam.community.service.query.letter.displayer.LetterBoxDisplayer
 
 @RequestMapping("/api/v1/letters")
@@ -22,6 +26,7 @@ import waffle.guam.community.service.query.letter.displayer.LetterBoxDisplayer
 class LetterController(
     private val createLetterHandler: CreateLetterHandler,
     private val deleteLetterHandler: DeleteLetterHandler,
+    private val updateLetterBoxHandler: UpdateLetterBoxHandler,
     private val letterBoxDisplayer: LetterBoxDisplayer,
 ) {
     @PostMapping("")
@@ -55,4 +60,15 @@ class LetterController(
         @RequestParam(defaultValue = "0") afterLetterId: Long,
         @RequestParam(defaultValue = "50") size: Long,
     ) = letterBoxDisplayer.getLetters(userContext.id, letterBoxId, afterLetterId, size)
+
+    @PatchMapping("/letters/{letterBoxId}/read")
+    fun readLetterBox(
+        userContext: UserContext,
+        @PathVariable letterBoxId: Long,
+        @RequestBody request: UpdateLetterBoxRequest,
+    ) = updateLetterBoxHandler.handle(
+        UpdateLetterBox(
+            userContext.id, letterBoxId, request.lastReadLetterId
+        )
+    )
 }

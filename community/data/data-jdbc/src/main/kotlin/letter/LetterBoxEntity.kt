@@ -39,7 +39,7 @@ class LetterBoxEntity(
     val letters: List<LetterEntity> = listOf()
 
     @Version
-    private val version: Long = 0L
+    val version: Long = 0L
 
     fun lastReadLetterIdOf(userId: Long): Long =
         if (isLowUser(userId)) lowLastReadLetterId
