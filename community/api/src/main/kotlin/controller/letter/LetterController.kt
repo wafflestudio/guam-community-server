@@ -13,6 +13,8 @@ import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.letter.req.SendLetterRequest
 import waffle.guam.community.controller.letter.req.UpdateLetterBoxRequest
 import waffle.guam.community.service.LetterId
+import waffle.guam.community.service.command.letter.BlockLetterBox
+import waffle.guam.community.service.command.letter.BlockLetterBoxHandler
 import waffle.guam.community.service.command.letter.CreateLetter
 import waffle.guam.community.service.command.letter.CreateLetterHandler
 import waffle.guam.community.service.command.letter.DeleteLetter
@@ -27,6 +29,7 @@ class LetterController(
     private val createLetterHandler: CreateLetterHandler,
     private val deleteLetterHandler: DeleteLetterHandler,
     private val updateLetterBoxHandler: UpdateLetterBoxHandler,
+    private val blockLetterBoxHandler: BlockLetterBoxHandler,
     private val letterBoxDisplayer: LetterBoxDisplayer,
 ) {
     @PostMapping("")
@@ -71,4 +74,10 @@ class LetterController(
             userContext.id, letterBoxId, request.lastReadLetterId
         )
     )
+
+    @PostMapping("/letters/{letterBoxId}/block")
+    fun blockLetterBox(
+        userContext: UserContext,
+        @PathVariable letterBoxId: Long,
+    ) = blockLetterBoxHandler.handle(BlockLetterBox(userContext.id, letterBoxId))
 }

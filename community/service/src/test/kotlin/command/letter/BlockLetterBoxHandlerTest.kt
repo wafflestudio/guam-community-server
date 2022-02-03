@@ -8,23 +8,20 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import waffle.guam.community.Log
 import waffle.guam.community.data.jdbc.letter.LetterBoxEntity
 import waffle.guam.community.data.jdbc.letter.LetterBoxRepository
-import waffle.guam.community.data.jdbc.report.ReportEntity
-import waffle.guam.community.data.jdbc.report.ReportRepository
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
-import waffle.guam.community.service.command.letter.ReportLetterBox
-import waffle.guam.community.service.command.letter.ReportLetterBoxHandler
+import waffle.guam.community.service.command.letter.BlockLetterBox
+import waffle.guam.community.service.command.letter.BlockLetterBoxHandler
 
 @DataJpaTest
-class ReportLetterBoxHandlerTest @Autowired constructor(
+class BlockLetterBoxHandlerTest @Autowired constructor(
     private val letterBoxRepository: LetterBoxRepository,
-    private val reportRepository: ReportRepository,
     private val userRepository: UserRepository,
 ) {
     companion object : Log
-    private val reportLetterBoxHandler = ReportLetterBoxHandler(letterBoxRepository, reportRepository)
+    private val blockLetterBoxHandler = BlockLetterBoxHandler(letterBoxRepository)
 
-    @DisplayName("유저가 상대를 신고할 수 있다.")
+    @DisplayName("유저가 상대를 차단할 수 있다.")
     @Test
     fun updateLetterBox() {
         // given
@@ -39,16 +36,14 @@ class ReportLetterBoxHandlerTest @Autowired constructor(
         )
 
         // when
-        reportLetterBoxHandler.handle(
-            ReportLetterBox(
-                reporterId = from.id, suspectId = to.id, letterBoxId = letterBox.id, reportType = ReportEntity.Type.SPAMMING
-            )
+        blockLetterBoxHandler.handle(
+            BlockLetterBox(userId = to.id, letterBoxId = letterBox.id)
         )
 
         // then
-        // 신고 시, 상대방을 차단하고 쪽지함을 삭제한다.
-        assertTrue(letterBox.isReported)
-        assertTrue(letterBox.isDeletedBy(from.id))
-        assertTrue(letterBox.hasBlockedOther(from.id))
+        // 차단 시, 쪽지함이 보이지 않도록 삭제된다
+        assertTrue(letterBox.isDeletedBy(to.id))
+        assertTrue(letterBox.hasBlockedOther(to.id))
+        assertTrue(letterBox.isBlockedByOther(from.id))
     }
 }
