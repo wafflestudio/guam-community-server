@@ -64,4 +64,40 @@ class UserLetterBoxCollectorTest @Autowired constructor(
         assertThat(resultTwo.latestLetter.text).isEqualTo(answerTwo.text)
         assertThat(resultTwo.isLastUnread).isEqualTo(false)
     }
+
+    @DisplayName("내가 삭제한 쪽지함은 가져오지 않는다")
+    @Test
+    fun getOnlyVisibleBoxes() {
+        // given
+        val (sender, receiver, nobody) = userRepository.saveAll(
+            listOf(
+                UserEntity(firebaseUid = "me"),
+                UserEntity(firebaseUid = "someOne"),
+                UserEntity(firebaseUid = "nobody"),
+            )
+        )
+        val (deleted, notDeleted) = letterBoxRepository.saveAll(
+            listOf(
+                LetterBoxEntity(senderId = sender.id, receiverId = receiver.id).apply { delete(receiver.id) },
+                LetterBoxEntity(senderId = nobody.id, receiverId = receiver.id),
+            )
+        )
+        // 구현 상 쪽지함이 존재하면 쪽지도 무조건 존재하기 때문에, 없으면 오류가 남
+        letterRepository.saveAll(
+            listOf(
+                LetterEntity(sender.id, receiver.id, deleted.id, "하이"),
+                LetterEntity(nobody.id, receiver.id, notDeleted.id, "정답"),
+            )
+        )
+
+        // when
+        val result = collector.get(receiver.id)
+
+        // then
+        assertThat(result.userId).isEqualTo(receiver.id)
+        assertThat(result.letterBoxes).hasSize(1)
+
+        val target = result.letterBoxes[0]
+        assertThat(target.id).isEqualTo(notDeleted.id)
+    }
 }

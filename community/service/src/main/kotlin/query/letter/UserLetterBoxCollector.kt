@@ -13,11 +13,14 @@ class UserLetterBoxCollector(
 ) : Collector<LetterBoxList, UserId> {
     companion object : Log
 
+    // TODO 인메모리 필터링 존재
     override fun get(id: UserId): LetterBoxList {
         val relatedBoxIds = letterBoxRepository.findBoxIds(userId = id)
-        val letterBoxes = letterBoxRepository.findPreviews(relatedBoxIds).map { (letterBox, latestLetter) ->
-            LetterBox(letterBoxEntity = letterBox, latestLetter = latestLetter, userId = id)
-        }
+        val letterBoxes = letterBoxRepository.findPreviews(relatedBoxIds)
+            .filter { (letterBoxEntity, _) -> letterBoxEntity.visibleTo(id) }
+            .map { (letterBox, latestLetter) ->
+                LetterBox(letterBoxEntity = letterBox, latestLetter = latestLetter, userId = id)
+            }
         return LetterBoxList(userId = id, letterBoxes = letterBoxes)
     }
 }
