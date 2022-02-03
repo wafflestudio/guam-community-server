@@ -9,6 +9,8 @@ import waffle.guam.community.common.MissingHeaderException
 import waffle.guam.community.common.UserContext
 import javax.servlet.http.HttpServletRequest
 
+const val GATEWAY_HEADER_NAME = "X-GATEWAY-USER-ID"
+
 class UserContextResolver : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean =
         UserContext::class.java.isAssignableFrom(parameter.parameterType)
@@ -21,6 +23,6 @@ class UserContextResolver : HandlerMethodArgumentResolver {
     ): UserContext {
         val req = (webRequest.nativeRequest as HttpServletRequest)
 
-        return req.getHeader("X-GATEWAY-USER-ID")?.toLong()?.let(::UserContext) ?: throw MissingHeaderException()
+        return req.getHeader(GATEWAY_HEADER_NAME)?.toLong()?.let(::UserContext) ?: throw MissingHeaderException()
     }
 }
