@@ -10,9 +10,8 @@ import javax.persistence.Id
  * Details TBD
  */
 class ReportEntity(
-    val reporter: Long,
-    val suspect: Long,
-    val letterBoxId: Long,
+    val reporterId: Long,
+    val suspectId: Long,
     val reportType: Type,
 ) {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
