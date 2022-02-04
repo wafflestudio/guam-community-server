@@ -3,7 +3,6 @@ package waffle.guam.community.service.query.letter
 import org.springframework.stereotype.Service
 import waffle.guam.community.Log
 import waffle.guam.community.data.jdbc.letter.LetterRepository
-import waffle.guam.community.service.LetterBoxId
 import waffle.guam.community.service.LetterId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.letter.Letter
@@ -17,7 +16,8 @@ class LetterListCollector(
 
     override fun get(id: Query): LetterList {
         val letterEntities = letterRepository.find(
-            letterBoxId = id.letterBoxId,
+            userId = id.userId,
+            pairId = id.pairId,
             lastLetterId = id.afterLetterId,
             size = id.size
         )
@@ -26,7 +26,7 @@ class LetterListCollector(
 
     data class Query(
         val userId: UserId,
-        val letterBoxId: LetterBoxId,
+        val pairId: UserId,
         val afterLetterId: LetterId,
         val size: Long = 50L,
     )

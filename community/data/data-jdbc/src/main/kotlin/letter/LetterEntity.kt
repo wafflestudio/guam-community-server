@@ -14,8 +14,7 @@ import javax.persistence.Table
 @Entity
 class LetterEntity(
     val senderId: Long,
-    val receiverId: Long, // 개발 편의를 위해 정규화 X
-    val letterBoxId: Long,
+    val receiverId: Long,
 
     @Column(length = 300)
     var text: String,
@@ -27,9 +26,16 @@ class LetterEntity(
     @Id
     val id: Long = 0L
 
+    val pairId: String = arrayOf(senderId, receiverId).sorted().toString()
+
+    var isRead: Boolean = false
+
     var status: Status = Status.ACTIVE
 
     enum class Status {
         ACTIVE, DELETED
     }
 }
+
+internal fun getPairIdOf(userOne: Long, userTwo: Long) =
+    arrayOf(userOne, userTwo).sorted().toString()

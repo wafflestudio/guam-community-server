@@ -7,6 +7,7 @@ data class Letter(
     val receiverId: Long,
     val text: String,
     val image: String?,
+    val isRead: Boolean,
 )
 
 fun Letter(e: LetterEntity): Letter =
@@ -14,5 +15,6 @@ fun Letter(e: LetterEntity): Letter =
         senderId = e.senderId,
         receiverId = e.receiverId,
         text = e.text,
-        image = e.image
+        image = e.image,
+        isRead = e.isRead,
     )
