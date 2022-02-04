@@ -23,7 +23,9 @@ class PostCommentController(
         userContext: UserContext,
         @PathVariable postId: Long,
         @RequestBody req: CreatePostCommentRequest
-    ) = createPostCommentHandler.handle(CreatePostComment(postId = postId, userId = 1L, content = req.content))
+    ) = createPostCommentHandler.handle(
+        CreatePostComment(postId = postId, userId = 1L, content = req.content, mentionIds = req.mentionIds)
+    )
 
     @PostMapping("/{postId}/comments/{commentId}")
     fun delete(

@@ -5,6 +5,7 @@ import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.common.ImagePathsConverter
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
+import waffle.guam.community.data.jdbc.scrap.PostScrapEntity
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
 import javax.persistence.CascadeType
@@ -52,6 +53,9 @@ class PostEntity(
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val likes: MutableSet<PostLikeEntity> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    val scraps: MutableSet<PostScrapEntity> = mutableSetOf(),
 ) : BaseTimeEntity() {
 
     enum class Status {
