@@ -32,6 +32,14 @@ class PostLikeConflict(message: String = "이미 좋아요를 누른 게시물�
     constructor(postId: Long, userId: Long) : this("이미 좋아요를 누른 게시물 입니다. [USER_ID: $userId, POST_ID: $postId]")
 }
 
+class PostScrapConflict(message: String = "이미 스크랩한 게시물입니다.") : GuamConflict(message) {
+    constructor(postId: Long, userId: Long) : this("이미 스크랩한 게시물 입니다. [USER_ID: $userId, POST_ID: $postId]")
+}
+
 class PostLikeNotFound(message: String = "좋아요를 누른 적이 없는 게시물입니다.") : GuamConflict(message) {
     constructor(postId: Long, userId: Long) : this("좋아요를 누른 적이 없는 게시물 입니다. [USER_ID: $userId, POST_ID: $postId]")
+}
+
+class PostScrapNotFound(message: String = "스크랩한 적이 없는 게시물입니다.") : GuamConflict(message) {
+    constructor(postId: Long, userId: Long) : this("스크랩한 적이 없는 게시물 입니다. [USER_ID: $userId, POST_ID: $postId]")
 }
