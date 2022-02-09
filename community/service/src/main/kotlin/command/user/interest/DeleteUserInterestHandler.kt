@@ -3,14 +3,14 @@ package waffle.guam.community.service.command.user.interest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.interest.InterestId
-import waffle.guam.community.data.jdbc.interest.interestRepository
+import waffle.guam.community.data.jdbc.interest.InterestRepository
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
 
 @Service
 class DeleteUserInterestHandler(
-    private val interestRepository: interestRepository,
+    private val interestRepository: InterestRepository,
 ) : CommandHandler<DeleteUserInterest, UserInterestDeleted> {
 
     @Transactional

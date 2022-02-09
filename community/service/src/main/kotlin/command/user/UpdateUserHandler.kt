@@ -33,7 +33,7 @@ class UpdateUserHandler(
     @Transactional
     fun updateToken(userId: Long, newDeviceToken: String): UserDeviceTokenUpdated {
         val userEntity = userAPIRepository.find(userId) ?: throw UserNotFound(userId)
-        userEntity.deviceToken = newDeviceToken
+//        userEntity.deviceToken = newDeviceToken Todo Immigration으로 옮기기
         return UserDeviceTokenUpdated(userId, newDeviceToken)
     }
 

@@ -18,7 +18,7 @@ class CreateUserHandler(
 }
 
 data class CreateUser(
-    val firebaseUid: String,
+    val immigrationId: Long,
     val nickname: String,
     val introduction: String,
     val githubId: String?,
@@ -29,5 +29,5 @@ data class CreateUser(
 
 data class UserCreated(
     val id: Long,
-    val firebaseUid: String
+    val immigrationId: Long,
 ) : Result

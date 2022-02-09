@@ -16,8 +16,7 @@ import javax.persistence.Table
 @Table(name = "users")
 @Entity
 class UserEntity(
-    val firebaseUid: String,
-    var deviceToken: String? = null,
+    val immigrationId: Long,
 
     val email: String? = null,
 
