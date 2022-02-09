@@ -1,4 +1,4 @@
-package waffle.guam.community.data.jdbc.stack
+package waffle.guam.community.data.jdbc.interest
 
 import java.io.Serializable
 import javax.persistence.Column
@@ -7,20 +7,20 @@ import javax.persistence.EmbeddedId
 import javax.persistence.Entity
 import javax.persistence.Table
 
-@Table(name = "stacks")
+@Table(name = "interests")
 @Entity
-class StackEntity private constructor(
+class InterestEntity private constructor(
     @EmbeddedId
-    val data: StackId,
+    val data: InterestId,
 ) {
-    constructor(userId: Long, name: String) : this(StackId(userId, name))
+    constructor(userId: Long, name: String) : this(InterestId(userId, name))
 }
 
-val StackEntity.name
+val InterestEntity.name
     get() = this.data.name
 
 @Embeddable
-class StackId(
+class InterestId(
     val userId: Long,
 
     @Column(length = 10)

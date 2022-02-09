@@ -9,18 +9,18 @@ import waffle.guam.community.data.jdbc.user.QUserEntity.userEntity
 class UserAPIRepository(
     private val querydsl: JPAQueryFactory,
 ) {
-    fun find(id: Long, fetchStacks: Boolean = false): UserEntity? =
+    fun find(id: Long, fetchInterests: Boolean = false): UserEntity? =
         querydsl
             .select(userEntity)
             .from(userEntity)
             .where(eqId(id))
-            .fetchJoinIf(fetchStacks)
+            .fetchJoinIf(fetchInterests)
             .fetchOne()
 
     private fun eqId(id: Long?) =
         id?.run { userEntity.id.eq(this) }
 
     private fun JPAQuery<UserEntity>.fetchJoinIf(flag: Boolean) =
-        if (flag) this.leftJoin(userEntity.stacks).fetchJoin()
+        if (flag) this.leftJoin(userEntity.interests).fetchJoin()
         else this
 }

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.UserContext
-import waffle.guam.community.controller.user.req.AddUserStackRequest
+import waffle.guam.community.controller.user.req.AddUserInterestRequest
 import waffle.guam.community.controller.user.req.UpdateDeviceTokenRequest
 import waffle.guam.community.controller.user.req.UpdateUserRequest
 import waffle.guam.community.service.command.user.UpdateUserHandler
-import waffle.guam.community.service.command.user.stack.CreateUserStackHandler
-import waffle.guam.community.service.command.user.stack.DeleteUserStack
-import waffle.guam.community.service.command.user.stack.DeleteUserStackHandler
+import waffle.guam.community.service.command.user.interest.CreateUserInterestHandler
+import waffle.guam.community.service.command.user.interest.DeleteUserInterest
+import waffle.guam.community.service.command.user.interest.DeleteUserInterestHandler
 import waffle.guam.community.service.query.post.displayer.PostDisplayer
 import waffle.guam.community.service.query.user.displayer.UserDisplayer
 
@@ -24,8 +24,8 @@ import waffle.guam.community.service.query.user.displayer.UserDisplayer
 @RestController
 class UserController(
     private val updateUserHandler: UpdateUserHandler,
-    private val createUserStackHandler: CreateUserStackHandler,
-    private val deleteUserStackHandler: DeleteUserStackHandler,
+    private val createUserInterestHandler: CreateUserInterestHandler,
+    private val deleteUserInterestHandler: DeleteUserInterestHandler,
     private val userDisplay: UserDisplayer,
     private val postDisplay: PostDisplayer,
 ) {
@@ -53,19 +53,19 @@ class UserController(
         @RequestBody request: UpdateUserRequest,
     ) = updateUserHandler.handle(request.toCommand(userId))
 
-    @PostMapping("{userId}/stack")
-    fun addStack(
+    @PostMapping("{userId}/interest")
+    fun addInterest(
         userContext: UserContext,
         @PathVariable userId: Long,
-        @RequestBody request: AddUserStackRequest,
-    ) = createUserStackHandler.handle(request.toCommand(userId))
+        @RequestBody request: AddUserInterestRequest,
+    ) = createUserInterestHandler.handle(request.toCommand(userId))
 
-    @DeleteMapping("{userId}/posts")
-    fun addStack(
+    @DeleteMapping("{userId}/interest")
+    fun deleteInterest(
         userContext: UserContext,
         @PathVariable userId: Long,
         @RequestParam(required = true) name: String,
-    ) = deleteUserStackHandler.handle(DeleteUserStack(userId, name))
+    ) = deleteUserInterestHandler.handle(DeleteUserInterest(userId, name))
 
     @GetMapping("{userId}/posts")
     fun userPosts(
