@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    group:
+      "default": "dev"
+      "dev": "server"
+      "prod": "server"
