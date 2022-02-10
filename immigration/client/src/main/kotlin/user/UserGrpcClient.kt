@@ -4,6 +4,7 @@ import io.grpc.Channel
 import io.grpc.ManagedChannelBuilder
 import waffle.guam.immigration.api.user.GetUserRequest
 import waffle.guam.immigration.api.user.GetUserResponse
+import waffle.guam.immigration.api.user.SendPushRequest
 import waffle.guam.immigration.api.user.UserService
 import waffle.guam.immigration.api.user.UserServiceGrpcKt
 import waffle.guam.immigration.api.user.toProto
@@ -27,4 +28,8 @@ class UserGrpcClient internal constructor(channel: Channel) : UserService {
 
     override suspend fun getUser(request: GetUserRequest): GetUserResponse =
         GetUserResponse(stub.getUser(request.toProto()))
+
+    override suspend fun sendPush(request: SendPushRequest) {
+        stub.sendPush(request.toProto())
+    }
 }

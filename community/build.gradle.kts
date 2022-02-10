@@ -29,10 +29,12 @@ allprojects {
     dependencyManagement {
         imports {
             mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.5")
+            mavenBom("io.grpc:grpc-bom:1.39.0")
         }
     }
 
     dependencies {
+        implementation(project(":immigration:client"))
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

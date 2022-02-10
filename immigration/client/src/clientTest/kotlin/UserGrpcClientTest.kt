@@ -22,7 +22,6 @@ class ItemGrpcClientTest @Autowired constructor(
     @Test
     fun a(): Unit = runBlocking {
         val client = UserGrpcClient(ManagedChannelBuilder.forAddress("localhost", port).usePlaintext().build())
-
         println(client.getUser(GetUserRequest("test")))
     }
 }

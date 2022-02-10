@@ -9,6 +9,7 @@ import "user/User.proto";
 // service
 service UserService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc sendPush(SendUserPush) returns (Empty);
 }
 
 // request
@@ -16,7 +17,16 @@ message GetUserRequest {
   string token = 1;
 }
 
+message SendUserPush {
+  repeated int64 userIds = 1;
+  string title = 2;
+  string body = 3;
+  string imageUrl = 4;
+}
+
 // response
 message GetUserResponse {
   User user = 1;
 }
+
+message Empty {}
