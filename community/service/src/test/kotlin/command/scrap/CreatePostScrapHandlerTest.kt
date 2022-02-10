@@ -28,7 +28,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun createPostScrap() {
         // given
-        val user = userRepository.save(UserEntity(firebaseUid = "지혁"))
+        val user = userRepository.save(UserEntity(immigrationId = 0L))
         val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
         // when
@@ -48,7 +48,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun postNotFound() {
         // given
-        val user = userRepository.save(UserEntity(firebaseUid = "하위"))
+        val user = userRepository.save(UserEntity(immigrationId = 0L))
 
         // when
         val command = CreatePostScrap(postId = 404L, userId = user.id)
@@ -63,7 +63,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun userNotFound() {
         // given
-        val user = userRepository.save(UserEntity(firebaseUid = "지혁"))
+        val user = userRepository.save(UserEntity(immigrationId = 0L))
         val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
         // when
@@ -79,7 +79,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun postScrapConflict() {
         // given
-        val user = userRepository.save(UserEntity(firebaseUid = "지혁"))
+        val user = userRepository.save(UserEntity(immigrationId = 0L))
         val post = postRepository.save(
             PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글")
                 .apply { scraps.add(PostScrapEntity(this, user)) }

@@ -1,24 +1,34 @@
 package waffle.guam.community.service.domain.user
 
-import waffle.guam.community.data.jdbc.stack.name
+import waffle.guam.community.data.jdbc.interest.name
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.service.UserId
 
 data class User(
     val id: UserId,
-    val firebaseUid: String,
+    val introduction: String?,
+    val githubId: String?,
+    val blogUrl: String?,
     val nickname: String?,
     val email: String?,
-    val stacks: List<Stack>,
+    val profileImage: String?,
+    val interests: List<Interest>,
 ) {
-    data class Stack(val name: String)
+    val isProfileSet: Boolean get() {
+        return !nickname.isNullOrBlank()
+    }
+
+    data class Interest(val name: String)
 }
 
-fun User(e: UserEntity) =
+fun User(e: UserEntity): User =
     User(
         id = e.id,
-        firebaseUid = e.firebaseUid,
+        introduction = e.introduction,
+        githubId = e.githubId,
+        blogUrl = e.blogUrl,
         nickname = e.nickname,
         email = e.email,
-        stacks = e.stacks.map { User.Stack(it.name) }
+        profileImage = e.profileImage,
+        interests = e.interests.map { User.Interest(it.name) }
     )

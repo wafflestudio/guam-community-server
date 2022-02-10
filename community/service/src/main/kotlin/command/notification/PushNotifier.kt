@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import waffle.guam.community.Log
 import waffle.guam.community.data.jdbc.user.UserRepository
-import waffle.guam.community.logOnError
 
 @Service
 class PushNotifier(
@@ -18,14 +17,15 @@ class PushNotifier(
 
     @Async
     fun sendPush(userIds: List<Long>, title: String, body: String, imageUrl: String? = null) {
-        val userTokens = userRepository.findAllById(userIds)
-            .mapNotNull { user -> user.deviceToken }
-            .ifEmpty { return@sendPush }
-
-        logOnError("FCM ERROR") {
-            log.info("Send message \"$title\" to $userIds")
-            sendFcmPush(userTokens, title, body, imageUrl)
-        }
+        // TODO Immigration으로 옮기기
+//        val userTokens = userRepository.findAllById(userIds)
+//            .mapNotNull { user -> user.deviceToken }
+//            .ifEmpty { return@sendPush }
+//
+//        logOnError("FCM ERROR") {
+//            log.info("Send message \"$title\" to $userIds")
+//            sendFcmPush(userTokens, title, body, imageUrl)
+//        }
     }
 
     private fun sendFcmPush(

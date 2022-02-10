@@ -6,7 +6,6 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<UserEntity, Long> {
-    fun findByFirebaseUid(firebaseUid: String): UserEntity?
     fun findAll(spec: Specification<UserEntity>, pageable: Pageable): Page<UserEntity>
     fun findOne(spec: Specification<UserEntity>): UserEntity?
 }
