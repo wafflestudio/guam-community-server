@@ -12,7 +12,9 @@ fun sendPushRequest(proto: UserServiceProto.SendUserPush): SendPushRequest =
         userIds = proto.userIdsList,
         title = proto.title,
         body = proto.body,
-        imagePath = proto.imageUrl
+        imagePath = if (proto.hasImageUrl()) {
+            proto.imageUrl.value
+        } else null,
     )
 
 fun SendPushRequest.toProto(): UserServiceProto.SendUserPush {
@@ -22,6 +24,7 @@ fun SendPushRequest.toProto(): UserServiceProto.SendUserPush {
         .addAllUserIds(userIds)
         .setTitle(title)
         .setBody(body)
-        .apply { imagePath?.let { this@apply.imageUrl = it } }
-        .build()
+        .also { builder ->
+            imagePath?.let { builder.imageUrlBuilder.value = it }
+        }.build()
 }
