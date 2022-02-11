@@ -14,7 +14,7 @@ class UserServiceImpl(
 ) : UserService {
     override suspend fun getUser(request: GetUserRequest): GetUserResponse =
         tokenHandler.getFirebaseUid(request.token)
-            .let { userRepository.findByFirebaseId(it) ?: userRepository.save(User(firebaseId = it)) }
+            .let { userRepository.findByFirebaseUserId(it) ?: userRepository.save(User(firebaseUserId = it)) }
             .let { ApiUser(it) }
             .let { GetUserResponse(it) }
 }
