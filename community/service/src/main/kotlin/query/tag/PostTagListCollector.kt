@@ -24,8 +24,7 @@ class PostTagListCollector(
     override fun multiGet(ids: Collection<PostId>): Map<PostId, PostTagList> =
         postRepository.findAll(spec = postIds(ids) * fetchTags())
             .also { posts -> posts.throwIfNotContainIds(ids) }
-            .map { post -> post.id to post.toPostTagList() }
-            .toMap()
+            .associate { post -> post.id to post.toPostTagList() }
 
     private fun PostEntity.toPostTagList() = PostTagList(
         postId = id,

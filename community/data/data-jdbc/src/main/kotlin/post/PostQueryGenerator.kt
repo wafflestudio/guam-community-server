@@ -41,6 +41,12 @@ interface PostQueryGenerator : QueryGenerator<PostEntity> {
         criteriaBuilder.conjunction()
     }
 
+    fun fetchScraps(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
+        query.distinct(true)
+        root.fetch(PostEntity_.scraps, JoinType.LEFT)
+        criteriaBuilder.conjunction()
+    }
+
     fun Collection<PostEntity>.throwIfNotContainIds(postIds: Collection<Long>) = apply {
         val missed = postIds - map { it.id }
 

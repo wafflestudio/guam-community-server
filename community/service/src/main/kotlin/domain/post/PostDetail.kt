@@ -14,7 +14,7 @@ data class PostDetail(
     val title: String,
     val content: String,
     val imagePaths: List<String>,
-    val tags: List<PostTag>,
+    val categories: List<PostTag>, // todo 엔티티도 네이밍 변경
     val likeCount: Int,
     val commentCount: Int,
     val comments: List<PostComment>,
