@@ -16,9 +16,10 @@ data class PostPreview(
     val tags: List<PostTag>,
     val likeCount: Int,
     val commentCount: Int,
-//    val viewCount: Int,
     val scrapCount: Int,
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val isLiked: Boolean,
+    val isScrapped: Boolean,
 )
