@@ -7,7 +7,7 @@ data class SendPushRequest(
     val imagePath: String?,
 )
 
-fun sendPushRequest(proto: UserServiceProto.SendUserPush): SendPushRequest =
+fun SendPushRequest(proto: UserServiceProto.SendUserPush): SendPushRequest =
     SendPushRequest(
         userIds = proto.userIdsList,
         title = proto.title,

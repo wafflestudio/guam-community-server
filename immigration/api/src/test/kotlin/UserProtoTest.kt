@@ -3,6 +3,7 @@ package waffle.guam.immigration.api
 import org.junit.jupiter.api.Test
 import waffle.guam.immigration.api.user.GetUserRequest
 import waffle.guam.immigration.api.user.GetUserResponse
+import waffle.guam.immigration.api.user.UpdateUserDeviceRequest
 import waffle.guam.immigration.api.user.User
 import waffle.guam.immigration.api.user.toProto
 
@@ -38,5 +39,12 @@ class UserProtoTest {
         val response3 = GetUserResponse(null)
 
         assert(response3 == GetUserResponse(response3.toProto()))
+    }
+
+    @Test
+    fun updateUserDeviceRequest() {
+        val request = UpdateUserDeviceRequest(token = "a", deviceId = "b")
+
+        assert(request == UpdateUserDeviceRequest(request.toProto()))
     }
 }

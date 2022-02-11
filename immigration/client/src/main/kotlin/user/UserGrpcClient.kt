@@ -10,7 +10,7 @@ import waffle.guam.immigration.api.user.UserService
 import waffle.guam.immigration.api.user.UserServiceGrpcKt
 import waffle.guam.immigration.api.user.toProto
 
-class UserGrpcClient internal constructor(channel: Channel) : UserService {
+class UserGrpcClient constructor(channel: Channel) : UserService {
     constructor(env: String) : this(
         when (env) {
             "dev" -> {
