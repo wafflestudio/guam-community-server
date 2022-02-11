@@ -17,7 +17,7 @@ data class PostPreview(
     val likeCount: Int,
     val commentCount: Int,
 //    val viewCount: Int,
-//    val scrapCount: Int,
+    val scrapCount: Int,
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
