@@ -8,6 +8,7 @@ import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.command.post.PostCreated
 import waffle.guam.community.service.command.post.PostDeleted
+import waffle.guam.community.service.command.post.PostUpdated
 import waffle.guam.community.service.domain.post.PostList
 import waffle.guam.community.service.query.Collector
 
@@ -21,7 +22,7 @@ class RecentPostListCollector(
 
     override fun get(id: BoardId): PostList =
         postListCollector.get(
-            PostListCollector.Query(boardId = id, size = RECENT_POSTS_SIZE, afterPostId = 0L)
+            PostListCollector.Query(boardId = id.takeIf { it > 0L }, size = RECENT_POSTS_SIZE, afterPostId = 0L)
         )
 
     @Service
@@ -50,6 +51,11 @@ class RecentPostListCollector(
             logger.info("Cache reloaded with $postDeleted")
         }
 
-        // TODO: reload when post updated
+        @EventListener
+        fun reload(postUpdated: PostUpdated) {
+            cache.reload(postUpdated.boardId)
+            cache.reload(0L)
+            logger.info("Cache reloaded with $postUpdated")
+        }
     }
 }

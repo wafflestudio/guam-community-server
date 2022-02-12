@@ -46,7 +46,7 @@ class PostDisplayer(
         } else {
             // No cache for old posts
             postListCollector.get(
-                PostListCollector.Query(boardId = boardId, afterPostId = afterPostId, size = 20)
+                PostListCollector.Query(boardId = boardId.takeIf { it > 0L }, afterPostId = afterPostId, size = 20)
             ).fillData(userId)
         }
 
@@ -100,7 +100,7 @@ class PostDisplayer(
                     status = it.status,
                     categories = tagMap.await()[it.id]?.content ?: emptyList(),
                     likeCount = likeMap.await()[it.id]?.content?.size ?: 0,
-                    commentCount = commentMap.await()[it.id] ?.content?.size ?: 0,
+                    commentCount = commentMap.await()[it.id]?.content?.size ?: 0,
                     scrapCount = scrapMap.await()[it.id]?.content?.size ?: 0,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt,

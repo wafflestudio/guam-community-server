@@ -17,7 +17,7 @@ interface PostQueryGenerator : QueryGenerator<PostEntity> {
 
     fun statusIn(statuses: List<PostEntity.Status>): Specification<PostEntity> = `in`(PostEntity_.STATUS, statuses)
 
-    fun boardId(boardId: Long): Specification<PostEntity> = eq(PostEntity_.BOARD_ID, boardId)
+    fun boardId(boardId: Long?): Specification<PostEntity> = eq(PostEntity_.BOARD_ID, boardId)
 
     fun fetchTags(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
         query.distinct(true)
