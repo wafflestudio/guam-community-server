@@ -16,3 +16,5 @@ include(":immigration:server")
 include(":immigration:client")
 
 include(":gateway")
+
+include(":deploy")
