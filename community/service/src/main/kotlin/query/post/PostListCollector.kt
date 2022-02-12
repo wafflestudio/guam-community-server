@@ -22,7 +22,7 @@ class PostListCollector(
     }
 
     data class Query(
-        val boardId: Long,
+        val boardId: Long?,
         val afterPostId: Long,
         val size: Int,
     )
