@@ -12,7 +12,7 @@ data class PostPreview(
     val user: User,
     val title: String,
     val content: String,
-    val isImageIncluded: Boolean,
+    val imagePaths: List<String>,
     val categories: List<PostTag>,
     val likeCount: Int,
     val commentCount: Int,

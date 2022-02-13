@@ -96,7 +96,7 @@ class PostDisplayer(
                     user = userMap.await()[it.userId]!!,
                     title = it.title,
                     content = it.content,
-                    isImageIncluded = it.isImageIncluded,
+                    imagePaths = it.imagePaths,
                     status = it.status,
                     categories = tagMap.await()[it.id]?.content ?: emptyList(),
                     likeCount = likeMap.await()[it.id]?.content?.size ?: 0,
