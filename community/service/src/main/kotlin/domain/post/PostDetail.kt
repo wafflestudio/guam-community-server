@@ -17,8 +17,11 @@ data class PostDetail(
     val categories: List<PostTag>, // todo 엔티티도 네이밍 변경
     val likeCount: Int,
     val commentCount: Int,
+    val scrapCount: Int,
     val comments: List<PostComment>,
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val isLiked: Boolean,
+    val isScrapped: Boolean,
 )

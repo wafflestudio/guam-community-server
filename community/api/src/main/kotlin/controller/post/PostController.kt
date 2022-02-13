@@ -64,5 +64,5 @@ class PostController(
     fun getPost(
         userContext: UserContext,
         @PathVariable postId: Long,
-    ) = postDisplayer.getPostDetail(postId = postId)
+    ) = postDisplayer.getPostDetail(postId = postId, userId = userContext.id)
 }
