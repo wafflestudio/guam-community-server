@@ -30,12 +30,12 @@ class UserServiceImpl(
     @Transactional
     override suspend fun updateUserDevice(request: UpdateUserDeviceRequest) =
         tokenHandler.getFirebaseUid(request.token)
-            .let { userRepository.findByFirebaseId(it) ?: throw UserNotFound() }
-            .run { deviceId = request.deviceId }
+            .let { userRepository.findByFirebaseUserId(it) ?: throw UserNotFound() }
+            .run { firebaseDeviceId = request.deviceId }
 
     override suspend fun sendPush(request: SendPushRequest) =
         userRepository.findAllById(request.userIds)
-            .mapNotNull { user -> user.deviceId }
+            .mapNotNull { user -> user.firebaseDeviceId }
             .toList()
             .let { sendFcmPush(it, request.title, request.body, request.imagePath) }
 
