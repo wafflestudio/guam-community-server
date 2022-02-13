@@ -1,5 +1,6 @@
 package waffle.guam.community.service.domain.post
 
+import waffle.guam.community.data.jdbc.board.BoardName
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.domain.tag.PostTag
@@ -22,4 +23,6 @@ data class PostPreview(
     val updatedAt: Instant,
     val isLiked: Boolean,
     val isScrapped: Boolean,
-)
+) {
+    val boardType = BoardName.of(boardId)
+}
