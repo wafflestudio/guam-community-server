@@ -29,7 +29,7 @@ class GuamGatewayFilterFactory(
         // Bearer token
         val token = exchange.request.headers.getFirst("Authorization")
             ?.split(" ")
-            ?.get(0)
+            ?.getOrNull(1)
             .let(::requireNotNull)
 
         val user = immigrationClient

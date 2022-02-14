@@ -30,13 +30,6 @@ class UpdateUserHandler(
         return UserUpdated(userEntity)
     }
 
-    @Transactional
-    fun updateToken(userId: Long, newDeviceToken: String): UserDeviceTokenUpdated {
-        val userEntity = userAPIRepository.find(userId) ?: throw UserNotFound(userId)
-//        userEntity.deviceToken = newDeviceToken Todo Immigration으로 옮기기
-        return UserDeviceTokenUpdated(userId, newDeviceToken)
-    }
-
     private fun UserEntity.updateBy(cmd: UpdateUser) {
         nickname = cmd.nickname ?: nickname
         introduction = cmd.introduction ?: introduction

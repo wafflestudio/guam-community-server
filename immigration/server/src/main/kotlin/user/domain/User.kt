@@ -8,5 +8,5 @@ data class User(
     @Id
     val id: Long = 0L,
     val firebaseUserId: String,
-    val firebaseDeviceId: String? = null,
+    var firebaseDeviceId: String? = null,
 )
