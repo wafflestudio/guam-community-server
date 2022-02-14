@@ -68,8 +68,8 @@ class PostDisplayer(
             )
         ).fillData(userId)
 
-    fun getPostDetail(postId: Long): PostDetail =
-        postCollector.get(postId).fillData()
+    fun getPostDetail(postId: Long, userId: Long): PostDetail =
+        postCollector.get(postId).fillData(userId)
 
     fun getUserPostList(
         userId: Long,
@@ -96,7 +96,7 @@ class PostDisplayer(
                     user = userMap.await()[it.userId]!!,
                     title = it.title,
                     content = it.content,
-                    isImageIncluded = it.isImageIncluded,
+                    imagePaths = it.imagePaths,
                     status = it.status,
                     categories = tagMap.await()[it.id]?.content ?: emptyList(),
                     likeCount = likeMap.await()[it.id]?.content?.size ?: 0,
@@ -104,16 +104,18 @@ class PostDisplayer(
                     scrapCount = scrapMap.await()[it.id]?.content?.size ?: 0,
                     createdAt = it.createdAt,
                     updatedAt = it.updatedAt,
-                    isLiked = likeMap.await()[it.id]?.content?.find { like -> like.userId == userId } != null,
-                    isScrapped = scrapMap.await()[it.id]?.content?.find { scrap -> scrap.userId == userId } != null,
+                    isLiked = likeMap.await()[it.id]?.content?.any { like -> like.userId == userId } ?: false,
+                    isScrapped = scrapMap.await()[it.id]?.content?.any { scrap -> scrap.userId == userId } ?: false,
                 )
             },
             hasNext = hasNext
         )
     }
 
-    private fun Post.fillData(): PostDetail {
+    private fun Post.fillData(userId: Long): PostDetail {
         val commentList = postCommentListCollector.get(id = id)
+        val likes = postLikeListCollector.get(id = id)
+        val scraps = postScrapListCollector.get(id = id)
 
         return PostDetail(
             id = id,
@@ -123,12 +125,15 @@ class PostDisplayer(
             content = content,
             imagePaths = imagePaths,
             categories = postTagListCollector.get(id = id).content,
-            likeCount = postLikeListCollector.get(id = id).content.size,
+            likeCount = likes.content.size,
             commentCount = commentList.content.size,
             comments = commentList.content,
             status = status,
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
+            isLiked = likes.content.any { it.userId == userId },
+            isScrapped = scraps.content.any { it.userId == userId },
+            scrapCount = scraps.content.size,
         )
     }
 }

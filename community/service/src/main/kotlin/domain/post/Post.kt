@@ -16,10 +16,7 @@ data class Post(
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
-) {
-    val isImageIncluded: Boolean
-        get() = imagePaths.isNotEmpty()
-}
+)
 
 fun Post(e: PostEntity) = Post(
     id = e.id,

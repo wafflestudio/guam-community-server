@@ -1,5 +1,6 @@
 package waffle.guam.community.service.domain.post
 
+import waffle.guam.community.data.jdbc.board.BoardName
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
@@ -17,7 +18,9 @@ data class MyPostView(
     val status: PostEntity.Status,
     val createdAt: Instant,
     val updatedAt: Instant,
-)
+) {
+    val boardType = BoardName.of(boardId)
+}
 
 fun MyPostView(projection: Projection): MyPostView =
     MyPostView(

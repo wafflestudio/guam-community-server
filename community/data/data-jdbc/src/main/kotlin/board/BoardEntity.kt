@@ -15,3 +15,12 @@ class BoardEntity(
 
     val title: String
 )
+
+// 보드엔티티 아예 필요없을 것 같긴 한데 일단은
+enum class BoardName(val idx: Long) {
+    ANONYMOUS(1), FREE(2), CAREER(3), INFORMATION(4), AD(5);
+
+    companion object {
+        fun of(idx: Long): BoardName = values().find { it.idx == idx } ?: throw IllegalArgumentException("INVALID BOARD ID")
+    }
+}

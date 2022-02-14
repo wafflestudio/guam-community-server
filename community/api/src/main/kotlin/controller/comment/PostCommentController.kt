@@ -1,5 +1,6 @@
 package waffle.guam.community.controller.comment
 
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,13 +12,21 @@ import waffle.guam.community.service.command.comment.CreatePostComment
 import waffle.guam.community.service.command.comment.CreatePostCommentHandler
 import waffle.guam.community.service.command.comment.DeletePostComment
 import waffle.guam.community.service.command.comment.DeletePostCommentHandler
+import waffle.guam.community.service.query.comment.PostCommentListCollector
 
 @RequestMapping("/api/v1/posts")
 @RestController
 class PostCommentController(
     private val createPostCommentHandler: CreatePostCommentHandler,
-    private val deletePostCommentHandler: DeletePostCommentHandler
+    private val deletePostCommentHandler: DeletePostCommentHandler,
+    private val postCommentListCollector: PostCommentListCollector.CacheImpl,
 ) {
+    @GetMapping("/{postId}/comments")
+    fun get(
+        userContext: UserContext,
+        @PathVariable postId: Long,
+    ) = postCommentListCollector.get(postId)
+
     @PostMapping("/{postId}/comments")
     fun create(
         userContext: UserContext,
