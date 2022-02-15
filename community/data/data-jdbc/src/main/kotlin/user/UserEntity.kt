@@ -33,7 +33,7 @@ class UserEntity(
     @Convert(converter = ImagePathConverter::class)
     var profileImage: String? = null,
 
-    @OneToMany(mappedBy = "data.userId", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "data.userId", fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
     val interests: MutableList<InterestEntity> = mutableListOf(),
 ) {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

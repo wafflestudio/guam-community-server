@@ -1,10 +1,10 @@
 package waffle.guam.community.service.command.user
 
-import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import waffle.guam.community.Log
+import waffle.guam.community.data.jdbc.interest.name
 import waffle.guam.community.data.jdbc.user.UserAPIRepository
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.service.UserNotFound
@@ -14,7 +14,7 @@ import waffle.guam.community.service.command.Result
 import waffle.guam.community.service.command.image.UploadImageList
 import waffle.guam.community.service.command.image.UploadImageListHandler
 import waffle.guam.community.service.domain.image.ImageType
-import java.time.Instant
+import waffle.guam.community.service.domain.user.User
 
 @Service
 class UpdateUserHandler(
@@ -40,11 +40,6 @@ class UpdateUserHandler(
             images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
         }
     }
-
-    @EventListener
-    fun userDeviceTokenUpdated(event: UserDeviceTokenUpdated) {
-        log.info("DEVICE TOKEN UPDATED(USER=${event.userId}, TOKEN=${event.newDeviceToken}): ${Instant.now()}")
-    }
 }
 
 data class UpdateUser(
@@ -57,23 +52,24 @@ data class UpdateUser(
 ) : Command
 
 data class UserUpdated(
-    val userId: Long,
+    val id: Long,
     val nickname: String?,
     val introduction: String?,
     val githubId: String?,
     val blogUrl: String?,
+    val email: String?,
+    val profileImage: String?,
+    val interests: List<User.Interest>,
 ) : Result
 
 fun UserUpdated(e: UserEntity) =
     UserUpdated(
-        userId = e.id,
+        id = e.id,
         nickname = e.nickname,
         introduction = e.introduction,
         githubId = e.githubId,
         blogUrl = e.blogUrl,
+        email = e.email,
+        profileImage = e.profileImage,
+        interests = e.interests.map { User.Interest(it.name) },
     )
-
-data class UserDeviceTokenUpdated(
-    val userId: Long,
-    val newDeviceToken: String,
-) : Result

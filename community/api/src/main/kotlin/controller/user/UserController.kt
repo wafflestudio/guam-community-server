@@ -44,7 +44,7 @@ class UserController(
         userContext: UserContext,
         @PathVariable userId: Long,
         @RequestBody request: UpdateUserRequest,
-    ) = updateUserHandler.handle(request.toCommand(userId))
+    ) = updateUserHandler.handle(request.toCommand(userContext.id, userId))
 
     @PostMapping("{userId}/interest")
     fun addInterest(
