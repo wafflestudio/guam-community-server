@@ -56,7 +56,7 @@ class UserCollector(
 
         @EventListener
         fun reload(userUpdated: UserUpdated) {
-            cache.reload(userUpdated.userId)
+            cache.reload(userUpdated.id)
             logger.info("Cache reloaded with $userUpdated")
         }
     }
