@@ -20,7 +20,7 @@ val InterestEntity.name
     get() = this.data.name
 
 @Embeddable
-class InterestId(
+data class InterestId(
     val userId: Long,
 
     @Column(length = 10)

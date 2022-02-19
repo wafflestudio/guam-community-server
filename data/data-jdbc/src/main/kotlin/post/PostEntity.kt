@@ -1,6 +1,5 @@
 package waffle.guam.community.data.jdbc.post
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.common.ImagePathsConverter
@@ -11,7 +10,6 @@ import waffle.guam.community.data.jdbc.user.UserEntity
 import javax.persistence.CascadeType
 import javax.persistence.Convert
 import javax.persistence.Entity
-import javax.persistence.EntityListeners
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
@@ -22,7 +20,6 @@ import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
-@EntityListeners(AuditingEntityListener::class)
 @Table(name = "posts")
 @Entity
 class PostEntity(

@@ -5,13 +5,13 @@ Content-Type: application/json
 
 GET {{ base_url }}/users/me
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 1
 
 ### USER_DETAIL - ID: 1
 
 GET {{ base_url }}/users/1
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 2
 
 ### POST_DETAIL - ID: 1
 
@@ -21,7 +21,7 @@ GET {{ base_url }}/posts/1
 
 PATCH  {{ base_url }}/users/1
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 1
 
 {
   "nickname": "steve"
@@ -31,7 +31,7 @@ Authorization: {{ token }}
 
 POST {{ base_url }}/users/1/stack
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 1
 
 {
   "name": "스프링"
@@ -41,16 +41,16 @@ Authorization: {{ token }}
 
 DELETE {{ base_url }}/users/1/stack?name=스프링
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 1
 
 ### GET USER'S POSTS
 
 GET {{ base_url }}/users/1/posts
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 1
 
 ### GET USER'S COMMENTS
 
-GET {{ base_url }}/users/2/comments
+GET {{ base_url }}/users/3/comments
 Content-Type: application/json
-Authorization: {{ token }}
+X-GATEWAY-USER-ID: 1
