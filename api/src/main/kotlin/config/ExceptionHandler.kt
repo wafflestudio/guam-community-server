@@ -1,5 +1,6 @@
 package waffle.guam.community.config
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
@@ -11,7 +12,9 @@ import waffle.guam.community.common.GuamException
 import javax.persistence.EntityExistsException
 
 @ControllerAdvice
-class ExceptionHandler {
+class ExceptionHandler(
+    private val eventPublisher: ApplicationEventPublisher,
+) {
     companion object : Log
 
     @ExceptionHandler(value = [EntityExistsException::class, DataIntegrityViolationException::class])
@@ -25,4 +28,12 @@ class ExceptionHandler {
     @ExceptionHandler(value = [GuamException::class])
     fun guamError(e: GuamException) =
         ResponseEntity(e.message, HttpStatus.valueOf(e.status))
+
+    @ExceptionHandler(value = [Exception::class])
+    fun unHandledException(exc: Exception) {
+        eventPublisher.publishEvent(UnHandledException(exc))
+        throw exc
+    }
+
+    data class UnHandledException(val exc: Throwable)
 }
