@@ -21,11 +21,11 @@ class PostLikeController(
     fun create(
         userContext: UserContext,
         @PathVariable postId: Long,
-    ) = createPostLikeHandler.handle(CreatePostLike(postId = postId, userId = 1L))
+    ) = createPostLikeHandler.handle(CreatePostLike(postId = postId, userId = userContext.id))
 
     @DeleteMapping("/{postId}/likes")
     fun delete(
         userContext: UserContext,
         @PathVariable postId: Long
-    ) = deletePostLikeHandler.handle(DeletePostLike(postId = postId, userId = 1L))
+    ) = deletePostLikeHandler.handle(DeletePostLike(postId = postId, userId = userContext.id))
 }

@@ -42,12 +42,14 @@ class RecentPostListCollector(
         @EventListener
         fun reload(postCreated: PostCreated) {
             cache.reload(postCreated.boardId)
+            cache.reload(0L)
             logger.info("Cache reloaded with $postCreated")
         }
 
         @EventListener
         fun reload(postDeleted: PostDeleted) {
             cache.reload(postDeleted.boardId)
+            cache.reload(0L)
             logger.info("Cache reloaded with $postDeleted")
         }
 

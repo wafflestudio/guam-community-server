@@ -22,12 +22,12 @@ class PostCommentLikeController(
         userContext: UserContext,
         @PathVariable postId: Long,
         @PathVariable commentId: Long,
-    ) = createPostCommentLikeHandler.handle(CreatePostCommentLike(postId = postId, commentId = commentId, userId = 1L))
+    ) = createPostCommentLikeHandler.handle(CreatePostCommentLike(postId = postId, commentId = commentId, userId = userContext.id))
 
     @DeleteMapping("/{postId}/comments/{commentId}/likes")
     fun delete(
         userContext: UserContext,
         @PathVariable postId: Long,
         @PathVariable commentId: Long,
-    ) = deletePostCommentLikeHandler.handle(DeletePostCommentLike(postId = postId, commentId = commentId, userId = 1L))
+    ) = deletePostCommentLikeHandler.handle(DeletePostCommentLike(postId = postId, commentId = commentId, userId = userContext.id))
 }
