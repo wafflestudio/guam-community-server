@@ -1,6 +1,7 @@
 package waffle.guam.community.service.query.tag
 
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
@@ -19,7 +20,7 @@ class PostTagListCollector(
     override fun get(id: PostId): PostTagList =
         postRepository.findOne(spec = postId(id) * fetchTags())
             ?.toPostTagList()
-            ?: throw Exception("POST NOT FOUND ($id)")
+            ?: throw PostNotFound(id)
 
     override fun multiGet(ids: Collection<PostId>): Map<PostId, PostTagList> =
         postRepository.findAll(spec = postIds(ids) * fetchTags())

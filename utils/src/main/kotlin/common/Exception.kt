@@ -11,6 +11,7 @@ class Forbidden(message: String = "허용되지 않은 요청입니다.") :
 // HTTP 404
 class UserNotFound(message: String = "해당 유저를 찾을 수 없습니다.") : GuamNotFound(message) {
     constructor(userId: Long) : this("해당 유저를 찾을 수 없습니다 [ID : $userId]")
+    constructor(userIds: Collection<Long>) : this("해당 유저들을 찾을 수 없습니다 [ID : $userIds]")
 }
 
 class InterestNotFound(message: String = "해당 관심사를 찾을 수 없습니다.") : GuamNotFound(message) {
@@ -23,6 +24,11 @@ class TagNotFound(message: String = "해당 태그를 찾을 수 없습니다.")
 
 class PostNotFound(message: String = "해당 게시물을 찾을 수 없습니다.") : GuamNotFound(message) {
     constructor(postId: Long) : this("해당 게시물을 찾을 수 없습니다 [ID : $postId]")
+    constructor(postIds: Collection<Long>) : this("해당 게시물 목록을 찾을 수 없습니다 [ID : $postIds]")
+}
+
+class PostCommentNotFound(message: String = "해당 댓글을 찾을 수 없습니다.") : GuamNotFound(message) {
+    constructor(commentId: Long) : this("해당 댓글을 찾을 수 없습니다 [ID : $commentId]")
 }
 
 // HTTP 409

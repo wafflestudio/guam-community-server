@@ -1,6 +1,8 @@
 package waffle.guam.community.service.command.like
 
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.GuamConflict
+import waffle.guam.community.common.PostCommentNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentQueryGenerator
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
@@ -17,7 +19,7 @@ class CreatePostCommentLikeHandler(
         val (postId, commentId, userId) = command
 
         val comment = postCommentRepository.findOne(commentId(commentId) * fetchCommentLikes())
-            ?: throw Exception("COMMENT NOT FOUND $commentId")
+            ?: throw PostCommentNotFound(commentId)
 
         comment.addLikeBy(userId)
 
@@ -30,7 +32,7 @@ class CreatePostCommentLikeHandler(
 
     private fun PostCommentEntity.addLikeBy(userId: Long) {
         if (likes.map { it.userId }.contains(userId)) {
-            throw Exception("USER $userId ALREADY LIKED COMMENT $id")
+            throw GuamConflict("USER $userId ALREADY LIKED COMMENT $id")
         }
 
         likes.add(PostCommentLikeEntity(comment = this, userId = userId))

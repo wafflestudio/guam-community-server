@@ -1,6 +1,9 @@
 package waffle.guam.community.service.command.comment
 
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.Forbidden
+import waffle.guam.community.common.PostCommentNotFound
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -16,10 +19,10 @@ class UpdatePostCommentHandler(
         val (postId, userId, commentId, content) = command
 
         val post = postRepository.findOne(postId(postId) * fetchComments())
-            ?: throw Exception("POST NOT FOUND $postId")
+            ?: throw PostNotFound(postId)
 
         val targetComment = post.comments.find { it.id == commentId }
-            ?: throw Exception("COMMENT $commentId NOT FOUND in POST $postId")
+            ?: throw PostCommentNotFound(commentId)
 
         targetComment.updateBy(userId, content)
 
@@ -28,7 +31,7 @@ class UpdatePostCommentHandler(
 
     private fun PostCommentEntity.updateBy(userId: Long, content: String) {
         if (this.user.id != userId) {
-            throw Exception("USER NOT AUTHORIZED TO UPDATE COMMENT $id")
+            throw Forbidden("USER NOT AUTHORIZED TO UPDATE COMMENT $id")
         }
 
         this.content = content

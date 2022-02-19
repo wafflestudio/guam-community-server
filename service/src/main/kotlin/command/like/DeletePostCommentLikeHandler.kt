@@ -1,6 +1,8 @@
 package waffle.guam.community.service.command.like
 
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.PostCommentNotFound
+import waffle.guam.community.common.PostLikeNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentQueryGenerator
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
@@ -16,7 +18,7 @@ class DeletePostCommentLikeHandler(
         val (postId, commentId, userId) = command
 
         val comment = postCommentRepository.findOne(commentId(commentId) * fetchCommentLikes())
-            ?: throw Exception("COMMENT NOT FOUND $commentId")
+            ?: throw PostCommentNotFound(commentId)
 
         comment.deleteLikeBy(userId)
 
@@ -28,7 +30,7 @@ class DeletePostCommentLikeHandler(
     }
 
     private fun PostCommentEntity.deleteLikeBy(userId: Long) {
-        val targetLike = likes.find { it.userId == userId } ?: throw Exception("LIKE NOT FOUND")
+        val targetLike = likes.find { it.userId == userId } ?: throw PostLikeNotFound()
 
         likes.remove(targetLike)
     }

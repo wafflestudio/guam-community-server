@@ -3,6 +3,7 @@ package waffle.guam.community.service.query.like
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -19,7 +20,7 @@ class PostLikeListCollector(
     override fun get(id: PostId): PostLikeList =
         postRepository.findOne(spec = postId(id) * fetchLikes())
             ?.let { PostLikeList(it) }
-            ?: throw Exception("POST NOT FOUND ($id)")
+            ?: throw PostNotFound(id)
 
     override fun multiGet(ids: Collection<PostId>): Map<PostId, PostLikeList> =
         postRepository.findAll(spec = postIds(ids) * fetchLikes())
