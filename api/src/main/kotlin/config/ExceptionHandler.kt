@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import waffle.guam.community.Log
-import waffle.guam.community.service.GuamException
+import waffle.guam.community.common.GuamException
 import javax.persistence.EntityExistsException
 
 @ControllerAdvice
@@ -24,5 +24,5 @@ class ExceptionHandler {
 
     @ExceptionHandler(value = [GuamException::class])
     fun guamError(e: GuamException) =
-        ResponseEntity(e.message, e.status)
+        ResponseEntity(e.message, HttpStatus.valueOf(e.status))
 }

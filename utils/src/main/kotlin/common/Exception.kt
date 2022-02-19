@@ -1,6 +1,4 @@
-package waffle.guam.community.service
-
-import waffle.guam.community.data.jdbc.interest.InterestId
+package waffle.guam.community.common
 
 // HTTP 400
 class InvalidArgumentException(message: String = "잘못된 인자입니다.") :
@@ -16,7 +14,7 @@ class UserNotFound(message: String = "해당 유저를 찾을 수 없습니다."
 }
 
 class InterestNotFound(message: String = "해당 관심사를 찾을 수 없습니다.") : GuamNotFound(message) {
-    constructor(id: InterestId) : this("해당 관심사를 찾을 수 없습니다 [USER_ID : ${id.userId}, NAME : ${id.name}]")
+    constructor(userId: Long, name: String) : this("해당 관심사를 찾을 수 없습니다 [USER_ID : $userId, NAME : $name]")
 }
 
 class TagNotFound(message: String = "해당 태그를 찾을 수 없습니다.") : GuamNotFound(message) {

@@ -1,7 +1,7 @@
 package waffle.guam.community.controller.user.req
 
 import org.springframework.web.multipart.MultipartFile
-import waffle.guam.community.service.GuamForbidden
+import waffle.guam.community.common.GuamForbidden
 import waffle.guam.community.service.command.user.UpdateUser
 
 data class UpdateUserRequest(

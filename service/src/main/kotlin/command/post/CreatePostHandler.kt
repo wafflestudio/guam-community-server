@@ -4,13 +4,13 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import waffle.guam.community.common.TagNotFound
+import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.tag.TagRepository
 import waffle.guam.community.data.jdbc.user.UserRepository
-import waffle.guam.community.service.TagNotFound
-import waffle.guam.community.service.UserNotFound
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result

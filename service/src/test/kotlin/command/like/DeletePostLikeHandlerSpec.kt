@@ -9,9 +9,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.PostLikeNotFound
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.post.PostRepository
-import waffle.guam.community.service.PostLikeNotFound
-import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.like.DeletePostLike
 import waffle.guam.community.service.command.like.DeletePostLikeHandler
 

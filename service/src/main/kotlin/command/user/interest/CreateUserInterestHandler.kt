@@ -2,9 +2,9 @@ package waffle.guam.community.service.command.user.interest
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.interest.InterestEntity
 import waffle.guam.community.data.jdbc.user.UserAPIRepository
-import waffle.guam.community.service.UserNotFound
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result

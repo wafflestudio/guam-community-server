@@ -3,11 +3,11 @@ package waffle.guam.community.service.command.scrap
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.common.PostScrapNotFound
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.PostId
-import waffle.guam.community.service.PostNotFound
-import waffle.guam.community.service.PostScrapNotFound
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler

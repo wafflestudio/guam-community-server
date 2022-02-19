@@ -9,10 +9,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.Forbidden
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
-import waffle.guam.community.service.Forbidden
-import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
 
