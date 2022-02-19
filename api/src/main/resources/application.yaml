@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: classpath:application-db.yaml
   profiles:
     include:
       - db
