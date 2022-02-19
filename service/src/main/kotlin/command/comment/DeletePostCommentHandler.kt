@@ -2,6 +2,9 @@ package waffle.guam.community.service.command.comment
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.Forbidden
+import waffle.guam.community.common.PostCommentNotFound
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
@@ -20,7 +23,7 @@ class DeletePostCommentHandler(
         val (postId, commentId, userId) = command
 
         val post = postRepository.findOne(spec = postId(postId) * fetchComments())
-            ?: throw Exception("POST NOT FOUND $postId")
+            ?: throw PostNotFound(postId)
 
         post.deleteCommentBy(commentId, userId)
 
@@ -29,10 +32,10 @@ class DeletePostCommentHandler(
 
     private fun PostEntity.deleteCommentBy(commentId: Long, userId: Long) {
         val targetComment = comments.find { it.id == commentId }
-            ?: throw Exception("COMMENT NOT FOUND $commentId")
+            ?: throw PostCommentNotFound(commentId)
 
         if (targetComment.user.id != userId) {
-            throw Exception("USER $userId NOT AUTHORIZED TO COMMENT $commentId")
+            throw Forbidden("USER $userId NOT AUTHORIZED TO COMMENT $commentId")
         }
 
         targetComment.status = PostCommentEntity.Status.DELETED

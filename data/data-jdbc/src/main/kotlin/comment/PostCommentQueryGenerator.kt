@@ -1,6 +1,7 @@
 package waffle.guam.community.data.jdbc.comment
 
 import org.springframework.data.jpa.domain.Specification
+import waffle.guam.community.common.PostCommentNotFound
 import waffle.guam.community.data.jdbc.QueryGenerator
 import javax.persistence.criteria.JoinType
 
@@ -19,7 +20,7 @@ interface PostCommentQueryGenerator : QueryGenerator<PostCommentEntity> {
         val missed = commentIds - map { it.id }
 
         if (missed.isNotEmpty()) {
-            throw Exception("COMMENT NOT FOUND $missed")
+            throw PostCommentNotFound()
         }
     }
 }

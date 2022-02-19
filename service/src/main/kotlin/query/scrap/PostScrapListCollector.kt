@@ -2,13 +2,13 @@ package waffle.guam.community.service.query.scrap
 
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.scrap.PostScrapEntity
 import waffle.guam.community.service.PostId
-import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.scrap.PostScrapCreated
 import waffle.guam.community.service.command.scrap.PostScrapDeleted
 import waffle.guam.community.service.domain.scrap.PostScrap

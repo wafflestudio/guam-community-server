@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserQueryGenerator
@@ -21,7 +22,7 @@ class UserCollector(
     override fun get(id: UserId): User =
         userRepository.findByIdOrNull(id)
             ?.let(::User)
-            ?: throw Exception("USER NOT FOUND ($id)")
+            ?: throw UserNotFound(id)
 
     override fun multiGet(ids: Collection<UserId>): Map<UserId, User> =
         userRepository.findAllById(ids)
@@ -32,7 +33,7 @@ class UserCollector(
         val missed = ids - map { it.id }.toSet()
 
         if (missed.isNotEmpty()) {
-            throw Exception("USER NOT FOUND $missed")
+            throw UserNotFound(missed)
         }
     }
 

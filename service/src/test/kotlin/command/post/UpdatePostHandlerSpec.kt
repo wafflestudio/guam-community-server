@@ -9,11 +9,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.Forbidden
+import waffle.guam.community.common.InvalidArgumentException
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.TagRepository
-import waffle.guam.community.service.Forbidden
-import waffle.guam.community.service.InvalidArgumentException
-import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.post.UpdatePost
 import waffle.guam.community.service.command.post.UpdatePostHandler
 

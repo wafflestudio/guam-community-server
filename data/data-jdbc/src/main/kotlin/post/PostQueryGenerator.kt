@@ -1,6 +1,7 @@
 package waffle.guam.community.data.jdbc.post
 
 import org.springframework.data.jpa.domain.Specification
+import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.QueryGenerator
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity_
 import waffle.guam.community.data.jdbc.tag.PostTagEntity_
@@ -51,7 +52,7 @@ interface PostQueryGenerator : QueryGenerator<PostEntity> {
         val missed = postIds - map { it.id }
 
         if (missed.isNotEmpty()) {
-            throw Exception("POST NOT FOUND $missed")
+            throw PostNotFound(missed)
         }
     }
 }

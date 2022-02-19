@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.common.PostScrapConflict
+import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.scrap.PostScrapEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
-import waffle.guam.community.service.PostNotFound
-import waffle.guam.community.service.PostScrapConflict
-import waffle.guam.community.service.UserNotFound
 import waffle.guam.community.service.command.scrap.CreatePostScrap
 import waffle.guam.community.service.command.scrap.CreatePostScrapHandler
 

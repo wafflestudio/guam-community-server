@@ -3,6 +3,7 @@ package waffle.guam.community.service.query.like
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.PostCommentNotFound
 import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.comment.PostCommentQueryGenerator
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
@@ -18,7 +19,7 @@ class PostCommentLikeCollector(
 ) : MultiCollector<PostCommentLikeList, CommentId>, PostCommentQueryGenerator {
     override fun get(id: CommentId): PostCommentLikeList {
         val comment = postCommentRepository.findOne(commentId(id) * fetchCommentLikes())
-            ?: throw Exception("COMMENT NOT FOUND $id")
+            ?: throw PostCommentNotFound(id)
 
         return PostCommentLikeList(comment)
     }

@@ -2,14 +2,15 @@ package waffle.guam.community.service.command.post
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import waffle.guam.community.common.Forbidden
+import waffle.guam.community.common.InvalidArgumentException
+import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.common.TagNotFound
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.tag.TagRepository
-import waffle.guam.community.service.Forbidden
-import waffle.guam.community.service.InvalidArgumentException
-import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
@@ -58,7 +59,7 @@ class UpdatePostHandler(
     }
 
     private fun PostEntity.updateTag(newTagId: Long) {
-        val tag = tagRepository.findByIdOrNull(newTagId) ?: throw Exception("TAG NOT FOUND $newTagId")
+        val tag = tagRepository.findByIdOrNull(newTagId) ?: throw TagNotFound(newTagId)
 
         tags.removeAll { true }
         tags.add(PostTagEntity(post = this, tag = tag))

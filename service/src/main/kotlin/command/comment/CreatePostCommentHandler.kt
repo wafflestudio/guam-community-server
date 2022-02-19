@@ -3,6 +3,8 @@ package waffle.guam.community.service.command.comment
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -23,8 +25,8 @@ class CreatePostCommentHandler(
     override fun handle(command: CreatePostComment): PostCommentCreated {
         val (postId, userId, content) = command
 
-        val post = postRepository.findByIdOrNull(postId) ?: throw Exception("POST NOT FOUND $postId")
-        val user = userRepository.findByIdOrNull(userId) ?: throw Exception("USER NOT FOUND $userId")
+        val post = postRepository.findByIdOrNull(postId) ?: throw PostNotFound(postId)
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFound(userId)
 
         post.addCommentBy(user, content)
 
