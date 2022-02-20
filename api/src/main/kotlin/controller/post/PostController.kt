@@ -26,13 +26,13 @@ class PostController(
     fun createPost(
         userContext: UserContext,
         @ModelAttribute req: CreatePostRequest,
-    ) = createPostHandler.handle(req.toCommand(1L))
+    ) = createPostHandler.handle(req.toCommand(userContext.id))
 
     @DeleteMapping("/{postId}")
     fun deletePost(
         userContext: UserContext,
         @PathVariable postId: Long,
-    ) = deletePostHandler.handle(DeletePost(postId = postId, userId = 1L))
+    ) = deletePostHandler.handle(DeletePost(postId = postId, userId = userContext.id))
 
     @GetMapping("")
     fun getPosts(
@@ -53,11 +53,11 @@ class PostController(
         @RequestParam keyword: String,
         @RequestParam(required = false) afterPostId: Long?,
     ) = postDisplayer.getSearchedPostPreviewList(
-        boardId = 1L,
+        boardId = boardId,
         tag = tag,
         keyword = keyword,
         afterPostId = afterPostId,
-        userId = userContext.id
+        userId = userContext.id,
     )
 
     @GetMapping("/{postId}")

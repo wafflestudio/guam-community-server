@@ -33,7 +33,7 @@ class PostCommentController(
         @PathVariable postId: Long,
         @RequestBody req: CreatePostCommentRequest
     ) = createPostCommentHandler.handle(
-        CreatePostComment(postId = postId, userId = 1L, content = req.content, mentionIds = req.mentionIds)
+        CreatePostComment(postId = postId, userId = userContext.id, content = req.content, mentionIds = req.mentionIds)
     )
 
     @PostMapping("/{postId}/comments/{commentId}")
@@ -41,5 +41,5 @@ class PostCommentController(
         userContext: UserContext,
         @PathVariable postId: Long,
         @PathVariable commentId: Long
-    ) = deletePostCommentHandler.handle(DeletePostComment(postId = postId, userId = 1L, commentId = commentId))
+    ) = deletePostCommentHandler.handle(DeletePostComment(postId = postId, userId = userContext.id, commentId = commentId))
 }

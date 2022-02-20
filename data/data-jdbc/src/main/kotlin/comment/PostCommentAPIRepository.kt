@@ -11,32 +11,34 @@ import waffle.guam.community.data.jdbc.like.QPostCommentLikeEntity.postCommentLi
 
 @Repository
 class PostCommentAPIRepository(
-    private val querydsl: JPAQueryFactory
+    private val querydsl: JPAQueryFactory,
 ) {
     fun findCommentsOfUser(
         userId: Long? = null,
         afterCommentId: Long? = null,
         sortedByLikes: Boolean = false,
         pageSize: Long = 20L,
-    ) = querydsl
-        .select(
-            Projections.constructor(
-                MyCommentView::class.java,
-                comment.id, comment.post.id, comment.content, comment.images,
-                likes.count().`as`(sortCriteria), comment.createdAt, comment.updatedAt
+    ): List<MyCommentView> =
+        querydsl
+            .select(
+                Projections.constructor(
+                    MyCommentView::class.java,
+                    comment.id, comment.post.id, comment.content, comment.images,
+                    likes.count().`as`(sortCriteria), comment.createdAt, comment.updatedAt
+                )
             )
-        )
-        .from(comment)
-        .leftJoin(comment.likes, likes)
-        .where(
-            eqUserId(userId),
-            gtId(afterCommentId),
-        )
-        .orderBy(
-            if (sortedByLikes) sortCriteria.desc()
-            else comment.id.desc()
-        )
-        .fetch()
+            .from(comment)
+            .leftJoin(comment.likes, likes)
+            .where(
+                eqUserId(userId),
+                gtId(afterCommentId),
+            )
+            .groupBy(likes.comment.id)
+            .orderBy(
+                if (sortedByLikes) sortCriteria.desc()
+                else comment.id.desc()
+            )
+            .fetch()
 
     private fun eqId(id: Long?) =
         id?.run { comment.id.eq(this) }
