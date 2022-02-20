@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: "" # vault
+      secretKey: "" # vault
+      instanceProfile: false
+    s3:
+      bucket: guam
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

@@ -1,11 +1,11 @@
 spring:
-  config:
-    import: classpath:application-db.yaml
   profiles:
-    include:
-      - vault
-      - db
-      - slack
     active: dev
   jpa:
     defer-datasource-initialization: true
+
+spring.config.import:
+  - classpath:application-aws.yaml
+  - classpath:application-db.yaml
+  - classpath:application-slack.yaml
+  - classpath:application-vault.yaml

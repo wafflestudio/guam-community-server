@@ -11,3 +11,4 @@ include(":utils")
 include(":slack")
 
 include(":deploy")
+include("storage")
