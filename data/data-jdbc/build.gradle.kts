@@ -23,6 +23,7 @@ dependencies {
     // QueryDSL
     val querydslVersion = "5.0.0"
     implementation("com.querydsl:querydsl-jpa:$querydslVersion")
+    implementation("com.querydsl:querydsl-core:$querydslVersion")
     kapt("com.querydsl:querydsl-apt:$querydslVersion:jpa")
     kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
 }

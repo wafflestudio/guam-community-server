@@ -18,6 +18,10 @@ class InterestNotFound(message: String = "해당 관심사를 찾을 수 없습�
     constructor(userId: Long, name: String) : this("해당 관심사를 찾을 수 없습니다 [USER_ID : $userId, NAME : $name]")
 }
 
+class LetterNotFound(message: String = "해당 쪽지를 찾을 수 없습니다.") : GuamNotFound(message) {
+    constructor(letterId: Long) : this("해당 쪽지를 찾을 수 없습니다 [ID : $letterId]")
+}
+
 class TagNotFound(message: String = "해당 태그를 찾을 수 없습니다.") : GuamNotFound(message) {
     constructor(tagId: Long) : this("해당 태그를 찾을 수 없습니다 [ID : $tagId]")
 }
