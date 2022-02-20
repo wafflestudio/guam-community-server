@@ -2,13 +2,12 @@ package waffle.guam.community.service.query.user
 
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.GuamCacheFactory
+import waffle.guam.community.data.jdbc.user.UserApiRepository
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserQueryGenerator
-import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.command.user.UserUpdated
 import waffle.guam.community.service.domain.user.User
@@ -17,15 +16,13 @@ import java.time.Duration
 
 @Service
 class UserCollector(
-    private val userRepository: UserRepository,
+    private val userApiRepository: UserApiRepository,
 ) : MultiCollector<User, UserId>, UserQueryGenerator {
     override fun get(id: UserId): User =
-        userRepository.findByIdOrNull(id)
-            ?.let(::User)
-            ?: throw UserNotFound(id)
+        userApiRepository.find(id).let(::User)
 
     override fun multiGet(ids: Collection<UserId>): Map<UserId, User> =
-        userRepository.findAllById(ids)
+        userApiRepository.findAll(ids)
             .also { it.throwIfNotContainIds(ids) }
             .associate { it.id to User(it) }
 

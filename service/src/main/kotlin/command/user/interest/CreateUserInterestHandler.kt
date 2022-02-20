@@ -4,14 +4,14 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.interest.InterestEntity
-import waffle.guam.community.data.jdbc.user.UserAPIRepository
+import waffle.guam.community.data.jdbc.user.UserApiRepository
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
 
 @Service
 class CreateUserInterestHandler(
-    private val userAPIRepository: UserAPIRepository,
+    private val userAPIRepository: UserApiRepository,
 ) : CommandHandler<CreateUserInterest, UserInterestCreated> {
 
     @Transactional

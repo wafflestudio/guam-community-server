@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 import waffle.guam.community.Log
 import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.interest.name
-import waffle.guam.community.data.jdbc.user.UserAPIRepository
+import waffle.guam.community.data.jdbc.user.UserApiRepository
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
@@ -18,7 +18,7 @@ import waffle.guam.community.service.domain.user.User
 
 @Service
 class UpdateUserHandler(
-    private val userAPIRepository: UserAPIRepository,
+    private val userAPIRepository: UserApiRepository,
     private val imageHandler: UploadImageListHandler,
 ) : CommandHandler<UpdateUser, UserUpdated> {
     companion object : Log
