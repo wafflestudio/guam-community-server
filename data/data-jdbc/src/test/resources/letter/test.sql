@@ -1,4 +1,4 @@
-insert into users(immigration_id, nickname) values (1, '강지혁'), (2, '정원식'), (3, '고영현');
+insert into users(id, nickname) values (1, '강지혁'), (2, '정원식'), (3, '고영현');
 
 insert into letters(user_id, sent_by, sent_to, text, status, is_read) values
 (1, 1, 2, '안녕하세요', 'ACTIVE', false),

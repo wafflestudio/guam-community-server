@@ -1,5 +1,5 @@
 insert into boards (title) values ('chat'), ('study');
-insert into users (nickname, immigration_id) values ('jon', 1), ('snow', 2), ('tony', 3), ('whitty', 4);
+insert into users (nickname, id) values ('jon', 1), ('snow', 2), ('tony', 3), ('whitty', 4);
 insert into tags (title) values ('Programming'), ('Data Science');
 
 insert into posts (board_id, user_id, title, content, images, status, created_at, updated_at) values

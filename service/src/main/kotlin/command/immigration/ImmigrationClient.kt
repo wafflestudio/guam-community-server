@@ -11,7 +11,7 @@ class ImmigrationClient(
 ) {
     private val client = when {
         "dev" in env.activeProfiles -> ImmigrationClientImpl("dev")
-        else -> TODO("Not yet implemented")
+        else -> ImmigrationClientImpl("dev") // TODO("Not yet implemented")
     }
 
     suspend fun sendPush(userIds: List<Long>, title: String, body: String, imageUrl: String? = null) {
