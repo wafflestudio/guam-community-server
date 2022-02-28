@@ -24,6 +24,6 @@ spec:
               port: 8080
           resources:
             requests:
-              cpu: 500m
-              memory: 512Mi
+              cpu: 128m
+              memory: 256Mi
 

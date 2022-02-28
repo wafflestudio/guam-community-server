@@ -25,7 +25,7 @@ class DeletePostScrapHandlerTest @Autowired constructor(
     private val userRepository: UserRepository,
 ) {
     private val deletePostScrapHandler = DeletePostScrapHandler(postRepository)
-    val user = userRepository.save(UserEntity(id = 0L))
+    val user = userRepository.save(UserEntity(id = 1L))
     val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
     @BeforeEach
