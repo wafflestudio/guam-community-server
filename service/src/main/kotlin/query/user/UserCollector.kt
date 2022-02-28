@@ -9,6 +9,7 @@ import waffle.guam.community.data.jdbc.user.UserApiRepository
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserQueryGenerator
 import waffle.guam.community.service.UserId
+import waffle.guam.community.service.command.user.UserCreated
 import waffle.guam.community.service.command.user.UserUpdated
 import waffle.guam.community.service.domain.user.User
 import waffle.guam.community.service.query.MultiCollector
@@ -51,6 +52,12 @@ class UserCollector(
         override fun get(id: UserId): User = cache.get(id)
 
         override fun multiGet(ids: Collection<UserId>): Map<UserId, User> = cache.multiGet(ids)
+
+        @EventListener
+        fun reload(userCreated: UserCreated) {
+            cache.reload(userCreated.user.id)
+            logger.info("Cache reloaded with $userCreated")
+        }
 
         @EventListener
         fun reload(userUpdated: UserUpdated) {

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.common.PostScrapNotFound
 import waffle.guam.community.data.jdbc.post.PostEntity
@@ -18,12 +19,13 @@ import waffle.guam.community.service.command.scrap.DeletePostScrap
 import waffle.guam.community.service.command.scrap.DeletePostScrapHandler
 
 @DataJpaTest
+@Transactional
 class DeletePostScrapHandlerTest @Autowired constructor(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
 ) {
     private val deletePostScrapHandler = DeletePostScrapHandler(postRepository)
-    val user = userRepository.save(UserEntity(immigrationId = 0L))
+    val user = userRepository.save(UserEntity(id = 0L))
     val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
     @BeforeEach
@@ -54,7 +56,6 @@ class DeletePostScrapHandlerTest @Autowired constructor(
     @Test
     fun postNotFound() {
         // given
-        val user = userRepository.save(UserEntity(immigrationId = 0L))
 
         // when
         val command = DeletePostScrap(postId = 404L, userId = user.id)
@@ -69,7 +70,6 @@ class DeletePostScrapHandlerTest @Autowired constructor(
     @Test
     fun userNotFound() {
         // given
-        val user = userRepository.save(UserEntity(immigrationId = 0L))
         val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
         // when

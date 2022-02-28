@@ -16,7 +16,9 @@ import javax.persistence.Table
 @Table(name = "users")
 @Entity
 class UserEntity(
-    val immigrationId: Long,
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    val id: Long, // same as immigration service ID
 
     val email: String? = null,
 
@@ -35,8 +37,4 @@ class UserEntity(
 
     @OneToMany(mappedBy = "data.userId", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val interests: MutableList<InterestEntity> = mutableListOf(),
-) {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    val id: Long = 0L
-}
+)

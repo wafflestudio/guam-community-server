@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.common.PostScrapConflict
 import waffle.guam.community.common.UserNotFound
@@ -18,6 +19,7 @@ import waffle.guam.community.service.command.scrap.CreatePostScrap
 import waffle.guam.community.service.command.scrap.CreatePostScrapHandler
 
 @DataJpaTest
+@Transactional
 class CreatePostScrapHandlerTest @Autowired constructor(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
@@ -28,7 +30,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun createPostScrap() {
         // given
-        val user = userRepository.save(UserEntity(immigrationId = 0L))
+        val user = userRepository.save(UserEntity(id = 0L))
         val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
         // when
@@ -48,7 +50,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun postNotFound() {
         // given
-        val user = userRepository.save(UserEntity(immigrationId = 0L))
+        val user = userRepository.save(UserEntity(id = 0L))
 
         // when
         val command = CreatePostScrap(postId = 404L, userId = user.id)
@@ -63,7 +65,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun userNotFound() {
         // given
-        val user = userRepository.save(UserEntity(immigrationId = 0L))
+        val user = userRepository.save(UserEntity(id = 0L))
         val post = postRepository.save(PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글"))
 
         // when
@@ -79,7 +81,7 @@ class CreatePostScrapHandlerTest @Autowired constructor(
     @Test
     fun postScrapConflict() {
         // given
-        val user = userRepository.save(UserEntity(immigrationId = 0L))
+        val user = userRepository.save(UserEntity(id = 0L))
         val post = postRepository.save(
             PostEntity(boardId = 0L, user = user, title = "제목", content = "게시글")
                 .apply { scraps.add(PostScrapEntity(this, user)) }
