@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    vault:
+      enabled: true
+      uri: http://guam-vault.jon-snow-korea.com:8200
+      authentication: TOKEN
+      token: "" # env SPRING_CLOUD_VAULT_TOKEN
+---
+spring.config.activate.on-profile: dev
+
+spring.config.import: vault://kv/dev/community
+
+---
+spring.config.activate.on-profile: prod
+
+spring.config.import: vault://kv/prod/community

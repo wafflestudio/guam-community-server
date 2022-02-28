@@ -1,6 +1,5 @@
-package waffle.guam.community.service.command.notification
+package waffle.guam.community.command.notification
 
-import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -11,6 +10,8 @@ import org.mockito.Mockito.times
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import waffle.guam.community.service.command.comment.PostCommentCreated
+import waffle.guam.community.service.command.notification.PostCommentNotificationHandler
+import waffle.guam.community.service.command.notification.PushNotifier
 
 @DataJpaTest
 class PostCommentNotificationHandlerTest {

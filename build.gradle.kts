@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.6.1" apply false
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.5.31"
-    kotlin("plugin.spring") version "1.5.31"
+    kotlin("jvm") version "1.6.0"
+    kotlin("plugin.spring") version "1.6.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
@@ -28,7 +28,7 @@ allprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.5")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.1")
             mavenBom("io.grpc:grpc-bom:1.39.0")
         }
     }
