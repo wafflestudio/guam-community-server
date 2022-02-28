@@ -3,6 +3,7 @@ spring:
     import: classpath:application-db.yaml
   profiles:
     include:
+      - vault
       - db
       - slack
     active: dev

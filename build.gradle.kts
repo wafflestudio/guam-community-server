@@ -28,7 +28,7 @@ allprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.5")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.1")
             mavenBom("io.grpc:grpc-bom:1.39.0")
         }
     }
