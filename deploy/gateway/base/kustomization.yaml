@@ -2,3 +2,4 @@ resources:
   - deploy.yaml
   - service.yaml
   - ingress.yaml
+  - managed-cert.yaml
