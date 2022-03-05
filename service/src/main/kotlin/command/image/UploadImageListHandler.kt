@@ -29,8 +29,8 @@ class UploadImageListHandler(
         return files.map { it.path }.let(::ImageListUploaded)
     }
 
-    private fun List<MultipartFile>.copyTo(directory: Path) = mapIndexed { idx, file ->
-        val storageFileName = "$idx/${file.name.substringAfterLast(".", "")}"
+    private fun List<MultipartFile>.copyTo(directory: Path) = filterNot { it.isEmpty }.mapIndexed { idx, file ->
+        val storageFileName = "$idx.${file.originalFilename?.substringAfterLast(".", "")}"
         val copiedPath = directory.resolve(storageFileName)
         file.inputStream.use { inputStream ->
             Files.copy(inputStream, copiedPath, StandardCopyOption.REPLACE_EXISTING)

@@ -8,14 +8,14 @@ data class CreatePostRequest(
     val title: String,
     val content: String,
     val tagId: Long,
-    val images: List<MultipartFile>
+    val images: List<MultipartFile>?,
 ) {
     fun toCommand(userId: Long): CreatePost = CreatePost(
         userId = userId,
         boardId = boardId,
         title = title,
         content = content,
-        images = images,
-        tagId = tagId
+        images = images ?: listOf(),
+        tagId = tagId,
     )
 }
