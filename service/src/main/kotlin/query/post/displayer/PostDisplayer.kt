@@ -112,7 +112,7 @@ class PostDisplayer(
         )
     }
 
-    private fun Post.fillData(userId: Long): PostDetail {
+    private fun Post.fillData(callerId: Long): PostDetail {
         val commentList = postCommentListCollector.get(id = id)
         val likes = postLikeListCollector.get(id = id)
         val scraps = postScrapListCollector.get(id = id)
@@ -131,8 +131,8 @@ class PostDisplayer(
             status = status,
             createdAt = createdAt,
             updatedAt = updatedAt,
-            isLiked = likes.content.any { it.userId == userId },
-            isScrapped = scraps.content.any { it.userId == userId },
+            isLiked = likes.content.any { it.userId == callerId },
+            isScrapped = scraps.content.any { it.userId == callerId },
             scrapCount = scraps.content.size,
         )
     }
