@@ -27,7 +27,7 @@ class PostEntity(
     @Id
     val id: Long = 0L,
 
-    val boardId: Long,
+    var boardId: Long,
 
     @ManyToOne(fetch = FetchType.LAZY)
     val user: UserEntity,
