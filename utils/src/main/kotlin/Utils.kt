@@ -16,6 +16,9 @@ interface Log {
 /**
  * Log If Error Occurs
  */
+val Any?.isNull: Boolean
+    get() = this == null
+
 fun <T> logOnError(logger: Logger = Utils.log, msg: String, target: () -> T): Result<T> =
     runCatching {
         target.invoke()

@@ -16,14 +16,15 @@ class PostListCollector(
 ) : Collector<PostList, PostListCollector.Query>, PostQueryGenerator {
     override fun get(id: Query): PostList {
         val spec = boardId(id.boardId) * status(PostEntity.Status.VALID) * afterPostId(id.afterPostId)
-        val pageable = PageRequest.of(0, id.size, Sort.by(Sort.Direction.DESC, PostEntity_.ID))
+        val pageable = PageRequest.of(id.page, id.size, Sort.by(Sort.Direction.DESC, PostEntity_.ID))
 
         return PostList(postRepository.findAll(spec, pageable))
     }
 
     data class Query(
         val boardId: Long?,
-        val afterPostId: Long,
-        val size: Int,
+        val afterPostId: Long = 0,
+        val page: Int = 0,
+        val size: Int = 20,
     )
 }

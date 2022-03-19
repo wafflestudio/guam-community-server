@@ -4,6 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostAPIRepository
+import waffle.guam.community.isNull
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.post.MyPostView
 import waffle.guam.community.service.domain.post.MyPostViewList
@@ -37,31 +38,36 @@ class PostDisplayer(
 ) {
     fun getPostPreviewList(
         boardId: Long,
-        afterPostId: Long? = null,
         userId: Long,
-    ): PostPreviewList =
-        if (afterPostId == null) {
+        afterPostId: Long? = null,
+        page: Int? = null,
+    ): PostPreviewList {
+        return if (afterPostId == 0L || page == 0) {
             // Cache for recent posts
             recentPostListCollector.get(boardId).fillData(userId)
         } else {
             // No cache for old posts
-            postListCollector.get(
-                PostListCollector.Query(boardId = boardId.takeIf { it > 0L }, afterPostId = afterPostId, size = 20)
-            ).fillData(userId)
+            require(afterPostId.isNull xor page.isNull)
+            val query = PostListCollector.Query(
+                boardId = boardId.takeIf { it > 0L },
+                afterPostId = afterPostId ?: 0,
+                page = page ?: 0,
+                size = 20
+            )
+            postListCollector.get(query).fillData(userId)
         }
+    }
 
     fun getSearchedPostPreviewList(
-        boardId: Long,
-        tag: String,
+        tagId: Long?,
         keyword: String,
         userId: Long,
-        afterPostId: Long? = null,
+        afterPostId: Long?,
     ): PostPreviewList =
         // No cache for searched posts
         searchedPostListCollector.get(
             SearchedPostListCollector.Query(
-                boardId = boardId,
-                tag = tag,
+                tagId = tagId,
                 keyword = keyword,
                 afterPostId = afterPostId ?: 0L,
                 size = 20
