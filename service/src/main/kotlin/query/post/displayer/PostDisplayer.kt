@@ -96,50 +96,33 @@ class PostDisplayer(
 
         PostPreviewList(
             content = content.map {
-                PostPreview(
-                    id = it.id,
-                    boardId = it.boardId,
+                PostPreview.of(
+                    post = it,
                     user = userMap.await()[it.userId]!!,
-                    title = it.title,
-                    content = it.content,
-                    imagePaths = it.imagePaths,
-                    status = it.status,
-                    categories = tagMap.await()[it.id]?.content ?: emptyList(),
-                    likeCount = likeMap.await()[it.id]?.content?.size ?: 0,
-                    commentCount = commentMap.await()[it.id]?.content?.size ?: 0,
-                    scrapCount = scrapMap.await()[it.id]?.content?.size ?: 0,
-                    createdAt = it.createdAt,
-                    updatedAt = it.updatedAt,
-                    isLiked = likeMap.await()[it.id]?.content?.any { like -> like.userId == userId } ?: false,
-                    isScrapped = scrapMap.await()[it.id]?.content?.any { scrap -> scrap.userId == userId } ?: false,
+                    tags = tagMap.await()[it.id]?.content,
+                    likes = likeMap.await()[it.id]?.content,
+                    scraps = scrapMap.await()[it.id]?.content,
+                    comments = commentMap.await()[it.id]?.content,
                 )
             },
             hasNext = hasNext
         )
     }
 
-    private fun Post.fillData(callerId: Long): PostDetail {
-        val commentList = postCommentListCollector.get(id = id)
-        val likes = postLikeListCollector.get(id = id)
-        val scraps = postScrapListCollector.get(id = id)
+    private fun Post.fillData(callerId: Long): PostDetail = runBlocking {
+        val commentList = async { postCommentListCollector.get(id = id) }
+        val likes = async { postLikeListCollector.get(id = id) }
+        val scraps = async { postScrapListCollector.get(id = id) }
+        val tags = async { postTagListCollector.get(id = id) }
 
-        return PostDetail(
-            id = id,
-            boardId = boardId,
+        PostDetail.of(
+            post = this@fillData,
             user = userCollector.get(id = userId),
-            title = title,
-            content = content,
-            imagePaths = imagePaths,
-            categories = postTagListCollector.get(id = id).content,
-            likeCount = likes.content.size,
-            commentCount = commentList.content.size,
-            comments = commentList.content,
-            status = status,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            isLiked = likes.content.any { it.userId == callerId },
-            isScrapped = scraps.content.any { it.userId == callerId },
-            scrapCount = scraps.content.size,
+            tags = tags.await().content,
+            likes = likes.await().content,
+            comments = commentList.await().content,
+            scraps = scraps.await().content,
+            callerId = callerId,
         )
     }
 }
