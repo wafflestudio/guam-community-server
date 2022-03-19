@@ -54,6 +54,8 @@ class PostEntity(
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val scraps: MutableSet<PostScrapEntity> = mutableSetOf(),
 ) : BaseTimeEntity() {
+    val isAnonymous: Boolean
+        get() = boardId == 1L
 
     enum class Status {
         VALID, DELETED

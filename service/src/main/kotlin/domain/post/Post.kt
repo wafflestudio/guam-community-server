@@ -16,7 +16,10 @@ data class Post(
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
-)
+) {
+    val isAnonymous: Boolean
+        get() = boardId == 1L
+}
 
 fun Post(e: PostEntity) = Post(
     id = e.id,

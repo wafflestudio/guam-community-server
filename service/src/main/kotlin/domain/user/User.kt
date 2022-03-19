@@ -32,3 +32,16 @@ fun User(e: UserEntity): User =
         profileImage = e.profileImage,
         interests = e.interests.map { User.Interest(it.name) }
     )
+
+fun AnonymousUser(suffix: String = ""): User {
+    return User(
+        id = 0,
+        nickname = "익명$suffix",
+        introduction = null,
+        githubId = null,
+        blogUrl = null,
+        email = null,
+        profileImage = null,
+        interests = listOf(),
+    )
+}

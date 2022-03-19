@@ -28,7 +28,7 @@ class PostCommentListCollector(
                 val commentIds = post.comments.map { it.id }
                 val likeMap = postCommentLikeCollector.multiGet(commentIds)
 
-                return PostCommentList(post, likeMap)
+                return PostCommentList(post, likeMap, post.isAnonymous)
             }
             ?: throw PostNotFound(id)
 
@@ -45,7 +45,7 @@ class PostCommentListCollector(
                     val commentIds = post.comments.map { it.id }
                     val likeMap = likeMapsInPosts.filter { commentIds.contains(it.key) }
 
-                    post.id to PostCommentList(post, likeMap)
+                    post.id to PostCommentList(post, likeMap, post.isAnonymous)
                 }
             }
             .toMap()
