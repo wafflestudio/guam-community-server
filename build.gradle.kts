@@ -34,7 +34,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("io.github.wafflestudio:guam-immigration-client:1.0.1")
+        implementation("io.github.wafflestudio:guam-immigration-client:1.0.4")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
