@@ -29,9 +29,6 @@ fun PostComment(e: PostCommentEntity, likeCount: Int? = null) =
         updatedAt = e.updatedAt,
     )
 
-fun PostComment.toAnonymous(suffix: String) =
-    this.copy(user = AnonymousUser(suffix))
-
 fun AnonymousComments(commentList: List<PostComment>, writerId: Long): List<PostComment> {
     val userIdOrder = commentList
         .filter { it.user.id != writerId }
@@ -42,6 +39,6 @@ fun AnonymousComments(commentList: List<PostComment>, writerId: Long): List<Post
 
     return commentList.map {
         val suffix = userIdOrder[it.user.id] ?: "(글쓴이)"
-        it.toAnonymous(suffix.toString())
+        it.copy(user = AnonymousUser(suffix.toString()))
     }
 }

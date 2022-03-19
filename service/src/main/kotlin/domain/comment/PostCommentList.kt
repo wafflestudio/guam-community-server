@@ -9,11 +9,15 @@ data class PostCommentList(
     val content: List<PostComment>,
 )
 
-fun PostCommentList(e: PostEntity, likeMap: Map<Long, PostCommentLikeList>) =
-    PostCommentList(
+fun PostCommentList(e: PostEntity, likeMap: Map<Long, PostCommentLikeList>, isAnonymous: Boolean): PostCommentList {
+    val comments = e.comments.map { comment ->
+        val likeCount = likeMap[comment.id]?.content?.size ?: 0
+        PostComment(comment, likeCount)
+    }
+    return PostCommentList(
         postId = e.id,
-        content = e.comments.map { comment ->
-            val likeCount = likeMap[comment.id]?.content?.size ?: 0
-            PostComment(comment, likeCount)
-        }
+        content = if (isAnonymous) {
+            AnonymousComments(comments, e.user.id)
+        } else comments
     )
+}
