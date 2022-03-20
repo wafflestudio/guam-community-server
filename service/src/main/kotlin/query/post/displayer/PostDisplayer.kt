@@ -42,12 +42,12 @@ class PostDisplayer(
         afterPostId: Long? = null,
         page: Int? = null,
     ): PostPreviewList {
+        require(afterPostId.isNull xor page.isNull)
         return if (afterPostId == 0L || page == 0) {
             // Cache for recent posts
             recentPostListCollector.get(boardId).fillData(userId)
         } else {
             // No cache for old posts
-            require(afterPostId.isNull xor page.isNull)
             val query = PostListCollector.Query(
                 boardId = boardId.takeIf { it > 0L },
                 afterPostId = afterPostId ?: 0,

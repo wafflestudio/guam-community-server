@@ -51,21 +51,12 @@ class PostController(
         userContext: UserContext,
         @RequestParam(required = false) boardId: Long?,
         @RequestParam(required = false) afterPostId: Long?,
-    ) = postDisplayer.getPostPreviewList(
-        boardId = boardId ?: 0L,
-        afterPostId = afterPostId ?: 0L,
-        userId = userContext.id
-    )
-
-    @GetMapping("", params = ["page"])
-    fun getPagedPosts(
-        userContext: UserContext,
-        @RequestParam(required = false) boardId: Long?,
         @RequestParam(required = false) page: Int?,
     ) = postDisplayer.getPostPreviewList(
         boardId = boardId ?: 0L,
-        page = page ?: 0,
+        page = page,
         userId = userContext.id,
+        afterPostId = afterPostId,
     )
 
     @GetMapping("", params = ["keyword"])
