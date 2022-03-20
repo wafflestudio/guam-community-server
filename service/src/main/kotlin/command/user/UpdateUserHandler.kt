@@ -35,21 +35,34 @@ class UpdateUserHandler(
         introduction = cmd.introduction ?: introduction
         githubId = cmd.githubId ?: githubId
         blogUrl = cmd.blogUrl ?: blogUrl
-        profileImage = cmd.profileImage?.let { img ->
-            val images = imageHandler.handle(UploadImageList(id, ImageType.PROFILE, listOf(img)))
-            images.imagePaths.first() // TODO 업데이트 시 이미지 삭제
+        cmd.profileImage?.let { img ->
+            val imagePath = if (img.isNotEmpty()) {
+                imageHandler.handle(UploadImageList(id, ImageType.PROFILE, img)).imagePaths.first() // TODO 업데이트 시 이미지 삭제
+            } else null
+            profileImage = imagePath
         }
     }
 }
 
+/**
+ * profileImage == null -> do nothing
+ * profileImage.isEmpty -> erase image
+ * else -> overwrite images
+ */
 data class UpdateUser(
     val userId: Long,
     val nickname: String?,
     val introduction: String?,
     val githubId: String?,
     val blogUrl: String?,
-    val profileImage: MultipartFile?,
-) : Command
+    val profileImage: List<MultipartFile>?,
+) : Command {
+    init {
+        if (profileImage != null) {
+            require(profileImage.size <= 1)
+        }
+    }
+}
 
 data class UserUpdated(
     val id: Long,
