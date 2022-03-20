@@ -36,7 +36,7 @@ data class PostCommentEntity(
     var content: String,
 
     @Convert(converter = ImagePathsConverter::class)
-    val images: List<String> = mutableListOf(),
+    val images: MutableList<String> = mutableListOf(),
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment")
     val likes: MutableList<PostCommentLikeEntity> = mutableListOf(),

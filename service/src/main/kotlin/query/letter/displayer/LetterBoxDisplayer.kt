@@ -18,12 +18,12 @@ class LetterBoxDisplayer(
         return userLetterBoxCollector.get(userId)
     }
 
-    fun getLetters(userId: UserId, pairId: UserId, afterLetterId: LetterId, size: Long): UserLetterList {
+    fun getLetters(userId: UserId, pairId: UserId, beforeLetterId: LetterId?, size: Long): UserLetterList {
         val letters = letterApiRepository.findLetters(
             userId = userId,
             pairId = pairId,
-            afterLetterId = afterLetterId,
             size = size,
+            beforeLetterId = beforeLetterId,
         ).map(::Letter)
         return UserLetterList(userId, pairId, letters)
     }

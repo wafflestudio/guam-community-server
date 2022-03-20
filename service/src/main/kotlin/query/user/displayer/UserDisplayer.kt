@@ -22,8 +22,8 @@ class UserDisplayer(
         createUserHandler.handle(CreateUser(immigrationId = userId)).user
     }
 
-    fun getUserComments(userId: Long, afterCommentId: Long?, sortByLikes: Boolean): List<MyCommentView> {
-        val data = commentAPIRepository.findCommentsOfUser(userId, afterCommentId)
+    fun getUserComments(userId: Long, beforeCommentId: Long?, sortByLikes: Boolean): List<MyCommentView> {
+        val data = commentAPIRepository.findCommentsOfUser(userId, beforeCommentId)
         return MyCommentViewList(data)
     }
 }

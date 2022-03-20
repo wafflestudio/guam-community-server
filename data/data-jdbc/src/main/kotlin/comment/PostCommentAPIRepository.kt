@@ -15,7 +15,7 @@ class PostCommentAPIRepository(
 ) {
     fun findCommentsOfUser(
         userId: Long? = null,
-        afterCommentId: Long? = null,
+        beforeCommentId: Long? = null,
         sortedByLikes: Boolean = false,
         pageSize: Long = 20L,
     ): List<MyCommentView> =
@@ -31,7 +31,7 @@ class PostCommentAPIRepository(
             .leftJoin(comment.likes, likes)
             .where(
                 eqUserId(userId),
-                gtId(afterCommentId),
+                ltId(beforeCommentId),
             )
             .groupBy(likes.comment.id)
             .orderBy(
@@ -43,8 +43,8 @@ class PostCommentAPIRepository(
     private fun eqId(id: Long?) =
         id?.run { comment.id.eq(this) }
 
-    private fun gtId(id: Long?) =
-        id?.run { comment.id.gt(this) }
+    private fun ltId(id: Long?) =
+        id?.run { comment.id.lt(this) }
 
     private fun eqUserId(userId: Long?) =
         userId?.run { comment.user.id.eq(this) }

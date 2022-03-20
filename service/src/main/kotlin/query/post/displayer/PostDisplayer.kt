@@ -39,18 +39,20 @@ class PostDisplayer(
     fun getPostPreviewList(
         boardId: Long,
         userId: Long,
-        afterPostId: Long? = null,
+        beforePostId: Long? = null,
         page: Int? = null,
     ): PostPreviewList {
-        return if (afterPostId == 0L || page == 0) {
+        // page 값이 존재하는 경우, beforePostId는 null이어야 함
+        // page 값이 null인 경우, beforePostId는 어떤 값이든 상관 없음
+        require(page.isNull || beforePostId.isNull)
+        return if (beforePostId.isNull || page == 0) {
             // Cache for recent posts
             recentPostListCollector.get(boardId).fillData(userId)
         } else {
             // No cache for old posts
-            require(afterPostId.isNull xor page.isNull)
             val query = PostListCollector.Query(
                 boardId = boardId.takeIf { it > 0L },
-                afterPostId = afterPostId ?: 0,
+                beforePostId = beforePostId!!,
                 page = page ?: 0,
                 size = 20
             )
@@ -62,14 +64,14 @@ class PostDisplayer(
         tagId: Long?,
         keyword: String,
         userId: Long,
-        afterPostId: Long?,
+        beforePostId: Long?,
     ): PostPreviewList =
         // No cache for searched posts
         searchedPostListCollector.get(
             SearchedPostListCollector.Query(
                 tagId = tagId,
                 keyword = keyword,
-                afterPostId = afterPostId ?: 0L,
+                beforePostId = beforePostId ?: 0L,
                 size = 20
             )
         ).fillData(userId)
@@ -79,11 +81,11 @@ class PostDisplayer(
 
     fun getUserPostList(
         userId: Long,
-        afterPostId: Long?,
+        beforePostId: Long?,
         sortByLikes: Boolean,
     ): List<MyPostView> {
         val data =
-            postAPIRepository.findPostsOfUser(userId = userId, afterPostId = afterPostId, sortedByLikes = sortByLikes)
+            postAPIRepository.findPostsOfUser(userId = userId, beforePostId = beforePostId, sortedByLikes = sortByLikes)
         return MyPostViewList(data)
     }
 

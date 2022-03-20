@@ -22,7 +22,7 @@ class RecentPostListCollector(
 
     override fun get(id: BoardId): PostList =
         postListCollector.get(
-            PostListCollector.Query(boardId = id.takeIf { it > 0L }, size = RECENT_POSTS_SIZE, afterPostId = 0L)
+            PostListCollector.Query(boardId = id.takeIf { it > 0L }, size = RECENT_POSTS_SIZE, beforePostId = 0L)
         )
 
     @Service

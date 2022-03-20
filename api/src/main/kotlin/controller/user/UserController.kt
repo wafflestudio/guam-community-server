@@ -65,15 +65,15 @@ class UserController(
     fun userPosts(
         userContext: UserContext,
         @PathVariable userId: Long,
-        @RequestParam(required = false) afterPostId: Long?,
+        @RequestParam(required = false) beforePostId: Long?,
         @RequestParam(required = false) sortByLikes: Boolean?,
-    ) = postDisplay.getUserPostList(userId, afterPostId, sortByLikes ?: false)
+    ) = postDisplay.getUserPostList(userId, beforePostId, sortByLikes ?: false)
 
     @GetMapping("{userId}/comments")
     fun userComments(
         userContext: UserContext,
         @PathVariable userId: Long,
-        @RequestParam(required = false) afterCommentId: Long?,
+        @RequestParam(required = false) beforeCommentId: Long?,
         @RequestParam(required = false) sortByLikes: Boolean?,
-    ) = userDisplay.getUserComments(userId, afterCommentId, sortByLikes ?: false)
+    ) = userDisplay.getUserComments(userId, beforeCommentId, sortByLikes ?: false)
 }

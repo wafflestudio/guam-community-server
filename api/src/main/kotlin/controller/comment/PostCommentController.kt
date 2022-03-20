@@ -2,14 +2,13 @@ package waffle.guam.community.controller.comment
 
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.comment.req.CreatePostCommentRequest
-import waffle.guam.community.service.command.comment.CreatePostComment
 import waffle.guam.community.service.command.comment.CreatePostCommentHandler
 import waffle.guam.community.service.command.comment.DeletePostComment
 import waffle.guam.community.service.command.comment.DeletePostCommentHandler
@@ -32,10 +31,8 @@ class PostCommentController(
     fun create(
         userContext: UserContext,
         @PathVariable postId: Long,
-        @RequestBody req: CreatePostCommentRequest
-    ) = createPostCommentHandler.handle(
-        CreatePostComment(postId = postId, userId = userContext.id, content = req.content, mentionIds = req.mentionIds)
-    )
+        @ModelAttribute req: CreatePostCommentRequest
+    ) = createPostCommentHandler.handle(req.toCommand(postId, userContext.id))
 
     @DeleteMapping("/{postId}/comments/{commentId}")
     fun delete(

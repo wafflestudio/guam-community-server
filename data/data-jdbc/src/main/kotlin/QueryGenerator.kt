@@ -19,10 +19,18 @@ interface QueryGenerator<E> {
         }
     }
 
-    fun <F : Comparable<F>> ge(refName: String, targetValue: F?): Specification<E> {
+    fun <F : Comparable<F>> gt(refName: String, targetValue: F?): Specification<E> {
         return Specification { root, _, criteriaBuilder ->
             if (targetValue != null) {
                 criteriaBuilder.greaterThan(root.get(refName), targetValue)
+            } else null
+        }
+    }
+
+    fun <F : Comparable<F>> lt(refName: String, targetValue: F?): Specification<E> {
+        return Specification { root, _, criteriaBuilder ->
+            if (targetValue != null) {
+                criteriaBuilder.lessThan(root.get(refName), targetValue)
             } else null
         }
     }
