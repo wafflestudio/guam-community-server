@@ -50,13 +50,13 @@ class PostController(
     fun getPosts(
         userContext: UserContext,
         @RequestParam(required = false) boardId: Long?,
-        @RequestParam(required = false) afterPostId: Long?,
+        @RequestParam(required = false) beforePostId: Long?,
         @RequestParam(required = false) page: Int?,
     ) = postDisplayer.getPostPreviewList(
         boardId = boardId ?: 0L,
         page = page,
         userId = userContext.id,
-        afterPostId = afterPostId,
+        beforePostId = beforePostId,
     )
 
     @GetMapping("", params = ["keyword"])
@@ -64,11 +64,11 @@ class PostController(
         userContext: UserContext,
         @RequestParam keyword: String,
         @RequestParam(required = false) tagId: Long?,
-        @RequestParam(required = false) afterPostId: Long?,
+        @RequestParam(required = false) beforePostId: Long?,
     ) = postDisplayer.getSearchedPostPreviewList(
         tagId = tagId,
         keyword = keyword,
-        afterPostId = afterPostId,
+        beforePostId = beforePostId,
         userId = userContext.id,
     )
 

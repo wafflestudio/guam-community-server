@@ -27,14 +27,14 @@ class LetterApiRepository(
     /**
      * Fetch All Letters from (user & pair)
      */
-    fun findLetters(userId: Long, pairId: Long, afterLetterId: Long, size: Long): List<LetterEntity> =
+    fun findLetters(userId: Long, pairId: Long, beforeLetterId: Long?, size: Long): List<LetterEntity> =
         queryFactory
             .selectFrom(letterEntity)
             .where(
                 letterEntity.userId.eq(userId),
                 letterEntity.sentBy.eq(pairId).or(letterEntity.sentTo.eq(pairId)),
                 letterEntity.status.eq(LetterEntity.Status.ACTIVE),
-                letterEntity.id.gt(afterLetterId),
+                beforeLetterId?.let { letterEntity.id.lt(beforeLetterId) },
             )
             .orderBy(letterEntity.id.desc())
             .limit(size)

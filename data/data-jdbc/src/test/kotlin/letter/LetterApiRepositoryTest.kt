@@ -43,7 +43,7 @@ class LetterApiRepositoryTest @Autowired constructor(
         // 그 중 삭제된 한 건 제외하고 4개를 가져와야 한다.
 
         // when
-        val result = letterApiRepository.findLetters(1L, 2L, 0L, size = 50)
+        val result = letterApiRepository.findLetters(1L, 2L, null, size = 50)
 
         // then
         assertThat(result).hasSize(4)

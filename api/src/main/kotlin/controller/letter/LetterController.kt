@@ -51,7 +51,7 @@ class LetterController(
     fun getLetters(
         userContext: UserContext,
         @PathVariable pairId: Long,
-        @RequestParam(defaultValue = "0") afterLetterId: Long,
         @RequestParam(defaultValue = "50") size: Long,
-    ) = letterBoxDisplayer.getLetters(userContext.id, pairId, afterLetterId, size)
+        @RequestParam(required = false) beforeLetterId: Long?,
+    ) = letterBoxDisplayer.getLetters(userContext.id, pairId, beforeLetterId, size)
 }

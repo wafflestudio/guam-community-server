@@ -16,7 +16,7 @@ class PostAPIRepository(
 ) {
     fun findPostsOfUser(
         userId: Long? = null,
-        afterPostId: Long? = null,
+        beforePostId: Long? = null,
         sortedByLikes: Boolean,
         pageSize: Long = 20L,
     ): List<MyPostView> = querydsl
@@ -33,7 +33,7 @@ class PostAPIRepository(
         .leftJoin(postEntity.comments, postCommentEntity)
         .where(
             eqUserId(userId),
-            gtId(afterPostId),
+            ltId(beforePostId),
         )
         .groupBy(postEntity.id)
         .orderBy(
@@ -46,8 +46,8 @@ class PostAPIRepository(
     private fun eqId(id: Long?) =
         id?.run { postEntity.id.eq(this) }
 
-    private fun gtId(id: Long?) =
-        id?.run { postEntity.id.gt(this) }
+    private fun ltId(id: Long?) =
+        id?.run { postEntity.id.lt(this) }
 
     private fun eqUserId(userId: Long?) =
         userId?.run { postEntity.user.id.eq(this) }
