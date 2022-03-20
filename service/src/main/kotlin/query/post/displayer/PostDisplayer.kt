@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostAPIRepository
 import waffle.guam.community.isNull
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.domain.post.MyPostView
-import waffle.guam.community.service.domain.post.MyPostViewList
 import waffle.guam.community.service.domain.post.Post
 import waffle.guam.community.service.domain.post.PostDetail
 import waffle.guam.community.service.domain.post.PostList
@@ -82,11 +80,12 @@ class PostDisplayer(
     fun getUserPostList(
         userId: Long,
         beforePostId: Long?,
-        sortByLikes: Boolean,
-    ): List<MyPostView> {
-        val data =
-            postAPIRepository.findPostsOfUser(userId = userId, beforePostId = beforePostId, sortedByLikes = sortByLikes)
-        return MyPostViewList(data)
+    ): PostPreviewList {
+        val posts = PostList(
+            content = postAPIRepository.findPostsOfUser(userId = userId, beforePostId = beforePostId).map { Post(it) },
+            hasNext = true // fixme 페이징
+        )
+        return posts.fillData(userId)
     }
 
     private fun PostList.fillData(userId: UserId): PostPreviewList = runBlocking {
