@@ -71,7 +71,7 @@ class PostDisplayer(
             SearchedPostListCollector.Query(
                 tagId = tagId,
                 keyword = keyword,
-                beforePostId = beforePostId ?: 0L,
+                beforePostId = beforePostId,
                 size = 20
             )
         ).fillData(userId)
