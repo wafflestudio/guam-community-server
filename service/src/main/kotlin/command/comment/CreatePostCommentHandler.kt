@@ -37,7 +37,6 @@ class CreatePostCommentHandler(
 
         return PostCommentCreated(
             postId = postId,
-            postUserId = post.user.id,
             mentionIds = command.mentionIds,
             content = command.content,
             writerName = user.nickname ?: "유저 $userId",
@@ -67,7 +66,6 @@ data class CreatePostComment(
 
 data class PostCommentCreated(
     val postId: Long,
-    val postUserId: Long,
     val mentionIds: List<UserId>,
     val content: String,
     val writerName: String,
