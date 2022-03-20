@@ -105,6 +105,7 @@ class PostDisplayer(
                     likes = likeMap.await()[it.id]?.content,
                     scraps = scrapMap.await()[it.id]?.content,
                     comments = commentMap.await()[it.id]?.content,
+                    isMine = it.userId == userId,
                 )
             },
             hasNext = hasNext

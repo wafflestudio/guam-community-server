@@ -5,6 +5,7 @@ import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.domain.comment.AnonymousComments
 import waffle.guam.community.service.domain.comment.PostComment
+import waffle.guam.community.service.domain.comment.PostCommentDetail
 import waffle.guam.community.service.domain.like.PostLike
 import waffle.guam.community.service.domain.scrap.PostScrap
 import waffle.guam.community.service.domain.tag.PostTag
@@ -23,10 +24,11 @@ data class PostDetail(
     val likeCount: Int,
     val commentCount: Int,
     val scrapCount: Int,
-    val comments: List<PostComment>,
+    val comments: List<PostCommentDetail>,
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val isMine: Boolean,
     val isLiked: Boolean,
     val isScrapped: Boolean,
 ) {
@@ -42,6 +44,7 @@ data class PostDetail(
             comments: List<PostComment>,
             callerId: Long,
         ): PostDetail {
+            val commentDetails = comments.map { PostCommentDetail(it, callerId) }
             return PostDetail(
                 id = post.id,
                 boardId = post.boardId,
@@ -52,10 +55,11 @@ data class PostDetail(
                 categories = tags,
                 likeCount = likes.size,
                 commentCount = comments.size,
-                comments = if (post.isAnonymous) AnonymousComments(comments, post.userId) else comments,
+                comments = if (post.isAnonymous) AnonymousComments(commentDetails, post.userId) else commentDetails,
                 status = post.status,
                 createdAt = post.createdAt,
                 updatedAt = post.updatedAt,
+                isMine = post.userId == callerId,
                 isLiked = likes.any { it.userId == callerId },
                 isScrapped = scraps.any { it.userId == callerId },
                 scrapCount = scraps.size,
