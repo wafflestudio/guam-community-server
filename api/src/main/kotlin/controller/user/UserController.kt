@@ -66,8 +66,7 @@ class UserController(
         userContext: UserContext,
         @PathVariable userId: Long,
         @RequestParam(required = false) beforePostId: Long?,
-        @RequestParam(required = false) sortByLikes: Boolean?,
-    ) = postDisplay.getUserPostList(userId, beforePostId, sortByLikes ?: false)
+    ) = postDisplay.getUserPostList(userId, beforePostId)
 
     @GetMapping("{userId}/comments")
     fun userComments(

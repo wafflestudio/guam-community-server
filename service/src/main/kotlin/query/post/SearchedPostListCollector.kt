@@ -13,7 +13,8 @@ class SearchedPostListCollector(
 ) : Collector<PostList, SearchedPostListCollector.Query>, PostQueryGenerator {
     override fun get(id: Query): PostList {
         // FIXME: 일부 조건만으로 쿼리를 날린 후, 메모리단에서 필터링 해주는 구조. 수정 필요. (es?..)
-        val searchedPosts = postRepository.findAll(beforePostId(id.beforePostId) * fetchTags())
+        val spec = if (id.beforePostId == null) fetchTags() else beforePostId(id.beforePostId) * fetchTags()
+        val searchedPosts = postRepository.findAll(spec)
             .filter { post ->
                 (id.tagId == null || post.tags.any { it.tag.id == id.tagId }) &&
                     (post.title.contains(id.keyword) || post.content.contains(id.keyword))
@@ -30,7 +31,7 @@ class SearchedPostListCollector(
     data class Query(
         val tagId: Long?,
         val keyword: String,
-        val beforePostId: Long,
-        val size: Int
+        val beforePostId: Long?,
+        val size: Int,
     )
 }

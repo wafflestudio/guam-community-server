@@ -9,7 +9,7 @@ data class UpdateUserRequest(
     val introduction: String? = null,
     val githubId: String? = null,
     val blogUrl: String? = null,
-    val profileImage: MultipartFile? = null,
+    val profileImage: List<MultipartFile>? = null,
 ) {
     fun toCommand(userContextId: Long, userId: Long): UpdateUser {
         if (userContextId != userId)

@@ -25,6 +25,7 @@ data class PostPreview(
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val isMine: Boolean,
     val isLiked: Boolean,
     val isScrapped: Boolean,
 ) {
@@ -38,6 +39,7 @@ data class PostPreview(
             likes: List<PostLike>?,
             scraps: List<PostScrap>?,
             comments: List<PostComment>?,
+            isMine: Boolean,
         ): PostPreview {
             return PostPreview(
                 id = post.id,
@@ -55,6 +57,7 @@ data class PostPreview(
                 scrapCount = scraps?.size ?: 0,
                 isLiked = likes?.any { like -> like.userId == user.id } ?: false,
                 isScrapped = scraps?.any { scrap -> scrap.userId == user.id } ?: false,
+                isMine = isMine,
             )
         }
     }
