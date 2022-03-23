@@ -1,5 +1,6 @@
 package waffle.guam.community.service.command.comment
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -37,6 +38,7 @@ class CreatePostCommentHandler(
 
         return PostCommentCreated(
             postId = postId,
+            postUserId = post.user.id,
             mentionIds = command.mentionIds,
             content = command.content,
             writerName = user.nickname ?: "유저 $userId",
@@ -66,6 +68,8 @@ data class CreatePostComment(
 
 data class PostCommentCreated(
     val postId: Long,
+    @get:JsonIgnore
+    val postUserId: Long,
     val mentionIds: List<UserId>,
     val content: String,
     val writerName: String,
