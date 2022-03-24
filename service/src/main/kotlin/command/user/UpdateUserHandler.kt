@@ -37,7 +37,7 @@ class UpdateUserHandler(
         blogUrl = cmd.blogUrl ?: blogUrl
         cmd.profileImage?.let { img ->
             val imagePath = if (img.isNotEmpty()) {
-                imageHandler.handle(UploadImageList(id, ImageType.PROFILE, img)).imagePaths.first() // TODO 업데이트 시 이미지 삭제
+                imageHandler.handle(UploadImageList(id, ImageType.PROFILE, img)).imagePaths.firstOrNull() // TODO 업데이트 시 이미지 삭제
             } else null
             profileImage = imagePath
         }
