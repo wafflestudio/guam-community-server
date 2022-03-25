@@ -1,5 +1,6 @@
 package waffle.guam.community.service.domain.comment
 
+import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
@@ -21,9 +22,16 @@ fun PostCommentList(e: PostEntity, likeMap: Map<Long, PostCommentLikeList>): Pos
         postId = e.id,
         writerId = e.user.id,
         boardId = e.boardId,
-        content = e.comments.map { comment ->
-            val likeCount = likeMap[comment.id]?.content?.size ?: 0
-            PostComment(comment, likeCount)
-        }.sortedBy { it.id }
+        content = e.comments
+            .filter { comment ->
+                comment.status == PostCommentEntity.Status.VALID
+            }
+            .map { comment ->
+                val likeCount = likeMap[comment.id]?.content?.size ?: 0
+                PostComment(comment, likeCount)
+            }
+            .sortedBy { comment ->
+                comment.id
+            }
     )
 }
