@@ -12,6 +12,7 @@ data class PostCommentDetail(
     val user: User,
     val content: String,
     val imagePaths: List<String>,
+    val mentionIds: List<Long>,
     val likeCount: Int,
     val createdAt: Instant,
     val updatedAt: Instant,
@@ -25,6 +26,7 @@ fun PostCommentDetail(d: PostComment, callerId: UserId) =
         user = d.user,
         content = d.content,
         imagePaths = d.imagePaths,
+        mentionIds = d.mentionIds,
         likeCount = d.likeCount,
         createdAt = d.createdAt,
         updatedAt = d.updatedAt,
@@ -41,6 +43,6 @@ fun AnonymousComments(commentList: List<PostCommentDetail>, writerId: Long): Lis
 
     return commentList.map {
         val suffix = userIdOrder[it.user.id] ?: "(글쓴이)"
-        it.copy(user = AnonymousUser(suffix.toString()))
+        it.copy(user = AnonymousUser(suffix.toString()), mentionIds = listOf()) // todo 익명 멘션
     }
 }

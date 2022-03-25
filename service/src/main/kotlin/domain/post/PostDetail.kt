@@ -44,7 +44,10 @@ data class PostDetail(
             comments: List<PostComment>,
             callerId: Long,
         ): PostDetail {
-            val commentDetails = comments.map { PostCommentDetail(it, callerId) }
+            val commentDetails = comments
+                .sortedBy { it.id }
+                .map { PostCommentDetail(it, callerId) }
+
             return PostDetail(
                 id = post.id,
                 boardId = post.boardId,

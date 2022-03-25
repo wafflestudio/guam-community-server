@@ -45,6 +45,19 @@ data class PostCommentEntity(
     var status: Status = Status.VALID,
 ) : BaseTimeEntity() {
 
+    private var mentionedUserIds: String = ""
+
+    val mentionIds: List<Long>
+        get() = if (mentionedUserIds.isEmpty()) {
+            emptyList()
+        } else {
+            mentionedUserIds.split(",").map { id -> id.toLong() }
+        }
+
+    fun setMentionedUserIds(ids: List<Long>) {
+        mentionedUserIds = ids.joinToString(",")
+    }
+
     enum class Status {
         VALID, DELETED
     }

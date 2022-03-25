@@ -29,26 +29,28 @@ class CreatePostCommentHandler(
 
     @Transactional
     override fun handle(command: CreatePostComment): PostCommentCreated {
-        val (postId, userId, content, images) = command
+        val (postId, userId, content, images, mentionIds) = command
 
         val post = postRepository.findByIdOrNull(postId) ?: throw PostNotFound(postId)
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFound(userId)
 
-        post.addCommentBy(user, content, images)
+        post.addCommentBy(user, content, images, mentionIds)
 
         return PostCommentCreated(
             postId = postId,
             postUserId = post.user.id,
-            mentionIds = command.mentionIds,
             content = command.content,
             writerName = user.nickname ?: "유저 $userId",
-            writerProfileImage = user.profileImage
+            writerProfileImage = user.profileImage,
+            mentionIds = mentionIds,
         )
     }
 
-    private fun PostEntity.addCommentBy(user: UserEntity, content: String, images: List<MultipartFile>) {
-        val newComment = PostCommentEntity(post = this, user = user, content = content)
-        comments.add(newComment.apply { addImages(images) })
+    private fun PostEntity.addCommentBy(user: UserEntity, content: String, images: List<MultipartFile>, mentionIds: List<UserId>) {
+        PostCommentEntity(post = this, user = user, content = content)
+            .apply { addImages(images) }
+            .apply { setMentionedUserIds(mentionIds) }
+            .let(comments::add)
     }
 
     // TODO: rollback uploaded image on error
