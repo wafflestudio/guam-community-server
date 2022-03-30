@@ -23,21 +23,21 @@ class CaffeineGuamCacheImpl<V : Any, K : Any> internal constructor(
 
     override fun internalGet(key: K): V? =
         caffeineCache.getIfPresent(key)
-            .also { value -> logger.info("[Caffeine internalGet] key : {}, value : {}", key, value) }
+            .also { value -> logger.debug("[Caffeine internalGet] key : {}, value : {}", key, value) }
 
     override fun internalMultiGet(keys: Collection<K>): Map<K, V> =
         caffeineCache.getAllPresent(keys)
-            .also { values -> logger.info("[Caffeine internalMultiGet] key : {}, value : {}", keys, values) }
+            .also { values -> logger.debug("[Caffeine internalMultiGet] key : {}, value : {}", keys, values) }
 
     override fun internalPut(key: K, value: V): Unit =
         caffeineCache.put(key, value)
-            .also { logger.info("[Caffeine internalPut] key : {}, value: {}", key, value) }
+            .also { logger.debug("[Caffeine internalPut] key : {}, value: {}", key, value) }
 
     override fun internalMultiPut(keyValue: Map<K, V>): Unit =
         caffeineCache.putAll(keyValue)
-            .also { logger.info("[Caffeine internalMultiPut] key: {}, value: {}", keyValue.keys, keyValue.values) }
+            .also { logger.debug("[Caffeine internalMultiPut] key: {}, value: {}", keyValue.keys, keyValue.values) }
 
     override fun internalInvalidate(key: K): Unit =
         caffeineCache.invalidate(key)
-            .also { logger.info("[Caffeine internalInvalidate] key: {}", key) }
+            .also { logger.debug("[Caffeine internalInvalidate] key: {}", key) }
 }
