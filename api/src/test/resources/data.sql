@@ -1,6 +1,6 @@
 insert into boards (title) values ('chat'), ('study');
 insert into users (nickname, id) values ('jon', 1), ('snow', 2), ('tony', 3), ('whitty', 4);
-insert into tags (title) values ('Programming'), ('Data Science');
+insert into categories (title) values ('Programming'), ('Data Science');
 
 insert into posts (board_id, user_id, title, content, images, status, created_at, updated_at) values
 (1, 1, 'hi', 'bye', null, 'VALID', '2021-10-10 09:00:00', '2021-10-10 09:00:00'),
@@ -8,7 +8,7 @@ insert into posts (board_id, user_id, title, content, images, status, created_at
 (1, 2, 'hi3', 'bye', null, 'VALID', '2021-10-10 09:02:00', '2021-10-10 09:02:00'),
 (2, 2, 'study', 'hard', null, 'VALID', '2021-10-10 09:03:00', '2021-10-10 09:03:00');
 
-insert into post_tags (post_id, tag_id) values (1, 1), (1, 2), (2, 1), (3, 1), (4, 2);
+insert into post_categories (post_id, category_id) values (1, 1), (1, 2), (2, 1), (3, 1), (4, 2);
 insert into post_likes (post_id, user_id) values (1, 1), (1, 3), (1, 4), (2, 2), (2, 3), (2, 4);
 
 insert into post_comments (post_id, user_id, content, images, created_at, updated_at) values

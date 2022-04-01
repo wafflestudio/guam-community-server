@@ -22,8 +22,8 @@ class LetterNotFound(message: String = "해당 쪽지를 찾을 수 없습니다
     constructor(letterId: Long) : this("해당 쪽지를 찾을 수 없습니다 [ID : $letterId]")
 }
 
-class TagNotFound(message: String = "해당 태그를 찾을 수 없습니다.") : GuamNotFound(message) {
-    constructor(tagId: Long) : this("해당 태그를 찾을 수 없습니다 [ID : $tagId]")
+class CategoryNotFound(message: String = "해당 카테고리를 찾을 수 없습니다.") : GuamNotFound(message) {
+    constructor(categoryId: Long) : this("해당 카테고리를 찾을 수 없습니다 [ID : $categoryId]")
 }
 
 class PostNotFound(message: String = "해당 게시물을 찾을 수 없습니다.") : GuamNotFound(message) {

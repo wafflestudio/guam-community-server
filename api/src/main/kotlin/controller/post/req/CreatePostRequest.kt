@@ -7,7 +7,7 @@ data class CreatePostRequest(
     val boardId: Long,
     val title: String,
     val content: String,
-    val tagId: Long,
+    val categoryId: Long,
     val images: List<MultipartFile>?,
 ) {
     fun toCommand(userId: Long): CreatePost = CreatePost(
@@ -16,6 +16,6 @@ data class CreatePostRequest(
         title = title,
         content = content,
         images = images ?: listOf(),
-        tagId = tagId,
+        categoryId = categoryId,
     )
 }

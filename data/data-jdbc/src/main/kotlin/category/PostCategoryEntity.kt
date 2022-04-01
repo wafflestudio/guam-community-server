@@ -1,4 +1,4 @@
-package waffle.guam.community.data.jdbc.tag
+package waffle.guam.community.data.jdbc.category
 
 import waffle.guam.community.data.jdbc.post.PostEntity
 import javax.persistence.Entity
@@ -10,9 +10,9 @@ import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
 
-@Table(name = "post_tags")
+@Table(name = "post_categories")
 @Entity
-data class PostTagEntity(
+data class PostCategoryEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     val id: Long = 0L,
@@ -21,7 +21,7 @@ data class PostTagEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     val post: PostEntity,
 
-    @JoinColumn(name = "tag_id")
+    @JoinColumn(name = "category_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    val tag: TagEntity
+    val category: CategoryEntity
 )

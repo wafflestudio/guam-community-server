@@ -63,10 +63,10 @@ class PostController(
     fun searchPosts(
         userContext: UserContext,
         @RequestParam keyword: String,
-        @RequestParam(required = false) tagId: Long?,
+        @RequestParam(required = false) categoryId: Long?,
         @RequestParam(required = false) beforePostId: Long?,
     ) = postDisplayer.getSearchedPostPreviewList(
-        tagId = tagId,
+        categoryId = categoryId,
         keyword = keyword,
         beforePostId = beforePostId,
         userId = userContext.id,

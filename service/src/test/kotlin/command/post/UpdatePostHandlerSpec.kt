@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.Forbidden
 import waffle.guam.community.common.InvalidArgumentException
 import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.post.PostRepository
-import waffle.guam.community.data.jdbc.tag.TagRepository
 import waffle.guam.community.service.command.post.UpdatePost
 import waffle.guam.community.service.command.post.UpdatePostHandler
 
@@ -22,15 +22,15 @@ import waffle.guam.community.service.command.post.UpdatePostHandler
 @Transactional
 class UpdatePostHandlerSpec @Autowired constructor(
     private val postRepository: PostRepository,
-    tagRepository: TagRepository,
+    categoryRepository: CategoryRepository,
 ) {
-    private val handler = UpdatePostHandler(postRepository, tagRepository)
+    private val handler = UpdatePostHandler(postRepository, categoryRepository)
     private val command = UpdatePost(
         postId = 1L,
         userId = 1L,
         title = "Update Test",
         content = "This is update test",
-        tagId = 2L
+        categoryId = 2L
     )
 
     @DisplayName("해당 포스트가 존재하지 않으면 에러가 발생한다.")
@@ -53,7 +53,7 @@ class UpdatePostHandlerSpec @Autowired constructor(
     @Test
     fun updateNothing() {
         assertThrows<InvalidArgumentException> {
-            handler.handle(command.copy(title = null, content = null, tagId = null))
+            handler.handle(command.copy(title = null, content = null, categoryId = null))
         }
     }
 
@@ -68,7 +68,7 @@ class UpdatePostHandlerSpec @Autowired constructor(
             assertThat(user.id).isEqualTo(command.userId)
             assertThat(title).isEqualTo(command.title)
             assertThat(content).isEqualTo(command.content)
-            assertThat(tags.first().tag.id).isEqualTo(command.tagId)
+            assertThat(categories.first().category.id).isEqualTo(command.categoryId)
         }
 
         result.run {
@@ -84,7 +84,7 @@ class UpdatePostHandlerSpec @Autowired constructor(
         val partialNullCommand = command.copy(
             title = "This is Update Test2",
             content = null,
-            tagId = null
+            categoryId = null
         )
         val oldPost = postRepository.findByIdOrNull(partialNullCommand.postId)!!
         val result = handler.handle(partialNullCommand)
@@ -96,7 +96,7 @@ class UpdatePostHandlerSpec @Autowired constructor(
             assertThat(user.id).isEqualTo(partialNullCommand.userId)
             assertThat(title).isEqualTo(partialNullCommand.title)
             assertThat(content).isEqualTo(oldPost.content)
-            assertThat(tags.first().tag.id).isEqualTo(oldPost.tags.first().tag.id)
+            assertThat(categories.first().category.id).isEqualTo(oldPost.categories.first().category.id)
         }
 
         result.run {

@@ -3,12 +3,12 @@ package waffle.guam.community.service.domain.post
 import waffle.guam.community.data.jdbc.board.BoardName
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
+import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.comment.AnonymousComments
 import waffle.guam.community.service.domain.comment.PostComment
 import waffle.guam.community.service.domain.comment.PostCommentDetail
 import waffle.guam.community.service.domain.like.PostLike
 import waffle.guam.community.service.domain.scrap.PostScrap
-import waffle.guam.community.service.domain.tag.PostTag
 import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.domain.user.User
 import java.time.Instant
@@ -20,7 +20,7 @@ data class PostDetail(
     val title: String,
     val content: String,
     val imagePaths: List<String>,
-    val categories: List<PostTag>, // todo 엔티티도 네이밍 변경
+    val category: PostCategory?,
     val likeCount: Int,
     val commentCount: Int,
     val scrapCount: Int,
@@ -38,7 +38,7 @@ data class PostDetail(
         fun of(
             post: Post,
             user: User,
-            tags: List<PostTag>,
+            category: PostCategory?,
             likes: List<PostLike>,
             scraps: List<PostScrap>,
             comments: List<PostComment>,
@@ -55,7 +55,7 @@ data class PostDetail(
                 title = post.title,
                 content = post.content,
                 imagePaths = post.imagePaths,
-                categories = tags,
+                category = category,
                 likeCount = likes.size,
                 commentCount = comments.size,
                 comments = if (post.isAnonymous) AnonymousComments(commentDetails, post.userId) else commentDetails,
