@@ -1,11 +1,11 @@
 package waffle.guam.community.data.jdbc.post
 
 import waffle.guam.community.data.jdbc.BaseTimeEntity
+import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.common.ImagePathsConverter
 import waffle.guam.community.data.jdbc.like.PostLikeEntity
 import waffle.guam.community.data.jdbc.scrap.PostScrapEntity
-import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
 import javax.persistence.CascadeType
 import javax.persistence.Convert
@@ -20,6 +20,9 @@ import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
+/**
+ * @property categories 현재는 post 당 하나만 사용하지만, 확장 가능성을 고려해 M:N 형태 유지
+ */
 @Table(name = "posts")
 @Entity
 class PostEntity(
@@ -42,8 +45,8 @@ class PostEntity(
     @Enumerated(value = EnumType.STRING)
     var status: Status = Status.VALID,
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    val tags: MutableSet<PostTagEntity> = mutableSetOf(),
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    val categories: MutableSet<PostCategoryEntity> = mutableSetOf(),
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val comments: MutableList<PostCommentEntity> = mutableListOf(),

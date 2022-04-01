@@ -12,10 +12,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.community.common.TagNotFound
+import waffle.guam.community.common.CategoryNotFound
 import waffle.guam.community.common.UserNotFound
+import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.post.PostRepository
-import waffle.guam.community.data.jdbc.tag.TagRepository
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.command.image.ImageListUploaded
 import waffle.guam.community.service.command.image.UploadImageList
@@ -28,18 +28,18 @@ import waffle.guam.community.service.command.post.CreatePostHandler
 @Transactional
 class CreatePostHandlerSpec @Autowired constructor(
     private val postRepository: PostRepository,
-    tagRepository: TagRepository,
+    categoryRepository: CategoryRepository,
     userRepository: UserRepository,
 ) {
     private val mockImageHandler: UploadImageListHandler = mockk()
-    private val handler = CreatePostHandler(postRepository, tagRepository, userRepository, mockImageHandler)
+    private val handler = CreatePostHandler(postRepository, categoryRepository, userRepository, mockImageHandler)
     private val command = CreatePost(
         boardId = 1L,
         userId = 2L,
         title = "Test Post",
         content = "This is Post Test",
         images = emptyList(),
-        tagId = 2L
+        categoryId = 2L
     )
 
     init {
@@ -61,11 +61,11 @@ class CreatePostHandlerSpec @Autowired constructor(
         }
     }
 
-    @DisplayName("해당 태그가 존재하지 않으면 에러가 발생한다.")
+    @DisplayName("해당 카테고리가 존재하지 않으면 에러가 발생한다.")
     @Test
-    fun notExistingTag() {
-        assertThrows<TagNotFound> {
-            handler.handle(command.copy(tagId = 404L))
+    fun notExistingCategory() {
+        assertThrows<CategoryNotFound> {
+            handler.handle(command.copy(categoryId = 404L))
         }
     }
 
@@ -78,7 +78,7 @@ class CreatePostHandlerSpec @Autowired constructor(
         assertThat(createdPost).isNotEqualTo(null)
         assertThat(command.boardId).isEqualTo(createdPost!!.boardId)
         assertThat(command.userId).isEqualTo(createdPost.user.id)
-        assertThat(command.tagId).isEqualTo(createdPost.tags.first().tag.id)
+        assertThat(command.categoryId).isEqualTo(createdPost.categories.first().category.id)
         assertThat(command.title).isEqualTo(createdPost.title)
         assertThat(command.content).isEqualTo(createdPost.content)
     }

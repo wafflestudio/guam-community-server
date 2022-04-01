@@ -3,10 +3,10 @@ package waffle.guam.community.service.domain.post
 import waffle.guam.community.data.jdbc.board.BoardName
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
+import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.comment.PostComment
 import waffle.guam.community.service.domain.like.PostLike
 import waffle.guam.community.service.domain.scrap.PostScrap
-import waffle.guam.community.service.domain.tag.PostTag
 import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.domain.user.User
 import java.time.Instant
@@ -18,7 +18,7 @@ data class PostPreview(
     val title: String,
     val content: String,
     val imagePaths: List<String>,
-    val categories: List<PostTag>,
+    val category: PostCategory?,
     val likeCount: Int,
     val commentCount: Int,
     val scrapCount: Int,
@@ -35,7 +35,7 @@ data class PostPreview(
         fun of(
             post: Post,
             user: User,
-            tags: List<PostTag>?,
+            category: PostCategory?,
             likes: List<PostLike>?,
             scraps: List<PostScrap>?,
             comments: List<PostComment>?,
@@ -51,7 +51,7 @@ data class PostPreview(
                 status = post.status,
                 createdAt = post.createdAt,
                 updatedAt = post.updatedAt,
-                categories = tags ?: listOf(),
+                category = category,
                 likeCount = likes?.size ?: 0,
                 commentCount = comments?.size ?: 0,
                 scrapCount = scraps?.size ?: 0,

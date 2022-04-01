@@ -11,6 +11,7 @@ import waffle.guam.community.service.domain.post.PostDetail
 import waffle.guam.community.service.domain.post.PostList
 import waffle.guam.community.service.domain.post.PostPreview
 import waffle.guam.community.service.domain.post.PostPreviewList
+import waffle.guam.community.service.query.category.PostCategoryListCollector
 import waffle.guam.community.service.query.comment.PostCommentListCollector
 import waffle.guam.community.service.query.like.PostLikeListCollector
 import waffle.guam.community.service.query.post.PostCollector
@@ -18,7 +19,6 @@ import waffle.guam.community.service.query.post.PostListCollector
 import waffle.guam.community.service.query.post.RecentPostListCollector
 import waffle.guam.community.service.query.post.SearchedPostListCollector
 import waffle.guam.community.service.query.scrap.PostScrapListCollector
-import waffle.guam.community.service.query.tag.PostTagListCollector
 import waffle.guam.community.service.query.user.UserCollector
 
 @Service
@@ -29,7 +29,7 @@ class PostDisplayer(
     private val recentPostListCollector: RecentPostListCollector.CacheImpl,
     private val postCollector: PostCollector.CacheImpl,
     private val userCollector: UserCollector.CacheImpl,
-    private val postTagListCollector: PostTagListCollector.CacheImpl,
+    private val postCategoryListCollector: PostCategoryListCollector.CacheImpl,
     private val postLikeListCollector: PostLikeListCollector.CacheImpl,
     private val postScrapListCollector: PostScrapListCollector.CacheImpl,
     private val postCommentListCollector: PostCommentListCollector.CacheImpl,
@@ -59,7 +59,7 @@ class PostDisplayer(
     }
 
     fun getSearchedPostPreviewList(
-        tagId: Long?,
+        categoryId: Long?,
         keyword: String,
         userId: Long,
         beforePostId: Long?,
@@ -67,7 +67,7 @@ class PostDisplayer(
         // No cache for searched posts
         searchedPostListCollector.get(
             SearchedPostListCollector.Query(
-                tagId = tagId,
+                categoryId = categoryId,
                 keyword = keyword,
                 beforePostId = beforePostId,
                 size = 20
@@ -90,7 +90,7 @@ class PostDisplayer(
 
     private fun PostList.fillData(userId: UserId): PostPreviewList = runBlocking {
         val userMap = async { userCollector.multiGet(content.map { it.userId }) }
-        val tagMap = async { postTagListCollector.multiGet(content.map { it.id }) }
+        val categoryMap = async { postCategoryListCollector.multiGet(content.map { it.id }) }
         val likeMap = async { postLikeListCollector.multiGet(content.map { it.id }) }
         val commentMap = async { postCommentListCollector.multiGet(content.map { it.id }) }
         val scrapMap = async { postScrapListCollector.multiGet(content.map { it.id }) }
@@ -100,7 +100,7 @@ class PostDisplayer(
                 PostPreview.of(
                     post = it,
                     user = userMap.await()[it.userId]!!,
-                    tags = tagMap.await()[it.id]?.content,
+                    category = categoryMap.await()[it.id]?.content?.single(),
                     likes = likeMap.await()[it.id]?.content,
                     scraps = scrapMap.await()[it.id]?.content,
                     comments = commentMap.await()[it.id]?.content,
@@ -115,12 +115,12 @@ class PostDisplayer(
         val commentList = async { postCommentListCollector.get(id = id) }
         val likes = async { postLikeListCollector.get(id = id) }
         val scraps = async { postScrapListCollector.get(id = id) }
-        val tags = async { postTagListCollector.get(id = id) }
+        val categories = async { postCategoryListCollector.get(id = id) }
 
         PostDetail.of(
             post = this@fillData,
             user = userCollector.get(id = userId),
-            tags = tags.await().content,
+            category = categories.await().content.single(),
             likes = likes.await().content,
             comments = commentList.await().content,
             scraps = scraps.await().content,

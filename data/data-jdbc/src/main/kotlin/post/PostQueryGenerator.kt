@@ -3,8 +3,8 @@ package waffle.guam.community.data.jdbc.post
 import org.springframework.data.jpa.domain.Specification
 import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.jdbc.QueryGenerator
+import waffle.guam.community.data.jdbc.category.PostCategoryEntity_
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity_
-import waffle.guam.community.data.jdbc.tag.PostTagEntity_
 import javax.persistence.criteria.JoinType
 
 interface PostQueryGenerator : QueryGenerator<PostEntity> {
@@ -20,10 +20,10 @@ interface PostQueryGenerator : QueryGenerator<PostEntity> {
 
     fun boardId(boardId: Long?): Specification<PostEntity> = eq(PostEntity_.BOARD_ID, boardId)
 
-    fun fetchTags(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
+    fun fetchCategories(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
         query.distinct(true)
-        root.fetch(PostEntity_.tags, JoinType.LEFT).also {
-            it.fetch(PostTagEntity_.tag, JoinType.LEFT)
+        root.fetch(PostEntity_.categories, JoinType.LEFT).also {
+            it.fetch(PostCategoryEntity_.category, JoinType.LEFT)
         }
         criteriaBuilder.conjunction()
     }
@@ -49,7 +49,7 @@ interface PostQueryGenerator : QueryGenerator<PostEntity> {
     }
 
     fun Collection<PostEntity>.throwIfNotContainIds(postIds: Collection<Long>) = apply {
-        val missed = postIds - map { it.id }
+        val missed = postIds - map { it.id }.toSet()
 
         if (missed.isNotEmpty()) {
             throw PostNotFound(missed)

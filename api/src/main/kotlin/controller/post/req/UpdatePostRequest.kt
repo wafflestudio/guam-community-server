@@ -6,7 +6,7 @@ data class UpdatePostRequest(
     val title: String? = null,
     val content: String? = null,
     val boardId: Long? = null,
-    val tagId: Long? = null,
+    val categoryId: Long? = null,
 ) {
     fun toCommand(postId: Long, userId: Long): UpdatePost {
         return UpdatePost(
@@ -15,7 +15,7 @@ data class UpdatePostRequest(
             title = title,
             content = content,
             boardId = boardId,
-            tagId = tagId,
+            categoryId = categoryId,
         )
     }
 }
