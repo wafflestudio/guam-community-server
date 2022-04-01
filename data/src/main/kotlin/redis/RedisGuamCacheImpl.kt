@@ -28,7 +28,7 @@ class RedisGuamCacheImpl<V : Any, K : Any> internal constructor(
         val value = redisTemplate.opsForValue().get(serializeKey(key))
             ?.let { deserializeValue(it) }
 
-        return value.also { logger.info("[Redis internalGet] key : {}, value : {}", key, value) }
+        return value.also { logger.debug("[Redis internalGet] key : {}, value : {}", key, value) }
     }
 
     override fun internalMultiGet(keys: Collection<K>): Map<K, V> {
@@ -39,23 +39,23 @@ class RedisGuamCacheImpl<V : Any, K : Any> internal constructor(
         return keys.zip(values)
             .mapNotNull { (k, v) -> v?.let { k to it } }
             .toMap()
-            .also { values -> logger.info("[Redis internalMultiGet] key : {}, value : {}", keys, values) }
+            .also { values -> logger.debug("[Redis internalMultiGet] key : {}, value : {}", keys, values) }
     }
 
     override fun internalPut(key: K, value: V) {
         redisTemplate.opsForValue().set(serializeKey(key), serializeValue(value), ttl)
-            .also { logger.info("[Redis internalPut] key : {}, value: {}", key, value) }
+            .also { logger.debug("[Redis internalPut] key : {}, value: {}", key, value) }
     }
 
     override fun internalMultiPut(keyValue: Map<K, V>) {
         // multiSet can't set ttl
         keyValue.forEach { (k, v) -> internalPut(k, v) }
-            .also { logger.info("[Redis internalMultiPut] key: {}, value: {}", keyValue.keys, keyValue.values) }
+            .also { logger.debug("[Redis internalMultiPut] key: {}, value: {}", keyValue.keys, keyValue.values) }
     }
 
     override fun internalInvalidate(key: K) {
         redisTemplate.delete(serializeKey(key))
-            .also { logger.info("[Redis internalInvalidate] key: {}", key) }
+            .also { logger.debug("[Redis internalInvalidate] key: {}", key) }
     }
 
     private fun serializeKey(key: K) = "$name:${mapper.writeValueAsBytes(key).decodeToString()}"
