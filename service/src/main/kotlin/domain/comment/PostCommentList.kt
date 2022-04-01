@@ -30,7 +30,7 @@ fun PostCommentList(e: PostEntity, likeMap: Map<Long, PostCommentLikeList>): Pos
                 val likeCount = likeMap[comment.id]?.content?.size ?: 0
                 PostComment(comment, likeCount)
             }
-            .sortedBy { comment ->
+            .sortedByDescending { comment ->
                 comment.id
             }
     )
