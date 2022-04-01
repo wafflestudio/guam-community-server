@@ -1,5 +1,7 @@
 package waffle.guam.community.service.query.tag
 
+import org.slf4j.LoggerFactory
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import waffle.guam.community.common.PostNotFound
 import waffle.guam.community.data.GuamCacheFactory
@@ -8,6 +10,7 @@ import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.tag.PostTagEntity
 import waffle.guam.community.service.PostId
+import waffle.guam.community.service.command.post.PostUpdated
 import waffle.guam.community.service.domain.tag.PostTag
 import waffle.guam.community.service.domain.tag.PostTagList
 import waffle.guam.community.service.query.MultiCollector
@@ -43,6 +46,7 @@ class PostTagListCollector(
         val impl: PostTagListCollector,
         cacheFactory: GuamCacheFactory,
     ) : MultiCollector<PostTagList, PostId> {
+        private val logger = LoggerFactory.getLogger(this::class.java)
         private val cache = cacheFactory.getCache(
             name = "POST_TAGS_CACHE",
             ttl = Duration.ofMinutes(10),
@@ -54,6 +58,10 @@ class PostTagListCollector(
 
         override fun multiGet(ids: Collection<PostId>): Map<PostId, PostTagList> = cache.multiGet(ids)
 
-        // TODO: reload when post updated
+        @EventListener
+        fun reload(event: PostUpdated) {
+            cache.reload(event.postId)
+            logger.info("Cache reloaded with $event")
+        }
     }
 }
