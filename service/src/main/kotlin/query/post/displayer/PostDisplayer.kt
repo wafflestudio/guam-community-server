@@ -100,7 +100,7 @@ class PostDisplayer(
                 PostPreview.of(
                     post = it,
                     user = userMap.await()[it.userId]!!,
-                    category = categoryMap.await()[it.id]?.content?.single(),
+                    category = categoryMap.await()[it.id]?.content?.singleOrNull(),
                     likes = likeMap.await()[it.id]?.content,
                     scraps = scrapMap.await()[it.id]?.content,
                     comments = commentMap.await()[it.id]?.content,
@@ -120,7 +120,7 @@ class PostDisplayer(
         PostDetail.of(
             post = this@fillData,
             user = userCollector.get(id = userId),
-            category = categories.await().content.single(),
+            category = categories.await().content.singleOrNull(),
             likes = likes.await().content,
             comments = commentList.await().content,
             scraps = scraps.await().content,
