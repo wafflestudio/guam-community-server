@@ -17,7 +17,7 @@ class RecentPostListCollector(
     private val postListCollector: PostListCollector,
 ) : Collector<PostList, BoardId>, PostQueryGenerator {
     companion object {
-        const val RECENT_POSTS_SIZE = 50
+        const val RECENT_POSTS_SIZE = 20
     }
 
     override fun get(id: BoardId): PostList =
