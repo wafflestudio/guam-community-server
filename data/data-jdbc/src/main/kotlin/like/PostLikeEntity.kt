@@ -1,5 +1,6 @@
 package waffle.guam.community.data.jdbc.like
 
+import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
 import javax.persistence.Entity
@@ -14,10 +15,6 @@ import javax.persistence.Table
 @Table(name = "post_likes")
 @Entity
 data class PostLikeEntity(
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    val id: Long = 0L,
-
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     val post: PostEntity,
@@ -25,4 +22,8 @@ data class PostLikeEntity(
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     val user: UserEntity
-)
+) : BaseTimeEntity() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    val id: Long = 0L
+}
