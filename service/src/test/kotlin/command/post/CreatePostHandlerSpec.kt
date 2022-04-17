@@ -12,8 +12,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.community.common.CategoryNotFound
+import waffle.guam.community.common.BadCategoryId
 import waffle.guam.community.common.UserNotFound
+import waffle.guam.community.data.jdbc.board.BoardRepository
 import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.user.UserRepository
@@ -30,9 +31,10 @@ class CreatePostHandlerSpec @Autowired constructor(
     private val postRepository: PostRepository,
     categoryRepository: CategoryRepository,
     userRepository: UserRepository,
+    boardRepository: BoardRepository,
 ) {
     private val mockImageHandler: UploadImageListHandler = mockk()
-    private val handler = CreatePostHandler(postRepository, categoryRepository, userRepository, mockImageHandler)
+    private val handler = CreatePostHandler(postRepository, boardRepository, categoryRepository, userRepository, mockImageHandler)
     private val command = CreatePost(
         boardId = 1L,
         userId = 2L,
@@ -64,7 +66,7 @@ class CreatePostHandlerSpec @Autowired constructor(
     @DisplayName("해당 카테고리가 존재하지 않으면 에러가 발생한다.")
     @Test
     fun notExistingCategory() {
-        assertThrows<CategoryNotFound> {
+        assertThrows<BadCategoryId> {
             handler.handle(command.copy(categoryId = 404L))
         }
     }

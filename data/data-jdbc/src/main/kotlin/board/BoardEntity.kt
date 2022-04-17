@@ -14,7 +14,10 @@ class BoardEntity(
     val id: Long,
 
     val title: String
-)
+) {
+    val isAnonymous: Boolean
+        get() = id == 1L
+}
 
 // 보드엔티티 아예 필요없을 것 같긴 한데 일단은
 enum class BoardName(val idx: Long) {

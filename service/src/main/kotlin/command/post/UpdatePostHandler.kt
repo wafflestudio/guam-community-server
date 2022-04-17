@@ -3,10 +3,13 @@ package waffle.guam.community.service.command.post
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.community.common.CategoryNotFound
+import waffle.guam.community.common.BadBoardId
+import waffle.guam.community.common.BadCategoryId
 import waffle.guam.community.common.Forbidden
+import waffle.guam.community.common.GuamBadRequest
 import waffle.guam.community.common.InvalidArgumentException
 import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.data.jdbc.board.BoardRepository
 import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
@@ -20,6 +23,7 @@ import waffle.guam.community.service.command.Result
 class UpdatePostHandler(
     private val postRepository: PostRepository,
     private val categoryRepository: CategoryRepository,
+    private val boardRepository: BoardRepository,
 ) : CommandHandler<UpdatePost, PostUpdated>, PostQueryGenerator {
 
     @Transactional
@@ -59,16 +63,16 @@ class UpdatePostHandler(
     }
 
     private fun PostEntity.updateBoardId(boardId: Long) {
-        val isChangingToAnonymous = boardId == 1L
-        if (isChangingToAnonymous xor this.isAnonymous) {
-            throw Forbidden("게시판을 이동할 수 없습니다.")
-        }
+        val newBoard = boardRepository.findByIdOrNull(boardId) ?: throw BadBoardId(boardId)
+
+        val isChangingAnonymity = newBoard.isAnonymous xor this.isAnonymous
+        if (isChangingAnonymity) { throw Forbidden("게시판을 이동할 수 없습니다.") }
 
         this.boardId = boardId
     }
 
     private fun PostEntity.updateCategory(newCategoryId: Long) {
-        val category = categoryRepository.findByIdOrNull(newCategoryId) ?: throw CategoryNotFound(newCategoryId)
+        val category = categoryRepository.findByIdOrNull(newCategoryId) ?: throw BadCategoryId(newCategoryId)
 
         categories.removeAll { true }
         categories.add(PostCategoryEntity(post = this, category = category))
@@ -86,6 +90,8 @@ data class UpdatePost(
     init {
         if (title == null && content == null && categoryId == null && boardId == null) {
             throw InvalidArgumentException("적어도 한 개 이상의 필드값을 변경해야합니다.")
+        } else if (content?.isBlank() == true || title?.isBlank() == true) {
+            throw GuamBadRequest("제목이나 게시글 내용은 빈 값으로 변경할 수 없습니다.")
         }
     }
 }

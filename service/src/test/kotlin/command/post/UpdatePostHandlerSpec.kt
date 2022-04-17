@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.Forbidden
 import waffle.guam.community.common.InvalidArgumentException
 import waffle.guam.community.common.PostNotFound
+import waffle.guam.community.data.jdbc.board.BoardRepository
 import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.command.post.UpdatePost
@@ -23,8 +24,9 @@ import waffle.guam.community.service.command.post.UpdatePostHandler
 class UpdatePostHandlerSpec @Autowired constructor(
     private val postRepository: PostRepository,
     categoryRepository: CategoryRepository,
+    boardRepository: BoardRepository,
 ) {
-    private val handler = UpdatePostHandler(postRepository, categoryRepository)
+    private val handler = UpdatePostHandler(postRepository, categoryRepository, boardRepository)
     private val command = UpdatePost(
         postId = 1L,
         userId = 1L,
@@ -84,7 +86,7 @@ class UpdatePostHandlerSpec @Autowired constructor(
         val partialNullCommand = command.copy(
             title = "This is Update Test2",
             content = null,
-            categoryId = null
+            categoryId = null,
         )
         val oldPost = postRepository.findByIdOrNull(partialNullCommand.postId)!!
         val result = handler.handle(partialNullCommand)

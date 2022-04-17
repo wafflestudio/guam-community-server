@@ -4,8 +4,11 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import waffle.guam.community.common.CategoryNotFound
+import waffle.guam.community.common.BadBoardId
+import waffle.guam.community.common.BadCategoryId
+import waffle.guam.community.common.GuamBadRequest
 import waffle.guam.community.common.UserNotFound
+import waffle.guam.community.data.jdbc.board.BoardRepository
 import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
@@ -21,6 +24,7 @@ import waffle.guam.community.service.domain.image.ImageType
 @Service
 class CreatePostHandler(
     private val postRepository: PostRepository,
+    private val boardRepository: BoardRepository,
     private val categoryRepository: CategoryRepository,
     private val userRepository: UserRepository,
     private val imageHandler: UploadImageListHandler,
@@ -28,12 +32,17 @@ class CreatePostHandler(
 
     @Transactional
     override fun handle(command: CreatePost): PostCreated {
+        checkBoardId(command.boardId)
         val post = postRepository.save(command.toEntity())
 
         post.addCategory(command.categoryId)
         post.addImages(command.images)
 
         return PostCreated(postId = post.id, boardId = post.boardId, userId = post.user.id)
+    }
+
+    private fun checkBoardId(boardId: Long) {
+        require(boardRepository.existsById(boardId)) { throw BadBoardId(boardId) }
     }
 
     private fun CreatePost.toEntity() = PostEntity(
@@ -44,7 +53,7 @@ class CreatePostHandler(
     )
 
     private fun PostEntity.addCategory(categoryId: Long) {
-        val category = categoryRepository.findByIdOrNull(categoryId) ?: throw CategoryNotFound(categoryId)
+        val category = categoryRepository.findByIdOrNull(categoryId) ?: throw BadCategoryId(categoryId)
         categories.add(PostCategoryEntity(post = this, category = category))
     }
 
@@ -63,7 +72,13 @@ data class CreatePost(
     val content: String,
     val images: List<MultipartFile>,
     val categoryId: Long,
-) : Command
+) : Command {
+    init {
+        if (content.isNullOrBlank() || title.isNullOrBlank()) {
+            throw GuamBadRequest("제목 또는 게시글 내용을 작성해주세요.")
+        }
+    }
+}
 
 data class PostCreated(
     val postId: Long,
