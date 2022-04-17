@@ -105,4 +105,19 @@ class UpdatePostHandlerSpec @Autowired constructor(
             assertThat(userId).isEqualTo(updatedPost.user.id)
         }
     }
+
+    @DisplayName("익명 게시판에서 기명 게시판으로 옮기는 경우 403 에러를 반환한다")
+    @Test
+    fun updateAnonymousStatus() {
+        // given
+        val command = command.copy(
+            title = "익명 게시판 안씀",
+            boardId = 2L,
+        )
+
+        // when
+        assertThrows<Forbidden> {
+            handler.handle(command)
+        }
+    }
 }

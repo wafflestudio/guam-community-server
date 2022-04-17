@@ -24,22 +24,15 @@ class UpdatePostHandler(
 
     @Transactional
     override fun handle(command: UpdatePost): PostUpdated {
-        val (postId, userId, title, content, boardId, categoryId) = command
-
-        val post = postRepository.findOne(postId(postId) * fetchCategories()) ?: throw PostNotFound(postId)
-
-        post.updateBy(userId = userId, title = title, content = content, boardId = boardId, categoryId = categoryId)
+        val post = postRepository.findOne(postId(command.postId) * fetchCategories()) ?: throw PostNotFound(command.postId)
+        post.updateBy(command)
 
         return PostUpdated(postId = post.id, boardId = post.boardId, userId = post.user.id)
     }
 
-    private fun PostEntity.updateBy(
-        userId: Long,
-        title: String? = null,
-        content: String? = null,
-        boardId: Long? = null,
-        categoryId: Long? = null,
-    ) {
+    private fun PostEntity.updateBy(command: UpdatePost) {
+        val (_, userId, title, content, boardId, categoryId) = command
+
         if (this.user.id != userId) {
             throw Forbidden("USER $userId NOT AUTHORIZED TO UPDATE POST $id")
         }
@@ -66,6 +59,11 @@ class UpdatePostHandler(
     }
 
     private fun PostEntity.updateBoardId(boardId: Long) {
+        val isChangingToAnonymous = boardId == 1L
+        if (isChangingToAnonymous xor this.isAnonymous) {
+            throw Forbidden("게시판을 이동할 수 없습니다.")
+        }
+
         this.boardId = boardId
     }
 

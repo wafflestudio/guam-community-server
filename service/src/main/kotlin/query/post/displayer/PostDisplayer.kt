@@ -43,14 +43,15 @@ class PostDisplayer(
         // page 값이 존재하는 경우, beforePostId는 null이어야 함
         // page 값이 null인 경우, beforePostId는 어떤 값이든 상관 없음
         require(page.isNull || beforePostId.isNull)
-        return if (beforePostId.isNull || page == 0) {
+
+        return if (beforePostId.isNull && (page == 0 || page == null)) {
             // Cache for recent posts
             recentPostListCollector.get(boardId).fillData(userId)
         } else {
             // No cache for old posts
             val query = PostListCollector.Query(
                 boardId = boardId.takeIf { it > 0L },
-                beforePostId = beforePostId!!,
+                beforePostId = beforePostId,
                 page = page ?: 0,
                 size = 20
             )
