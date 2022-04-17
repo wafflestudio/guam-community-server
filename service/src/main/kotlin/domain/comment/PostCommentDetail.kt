@@ -17,6 +17,7 @@ data class PostCommentDetail(
     val createdAt: Instant,
     val updatedAt: Instant,
     val isMine: Boolean,
+    val isLiked: Boolean,
 )
 
 fun PostCommentDetail(d: PostComment, callerId: UserId) =
@@ -27,10 +28,11 @@ fun PostCommentDetail(d: PostComment, callerId: UserId) =
         content = d.content,
         imagePaths = d.imagePaths,
         mentionIds = d.mentionIds,
-        likeCount = d.likeCount,
+        likeCount = d.likes.size,
         createdAt = d.createdAt,
         updatedAt = d.updatedAt,
         isMine = d.user.id == callerId,
+        isLiked = d.likes.any { it.userId == callerId },
     )
 
 fun AnonymousComments(commentList: List<PostCommentDetail>, writerId: Long): List<PostCommentDetail> {

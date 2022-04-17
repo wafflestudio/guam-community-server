@@ -89,7 +89,7 @@ class PostDisplayer(
         return posts.fillData(userId)
     }
 
-    private fun PostList.fillData(userId: UserId): PostPreviewList = runBlocking {
+    private fun PostList.fillData(callerId: UserId): PostPreviewList = runBlocking {
         val userMap = async { userCollector.multiGet(content.map { it.userId }) }
         val categoryMap = async { postCategoryListCollector.multiGet(content.map { it.id }) }
         val likeMap = async { postLikeListCollector.multiGet(content.map { it.id }) }
@@ -105,7 +105,7 @@ class PostDisplayer(
                     likes = likeMap.await()[it.id]?.content,
                     scraps = scrapMap.await()[it.id]?.content,
                     comments = commentMap.await()[it.id]?.content,
-                    isMine = it.userId == userId,
+                    callerId = callerId,
                 )
             },
             hasNext = hasNext

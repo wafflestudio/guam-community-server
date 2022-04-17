@@ -23,15 +23,8 @@ fun PostCommentList(e: PostEntity, likeMap: Map<Long, PostCommentLikeList>): Pos
         writerId = e.user.id,
         boardId = e.boardId,
         content = e.comments
-            .filter { comment ->
-                comment.status == PostCommentEntity.Status.VALID
-            }
-            .map { comment ->
-                val likeCount = likeMap[comment.id]?.content?.size ?: 0
-                PostComment(comment, likeCount)
-            }
-            .sortedByDescending { comment ->
-                comment.id
-            }
+            .filter { comment -> comment.status == PostCommentEntity.Status.VALID }
+            .map { comment -> PostComment(comment, likeMap[comment.id]) }
+            .sortedByDescending { comment -> comment.id }
     )
 }

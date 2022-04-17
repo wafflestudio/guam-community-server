@@ -39,7 +39,7 @@ data class PostPreview(
             likes: List<PostLike>?,
             scraps: List<PostScrap>?,
             comments: List<PostComment>?,
-            isMine: Boolean,
+            callerId: Long,
         ): PostPreview {
             return PostPreview(
                 id = post.id,
@@ -55,9 +55,9 @@ data class PostPreview(
                 likeCount = likes?.size ?: 0,
                 commentCount = comments?.size ?: 0,
                 scrapCount = scraps?.size ?: 0,
-                isLiked = likes?.any { like -> like.userId == user.id } ?: false,
-                isScrapped = scraps?.any { scrap -> scrap.userId == user.id } ?: false,
-                isMine = isMine,
+                isMine = post.userId == callerId,
+                isLiked = likes?.any { like -> like.userId == callerId } ?: false,
+                isScrapped = scraps?.any { scrap -> scrap.userId == callerId } ?: false,
             )
         }
     }
