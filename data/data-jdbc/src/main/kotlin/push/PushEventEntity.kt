@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Table(name = "push_events")
@@ -20,6 +21,7 @@ data class PushEventEntity(
 
     val userId: Long,
 
+    @ManyToOne
     @JoinColumn(name = "writer_id")
     val writer: UserEntity,
 
@@ -30,7 +32,7 @@ data class PushEventEntity(
 
     val linkUrl: String,
 
-    var isRead: Boolean,
+    var  isRead: Boolean,
 
     val createdAt: Instant = Instant.now(),
 ) {
