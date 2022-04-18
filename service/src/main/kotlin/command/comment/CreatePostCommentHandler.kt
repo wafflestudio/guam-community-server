@@ -40,13 +40,17 @@ class CreatePostCommentHandler(
             postId = postId,
             postUserId = post.user.id,
             content = command.content,
-            writerName = user.nickname ?: "유저 $userId",
-            writerProfileImage = user.profileImage,
+            writerId = user.id,
             mentionIds = mentionIds,
         )
     }
 
-    private fun PostEntity.addCommentBy(user: UserEntity, content: String, images: List<MultipartFile>, mentionIds: List<UserId>) {
+    private fun PostEntity.addCommentBy(
+        user: UserEntity,
+        content: String,
+        images: List<MultipartFile>,
+        mentionIds: List<UserId>,
+    ) {
         PostCommentEntity(post = this, user = user, content = content)
             .apply { addImages(images) }
             .apply { setMentionedUserIds(mentionIds) }
@@ -74,6 +78,5 @@ data class PostCommentCreated(
     val postUserId: Long,
     val mentionIds: List<UserId>,
     val content: String,
-    val writerName: String,
-    val writerProfileImage: String?,
+    val writerId: Long,
 ) : Result
