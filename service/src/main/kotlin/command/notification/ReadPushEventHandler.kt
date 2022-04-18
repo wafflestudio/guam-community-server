@@ -2,7 +2,6 @@ package waffle.guam.community.service.command.notification
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.community.common.GuamNotFound
 import waffle.guam.community.common.GuamUnAuthorized
 import waffle.guam.community.data.jdbc.push.PushEventRepository
 import waffle.guam.community.service.command.Command
@@ -12,29 +11,29 @@ import waffle.guam.community.service.command.Result
 @Service
 class ReadPushEventHandler(
     private val pushEventRepository: PushEventRepository,
-) : CommandHandler<ReadPushEvent, PushEventRead> {
+) : CommandHandler<ReadPushEvents, PushEventsRead> {
 
     @Transactional
-    override fun handle(command: ReadPushEvent): PushEventRead {
-        val pushEvent = pushEventRepository.findById(command.pushEventId)
-            .orElseThrow { GuamNotFound("PUSH_EVENT [${command.pushEventId}] NOT FOUND") }
+    override fun handle(command: ReadPushEvents): PushEventsRead {
+        val (mine, others) = pushEventRepository.findAllById(command.pushEventIds)
+            .partition { it.userId == command.userId }
 
-        if (pushEvent.userId != command.userId) {
-            throw GuamUnAuthorized("USER [${command.userId}] can't update PUSH_EVENT [${command.pushEventId}]")
+        if (others.isNotEmpty()) {
+            throw GuamUnAuthorized("USER [${command.userId}] can't update PUSH_EVENTS [$others]")
         }
 
-        pushEvent.isRead = true
+        mine.forEach { it.isRead = true }
 
-        return PushEventRead(command.userId, command.pushEventId)
+        return PushEventsRead(command.userId, mine.map { it.id })
     }
 }
 
-data class ReadPushEvent(
+data class ReadPushEvents(
     val userId: Long,
-    val pushEventId: Long,
+    val pushEventIds: List<Long>,
 ) : Command
 
-data class PushEventRead(
+data class PushEventsRead(
     val userId: Long,
-    val pushEventId: Long,
+    val pushEventIds: List<Long>,
 ) : Result
