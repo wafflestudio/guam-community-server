@@ -13,7 +13,6 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
-    implementation("com.google.firebase:firebase-admin:7.1.0")
     implementation("org.springdoc:springdoc-openapi-ui:1.5.+")
 
     compileOnly("ch.qos.logback:logback-classic")
