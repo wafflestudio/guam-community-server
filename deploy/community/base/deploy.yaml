@@ -6,6 +6,8 @@ spec:
   selector:
     matchLabels:
       app: api
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
