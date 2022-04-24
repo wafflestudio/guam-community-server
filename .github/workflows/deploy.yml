@@ -24,9 +24,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Add Firebase Secret File
-        run: echo ${{ secrets.FIREBASE_SDK }} | base64 --decode > ${{ secrets.FIREBASE_SDK_PATH }}
-
       - name: Build Code
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
@@ -38,14 +35,5 @@ jobs:
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DCR_NAME }}
-
-  deploy_container:
-    needs: build_and_push_container
-    runs-on: [ self-hosted, guam ]
-
-    steps:
-      - name: Run Deploy Script
-        run: ./deploy.sh
-        working-directory: /home/ec2-user
 
 
