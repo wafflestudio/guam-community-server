@@ -30,7 +30,7 @@ jobs:
           arguments: build
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DCR_NAME }} ./community
+        run: docker build -t ${{ secrets.DCR_NAME }} .
         # NO Tag Versioning Now
 
       - name: Push Docker Image
