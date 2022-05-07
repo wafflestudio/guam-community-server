@@ -15,9 +15,9 @@ X-GATEWAY-USER-ID: 2
 
 ### POST_DETAIL - ID: 1
 
-GET {{ base_url }}/posts
+GET {{ base_url }}/posts/188
 Content-Type: application/json
-X-GATEWAY-USER-ID: 1
+X-GATEWAY-USER-ID: 9
 
 ### UPDATE_USER - ID: 1
 
