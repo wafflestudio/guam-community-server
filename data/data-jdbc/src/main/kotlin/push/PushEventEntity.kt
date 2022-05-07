@@ -15,10 +15,6 @@ import javax.persistence.Table
 @Table(name = "push_events")
 @Entity
 data class PushEventEntity(
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    val id: Long = 0L,
-
     val userId: Long,
 
     @ManyToOne
@@ -32,11 +28,17 @@ data class PushEventEntity(
 
     val linkUrl: String,
 
-    var isRead: Boolean,
-
-    val createdAt: Instant = Instant.now(),
+    val isAnonymousEvent: Boolean,
 ) {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    val id: Long = 0L
+
+    var isRead: Boolean = false
+
+    val createdAt: Instant = Instant.now()
+
     enum class Kind {
-        POST_COMMENT, POST_COMMENT_MENTION
+        POST_LIKE, POST_COMMENT, POST_COMMENT_MENTION, POST_COMMENT_LIKE, POST_SCRAP
     }
 }

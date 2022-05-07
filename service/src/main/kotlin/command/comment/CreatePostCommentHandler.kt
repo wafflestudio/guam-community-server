@@ -10,6 +10,7 @@ import waffle.guam.community.common.UserNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.push.PushEventEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.UserId
@@ -42,6 +43,7 @@ class CreatePostCommentHandler(
             content = command.content,
             writerId = user.id,
             mentionIds = mentionIds,
+            isAnonymous = post.isAnonymous,
         )
     }
 
@@ -79,4 +81,30 @@ data class PostCommentCreated(
     val mentionIds: List<UserId>,
     val content: String,
     val writerId: Long,
-) : Result
+    @get:JsonIgnore
+    val isAnonymous: Boolean,
+) : Result {
+    fun toCreatedEventEntity(writer: UserEntity): PushEventEntity {
+        return PushEventEntity(
+            userId = postUserId,
+            writer = writer,
+            kind = PushEventEntity.Kind.POST_COMMENT,
+            body = content.take(50),
+            linkUrl = "/api/v1/posts/$postId",
+            isAnonymousEvent = isAnonymous,
+        )
+    }
+
+    fun toMentionEventEntity(writer: UserEntity): List<PushEventEntity> {
+        return mentionIds.map {
+            PushEventEntity(
+                userId = it,
+                writer = writer,
+                kind = PushEventEntity.Kind.POST_COMMENT_MENTION,
+                body = content.take(50),
+                linkUrl = "/api/v1/posts/$postId",
+                isAnonymousEvent = isAnonymous,
+            )
+        }
+    }
+}

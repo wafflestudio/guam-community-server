@@ -1,5 +1,6 @@
 package waffle.guam.community.service.command.like
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.stereotype.Service
 import waffle.guam.community.common.GuamConflict
 import waffle.guam.community.common.PostCommentNotFound
@@ -7,6 +8,8 @@ import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentQueryGenerator
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
 import waffle.guam.community.data.jdbc.like.PostCommentLikeEntity
+import waffle.guam.community.data.jdbc.push.PushEventEntity
+import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
@@ -24,9 +27,11 @@ class CreatePostCommentLikeHandler(
         comment.addLikeBy(userId)
 
         return PostCommentLikeCreated(
-            postId = comment.post.id,
+            postId = postId,
             commentId = comment.id,
-            userId = comment.user.id
+            userId = comment.user.id,
+            content = comment.content,
+            isAnonymous = comment.post.isAnonymous,
         )
     }
 
@@ -49,4 +54,17 @@ data class PostCommentLikeCreated(
     val postId: Long,
     val commentId: Long,
     val userId: Long,
-) : Result
+    @get:JsonIgnore val content: String,
+    @get:JsonIgnore val isAnonymous: Boolean,
+) : Result {
+    fun toPushEventEntity(writer: UserEntity): PushEventEntity {
+        return PushEventEntity(
+            userId = userId,
+            writer = writer,
+            kind = PushEventEntity.Kind.POST_COMMENT_LIKE,
+            body = content.take(50),
+            linkUrl = "/api/v1/posts/$postId/comments",
+            isAnonymousEvent = isAnonymous,
+        )
+    }
+}
