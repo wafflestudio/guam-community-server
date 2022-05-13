@@ -16,6 +16,7 @@ class CreatePushEventHandler(
 ) {
     @EventListener
     fun postCommentCreated(event: PostCommentCreated) {
+        if (event.needNotNotify) return
         val userWhoWrote = userRepository.getById(event.writerId)
         val postCommentCreatedEvent = event.toCreatedEventEntity(userWhoWrote)
         val mentionedEvents = event.toMentionEventEntity(userWhoWrote)

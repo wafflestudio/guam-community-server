@@ -84,6 +84,10 @@ data class PostCommentCreated(
     @get:JsonIgnore
     val isAnonymous: Boolean,
 ) : Result {
+    @get:JsonIgnore
+    val needNotNotify: Boolean
+        get() = writerId == postUserId
+
     fun toCreatedEventEntity(writer: UserEntity): PushEventEntity {
         return PushEventEntity(
             userId = postUserId,

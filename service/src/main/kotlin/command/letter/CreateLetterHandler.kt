@@ -3,6 +3,7 @@ package waffle.guam.community.service.command.letter
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import waffle.guam.community.common.GuamBadRequest
 import waffle.guam.community.data.jdbc.letter.LetterEntity
 import waffle.guam.community.data.jdbc.letter.LetterRepository
 import waffle.guam.community.service.UserId
@@ -41,7 +42,12 @@ data class CreateLetter(
     val to: UserId,
     val text: String,
     val image: MultipartFile?,
-) : Command
+) : Command {
+    init {
+        require(from != to) { throw GuamBadRequest("자기 자신에게 쪽지를 보낼 수 없습니다.") }
+        require(text.isNotBlank()) { throw GuamBadRequest("내용을 입력해주세요.") }
+    }
+}
 
 data class LetterCreated(
     val from: UserId,
