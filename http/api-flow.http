@@ -56,3 +56,9 @@ X-GATEWAY-USER-ID: 1
 GET {{ base_url }}/users/3/comments
 Content-Type: application/json
 X-GATEWAY-USER-ID: 1
+
+### GET USER'S COMMENTS
+
+POST {{ base_url }}/posts/190/comments/224/likes
+Content-Type: application/json
+X-GATEWAY-USER-ID: 1

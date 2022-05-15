@@ -15,7 +15,7 @@ import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.PushEventResult
 
 @Service
 class CreatePostLikeHandler(
@@ -65,15 +65,21 @@ data class PostLikeCreated(
     @get:JsonIgnore val postUserId: Long,
     @get:JsonIgnore val content: String,
     @get:JsonIgnore val isAnonymous: Boolean,
-) : Result {
-    fun toPushEventEntity(writer: UserEntity): PushEventEntity {
+) : PushEventResult {
+    override val consumingUserId: Long
+        get() = postUserId
+
+    override val producedUserId: Long
+        get() = userId
+
+    override fun toPushEventEntities(producedBy: UserEntity): List<PushEventEntity> {
         return PushEventEntity(
-            userId = postUserId,
-            writer = writer,
+            userId = consumingUserId,
+            writer = producedBy,
             kind = PushEventEntity.Kind.POST_LIKE,
             body = content.take(50),
             linkUrl = "/api/v1/posts/$postId",
             isAnonymousEvent = isAnonymous,
-        )
+        ).let(::listOf)
     }
 }

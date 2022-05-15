@@ -5,10 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.push.PushEventRepository
 import waffle.guam.community.data.jdbc.user.UserRepository
-import waffle.guam.community.service.command.comment.PostCommentCreated
-import waffle.guam.community.service.command.like.PostCommentLikeCreated
-import waffle.guam.community.service.command.like.PostLikeCreated
-import waffle.guam.community.service.command.scrap.PostScrapCreated
+import waffle.guam.community.service.command.PushEventResult
 
 @Service
 class CreatePushEventHandler(
@@ -17,32 +14,9 @@ class CreatePushEventHandler(
 ) {
     @Transactional
     @EventListener
-    fun postCommentCreated(event: PostCommentCreated) {
+    fun pushEventCreated(event: PushEventResult) {
         if (event.needNotNotify) return
-        val userWhoWrote = userRepository.getById(event.writerId)
-        val postCommentCreatedEvent = event.toCreatedEventEntity(userWhoWrote)
-        val mentionedEvents = event.toMentionEventEntity(userWhoWrote)
-        pushEventRepository.saveAll(mentionedEvents + postCommentCreatedEvent)
-    }
-
-    @Transactional
-    @EventListener
-    fun postLiked(event: PostLikeCreated) {
-        val userWhoLiked = userRepository.getById(event.userId)
-        pushEventRepository.save(event.toPushEventEntity(userWhoLiked))
-    }
-
-    @Transactional
-    @EventListener
-    fun postCommentLiked(event: PostCommentLikeCreated) {
-        val userWhoLiked = userRepository.getById(event.userId)
-        pushEventRepository.save(event.toPushEventEntity(userWhoLiked))
-    }
-
-    @Transactional
-    @EventListener
-    fun postScrapped(event: PostScrapCreated) {
-        val userWhoScrapped = userRepository.getById(event.userId)
-        pushEventRepository.save(event.toPushEventEntity(userWhoScrapped))
+        val userWhoTriggeredEvent = userRepository.getById(event.producedUserId)
+        pushEventRepository.saveAll(event.toPushEventEntities(userWhoTriggeredEvent))
     }
 }

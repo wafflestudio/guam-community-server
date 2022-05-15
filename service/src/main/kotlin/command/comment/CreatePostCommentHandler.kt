@@ -16,7 +16,7 @@ import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.PushEventResult
 import waffle.guam.community.service.command.image.UploadImageList
 import waffle.guam.community.service.command.image.UploadImageListHandler
 import waffle.guam.community.service.domain.image.ImageType
@@ -80,15 +80,23 @@ data class PostCommentCreated(
     val postUserId: Long,
     val mentionIds: List<UserId>,
     val content: String,
-    val writerId: Long,
     @get:JsonIgnore
     val isAnonymous: Boolean,
-) : Result {
-    @get:JsonIgnore
-    val needNotNotify: Boolean
-        get() = writerId == postUserId
+    val writerId: Long,
+) : PushEventResult {
+    override val producedUserId: Long
+        get() = writerId
 
-    fun toCreatedEventEntity(writer: UserEntity): PushEventEntity {
+    override val consumingUserId: Long
+        get() = postUserId
+
+    override fun toPushEventEntities(producedBy: UserEntity): List<PushEventEntity> {
+        val postCommentCreatedEvent = this.toCreatedEventEntity(producedBy)
+        val mentionedEvents = this.toMentionEventEntity(producedBy)
+        return mentionedEvents + postCommentCreatedEvent
+    }
+
+    private fun toCreatedEventEntity(writer: UserEntity): PushEventEntity {
         return PushEventEntity(
             userId = postUserId,
             writer = writer,
@@ -99,7 +107,7 @@ data class PostCommentCreated(
         )
     }
 
-    fun toMentionEventEntity(writer: UserEntity): List<PushEventEntity> {
+    private fun toMentionEventEntity(writer: UserEntity): List<PushEventEntity> {
         return mentionIds.map {
             PushEventEntity(
                 userId = it,

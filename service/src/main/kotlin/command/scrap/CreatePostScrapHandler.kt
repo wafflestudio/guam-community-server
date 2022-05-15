@@ -17,7 +17,7 @@ import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.PushEventResult
 
 @Service
 class CreatePostScrapHandler(
@@ -32,7 +32,7 @@ class CreatePostScrapHandler(
         return PostScrapCreated(
             postId = command.postId,
             userId = command.userId,
-            postUserId = post.user.id,
+            consumingUserId = post.user.id,
             content = post.content,
             isAnonymous = post.isAnonymous,
         )
@@ -56,18 +56,21 @@ data class CreatePostScrap(
 data class PostScrapCreated(
     val postId: PostId,
     val userId: UserId,
+    override val consumingUserId: Long,
     @get:JsonIgnore val content: String,
-    @get:JsonIgnore val postUserId: Long,
     @get:JsonIgnore val isAnonymous: Boolean,
-) : Result {
-    fun toPushEventEntity(writer: UserEntity): PushEventEntity {
+) : PushEventResult {
+    override val producedUserId: Long
+        get() = userId
+
+    override fun toPushEventEntities(producedBy: UserEntity): List<PushEventEntity> {
         return PushEventEntity(
-            userId = postUserId,
-            writer = writer,
+            userId = consumingUserId,
+            writer = producedBy,
             kind = PushEventEntity.Kind.POST_SCRAP,
             body = content.take(50),
             linkUrl = "/api/v1/posts/$postId",
             isAnonymousEvent = isAnonymous,
-        )
+        ).let(::listOf)
     }
 }
