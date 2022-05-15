@@ -2,6 +2,7 @@ package waffle.guam.community.service.command.notification
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.RequestBody
 import waffle.guam.community.common.GuamUnAuthorized
 import waffle.guam.community.data.jdbc.push.PushEventRepository
 import waffle.guam.community.service.command.Command
@@ -14,7 +15,7 @@ class ReadPushEventHandler(
 ) : CommandHandler<ReadPushEvents, PushEventsRead> {
 
     @Transactional
-    override fun handle(command: ReadPushEvents): PushEventsRead {
+    override fun handle(@RequestBody command: ReadPushEvents): PushEventsRead {
         val (mine, others) = pushEventRepository.findAllById(command.pushEventIds)
             .partition { it.userId == command.userId }
 
