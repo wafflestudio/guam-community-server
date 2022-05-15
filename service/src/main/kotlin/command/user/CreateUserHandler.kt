@@ -1,6 +1,7 @@
 package waffle.guam.community.service.command.user
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.user.UserEntity
 import waffle.guam.community.data.jdbc.user.UserRepository
 import waffle.guam.community.service.command.Command
@@ -13,6 +14,7 @@ class CreateUserHandler(
     private val userRepository: UserRepository
 ) : CommandHandler<CreateUser, UserCreated> {
 
+    @Transactional
     override fun handle(command: CreateUser): UserCreated =
         userRepository.save(UserEntity(id = command.immigrationId)).let(::UserCreated)
 }

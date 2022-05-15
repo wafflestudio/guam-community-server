@@ -1,6 +1,7 @@
 package waffle.guam.community.service.command.comment
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.Forbidden
 import waffle.guam.community.common.PostCommentNotFound
 import waffle.guam.community.common.PostNotFound
@@ -15,6 +16,8 @@ import waffle.guam.community.service.command.Result
 class UpdatePostCommentHandler(
     private val postRepository: PostRepository,
 ) : CommandHandler<UpdatePostComment, PostCommentUpdated>, PostQueryGenerator {
+
+    @Transactional
     override fun handle(command: UpdatePostComment): PostCommentUpdated {
         val (postId, userId, commentId, content) = command
 

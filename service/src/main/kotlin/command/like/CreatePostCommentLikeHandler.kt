@@ -2,6 +2,7 @@ package waffle.guam.community.service.command.like
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.GuamConflict
 import waffle.guam.community.common.PostCommentNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
@@ -18,6 +19,8 @@ import waffle.guam.community.service.command.Result
 class CreatePostCommentLikeHandler(
     private val postCommentRepository: PostCommentRepository,
 ) : CommandHandler<CreatePostCommentLike, PostCommentLikeCreated>, PostCommentQueryGenerator {
+
+    @Transactional
     override fun handle(command: CreatePostCommentLike): PostCommentLikeCreated {
         val (postId, commentId, userId) = command
 

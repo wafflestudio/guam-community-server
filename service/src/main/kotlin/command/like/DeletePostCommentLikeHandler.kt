@@ -1,6 +1,7 @@
 package waffle.guam.community.service.command.like
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.PostCommentNotFound
 import waffle.guam.community.common.PostLikeNotFound
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
@@ -14,6 +15,8 @@ import waffle.guam.community.service.command.Result
 class DeletePostCommentLikeHandler(
     private val postCommentRepository: PostCommentRepository,
 ) : CommandHandler<DeletePostCommentLike, PostCommentLikeDeleted>, PostCommentQueryGenerator {
+
+    @Transactional
     override fun handle(command: DeletePostCommentLike): PostCommentLikeDeleted {
         val (postId, commentId, userId) = command
 
