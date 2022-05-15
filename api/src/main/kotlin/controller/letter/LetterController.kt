@@ -42,12 +42,12 @@ class LetterController(
         @PathVariable letterId: Long,
     ) = deleteLetterHandler.handle(DeleteLetter(letterId = letterId, userId = userContext.id))
 
-    @GetMapping("/letters")
+    @GetMapping("")
     fun getLetterBoxes(
         userContext: UserContext,
     ) = letterBoxDisplayer.getMyLetterBoxes(userContext.id)
 
-    @GetMapping("/letters/{pairId}")
+    @GetMapping("/{pairId}")
     fun getLetters(
         userContext: UserContext,
         @PathVariable pairId: Long,
