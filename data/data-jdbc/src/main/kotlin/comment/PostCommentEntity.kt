@@ -5,6 +5,7 @@ import waffle.guam.community.data.jdbc.common.ImagePathsConverter
 import waffle.guam.community.data.jdbc.like.PostCommentLikeEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.user.UserEntity
+import javax.persistence.CascadeType
 import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -38,7 +39,7 @@ data class PostCommentEntity(
     @Convert(converter = ImagePathsConverter::class)
     val images: MutableList<String> = mutableListOf(),
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = [CascadeType.ALL], orphanRemoval = true)
     val likes: MutableList<PostCommentLikeEntity> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)
