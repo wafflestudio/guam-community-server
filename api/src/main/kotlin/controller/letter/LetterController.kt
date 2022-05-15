@@ -12,15 +12,15 @@ import waffle.guam.community.common.UserContext
 import waffle.guam.community.controller.letter.req.SendLetterRequest
 import waffle.guam.community.service.command.letter.CreateLetter
 import waffle.guam.community.service.command.letter.CreateLetterHandler
-import waffle.guam.community.service.command.letter.DeleteLetter
-import waffle.guam.community.service.command.letter.DeleteLetterHandler
+import waffle.guam.community.service.command.letter.DeleteLetterBox
+import waffle.guam.community.service.command.letter.DeleteLetterBoxHandler
 import waffle.guam.community.service.query.letter.displayer.LetterBoxDisplayer
 
 @RequestMapping("/api/v1/letters")
 @RestController
 class LetterController(
     private val createLetterHandler: CreateLetterHandler,
-    private val deleteLetterHandler: DeleteLetterHandler,
+    private val deleteLetterHandler: DeleteLetterBoxHandler,
     private val letterBoxDisplayer: LetterBoxDisplayer,
 ) {
     @PostMapping("")
@@ -36,12 +36,6 @@ class LetterController(
         )
     )
 
-    @DeleteMapping("/{letterId}")
-    fun deleteLetter(
-        userContext: UserContext,
-        @PathVariable letterId: Long,
-    ) = deleteLetterHandler.handle(DeleteLetter(letterId = letterId, userId = userContext.id))
-
     @GetMapping("")
     fun getLetterBoxes(
         userContext: UserContext,
@@ -54,4 +48,10 @@ class LetterController(
         @RequestParam(defaultValue = "50") size: Long,
         @RequestParam(required = false) beforeLetterId: Long?,
     ) = letterBoxDisplayer.getLetters(userContext.id, pairId, beforeLetterId, size)
+
+    @DeleteMapping("/{pairId}")
+    fun deleteLetterBox(
+        userContext: UserContext,
+        @PathVariable pairId: Long,
+    ) = deleteLetterHandler.handle(DeleteLetterBox(pairId = pairId, userId = userContext.id))
 }

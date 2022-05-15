@@ -1,11 +1,10 @@
 package waffle.guam.community.service.command.letter
 
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.common.GuamForbidden
-import waffle.guam.community.common.LetterNotFound
 import waffle.guam.community.data.jdbc.letter.LetterEntity
+import waffle.guam.community.data.jdbc.letter.LetterQueryGenerator
 import waffle.guam.community.data.jdbc.letter.LetterRepository
 import waffle.guam.community.service.LetterId
 import waffle.guam.community.service.UserId
@@ -14,14 +13,18 @@ import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
 
 @Service
-class DeleteLetterHandler(
+class DeleteLetterBoxHandler(
     private val letterRepository: LetterRepository,
-) : CommandHandler<DeleteLetter, LetterDeleted> {
+) : CommandHandler<DeleteLetterBox, LetterDeleted>, LetterQueryGenerator {
     @Transactional
-    override fun handle(command: DeleteLetter): LetterDeleted {
-        val letter = letterRepository.findByIdOrNull(command.letterId) ?: throw LetterNotFound(command.letterId)
-        letter.deleteBy(command.userId)
-        return LetterDeleted(letter.id)
+    override fun handle(command: DeleteLetterBox): LetterDeleted {
+        val (userId, pairId) = command
+        val lettersSent = letterRepository.findAll(spec = userId(userId) * status(LetterEntity.Status.ACTIVE) * sentTo(pairId))
+        val lettersGot = letterRepository.findAll(spec = userId(userId) * status(LetterEntity.Status.ACTIVE) * sentBy(pairId))
+
+        return (lettersSent + lettersGot)
+            .map { letter -> letter.deleteBy(userId); letter.id }
+            .let { letterIds -> LetterDeleted(userId, pairId, letterIds) }
     }
 
     private fun LetterEntity.deleteBy(userId: UserId) {
@@ -30,11 +33,13 @@ class DeleteLetterHandler(
     }
 }
 
-data class DeleteLetter(
+data class DeleteLetterBox(
     val userId: UserId,
-    val letterId: LetterId,
+    val pairId: UserId,
 ) : Command
 
 data class LetterDeleted(
-    val letterId: LetterId,
+    val userId: UserId,
+    val pairId: UserId,
+    val letterIds: List<LetterId>,
 ) : Result
