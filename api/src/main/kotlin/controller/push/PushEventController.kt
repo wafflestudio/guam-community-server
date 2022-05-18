@@ -3,6 +3,7 @@ package waffle.guam.community.controller.push
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.common.GuamUnAuthorized
 import waffle.guam.community.common.UserContext
@@ -19,7 +20,11 @@ class PushEventController(
 ) {
 
     @GetMapping("")
-    fun getPushEvents(userContext: UserContext) = pushEventListListCollector.get(userContext.id)
+    fun getPushEvents(
+        userContext: UserContext,
+        @RequestParam page: Int,
+        @RequestParam size: Int,
+    ) = pushEventListListCollector.get(PushEventListCollector.Query(userId = userContext.id, page = page, size = size))
 
     @PostMapping("/read")
     fun readPushEvents(

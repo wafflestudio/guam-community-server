@@ -12,6 +12,7 @@ import waffle.guam.community.service.command.comment.PostCommentCreated
 import waffle.guam.community.service.command.comment.PostCommentDeleted
 import waffle.guam.community.service.command.comment.PostCommentUpdated
 import waffle.guam.community.service.command.like.PostCommentLikeCreated
+import waffle.guam.community.service.command.like.PostCommentLikeDeleted
 import waffle.guam.community.service.domain.comment.PostCommentList
 import waffle.guam.community.service.query.MultiCollector
 import waffle.guam.community.service.query.like.PostCommentLikeCollector
@@ -88,6 +89,12 @@ class PostCommentListCollector(
 
         @EventListener
         fun reload(event: PostCommentLikeCreated) {
+            cache.reload(event.postId)
+            logger.info("Cache reloaded with $event")
+        }
+
+        @EventListener
+        fun reload(event: PostCommentLikeDeleted) {
             cache.reload(event.postId)
             logger.info("Cache reloaded with $event")
         }
