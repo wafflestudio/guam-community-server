@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 1000
+    show-sql: true
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: "" # vault
+    username: "" # vault
+    password: "" # vault
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false

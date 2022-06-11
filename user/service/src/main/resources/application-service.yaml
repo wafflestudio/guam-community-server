@@ -1,0 +1,36 @@
+spring:
+  cloud:
+    vault:
+      enabled: true
+      uri: http://guam-vault.jon-snow-korea.com:8200
+      authentication: TOKEN
+      token: s.53RQSdXUr77gqzLyuWRaY092
+  datasource:
+    url: "" # vault
+    username: "" # vault
+    password: "" # vault
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+cloud:
+  aws:
+    credentials:
+      accessKey: "" # vault
+      secretKey: "" # vault
+      instanceProfile: false
+    s3:
+      bucket: guam
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+---
+spring.config.activate.on-profile: dev
+
+spring.config.import: vault://kv/dev/user
+
+---
+spring.config.activate.on-profile: prod
+
+spring.config.import: vault://kv/prod/user

@@ -1,0 +1,1 @@
+insert into blocks(target_id, user_id) values (1, 2), (1, 3);
