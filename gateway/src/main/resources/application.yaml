@@ -15,7 +15,7 @@ spring:
         - id: user_auth_route
           uri: http://api.guam-user-dev.svc.cluster.local
           predicates:
-            - Path=/community/api/v1/users/me, /community/api/v1/users/*/interest, /community/api/v1/push/**
+            - Path=/community/api/v1/users/me, /community/api/v1/users/*/interest, /community/api/v1/push/**, /community/api/v1/users/{id:\d+}
           filters:
             - RewritePath=/community(?<segment>/?.*), $\{segment}
             - Guam

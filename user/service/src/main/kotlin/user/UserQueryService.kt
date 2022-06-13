@@ -12,7 +12,6 @@ interface UserQueryService {
     fun getUsers(userIds: List<Long>): List<User>
 }
 
-@Primary
 @Service
 class UserQueryServiceCacheImpl(
     private val impl: UserQueryServiceImpl,
@@ -62,6 +61,7 @@ class UserQueryServiceCacheImpl(
     }
 }
 
+@Primary
 @Service
 class UserQueryServiceImpl(
     private val userRepository: UserRepository,
