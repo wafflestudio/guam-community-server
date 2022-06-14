@@ -12,19 +12,19 @@ spring:
       enabled: true
       routes:
         # user
-        - id: user_auth_route
-          uri: http://api.guam-user-dev.svc.cluster.local
-          predicates:
-            - Path=/community/api/v1/users/me, /community/api/v1/users/*/interest, /community/api/v1/push/**, /community/api/v1/users/{id:\d+}
-          filters:
-            - RewritePath=/community(?<segment>/?.*), $\{segment}
-            - Guam
         - id: user_route
           uri: http://api.guam-user-dev.svc.cluster.local
           predicates:
             - Path=/user/api/v1/users, /user/api/v1/users/{id}
           filters:
             - RewritePath=/user(?<segment>/?.*), $\{segment}
+        - id: user_auth_route
+          uri: http://api.guam-user-dev.svc.cluster.local
+          predicates:
+            - Path=/community/api/v1/users/**
+          filters:
+            - RewritePath=/community(?<segment>/?.*), $\{segment}
+            - Guam
         # favorite
         - id: favorite_auth_route
           uri: http://api.guam-favorite-dev.svc.cluster.local

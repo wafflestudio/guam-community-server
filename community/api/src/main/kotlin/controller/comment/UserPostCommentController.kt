@@ -13,7 +13,7 @@ class UserPostCommentController(
     private val userCommentDisplay: UserCommentDisplayer,
 ) {
 
-    @GetMapping("/api/v1/users/{userId}/comments")
+    @GetMapping("/api/v1/comments/users/{userId}")
     fun userComments(
         userContext: UserContext,
         @PathVariable userId: Long,
