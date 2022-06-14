@@ -25,7 +25,8 @@ interface UserCommandService : CommandService {
         val introduction: String?,
         val githubId: String?,
         val blogUrl: String?,
-        val profileImage: MultipartFile?,
+        val profileImage: MultipartFile? = null,
+        val clearImage: Boolean = false,
     ) : Command
 
     data class CreateInterest(
@@ -56,9 +57,10 @@ class UserCommandServiceImpl(
             it.blogUrl = command.blogUrl ?: it.blogUrl
         }
 
-        if (command.profileImage != null) {
-            val imagePath = imageClient.upload(userId = command.userId, image = command.profileImage)
-            user.profileImage = imagePath.path
+        if (command.clearImage) {
+            user.profileImage = null
+        } else if (command.profileImage != null) {
+            user.profileImage = imageClient.upload(userId = command.userId, image = command.profileImage).path
         }
 
         return User(user)

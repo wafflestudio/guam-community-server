@@ -71,6 +71,29 @@ class UserController(
         )
     }
 
+    // 프로필 이미지 초기화용 api
+    @PatchMapping("/{targetUserId}/json")
+    fun updateUserJson(
+        @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
+        @PathVariable targetUserId: Long,
+        @RequestBody request: UpdateUserRequest,
+    ): User {
+        if (userId != targetUserId) {
+            throw UnAuthorized()
+        }
+
+        return userCommandService.updateUser(
+            UpdateUser(
+                userId = targetUserId,
+                nickname = request.nickname,
+                introduction = request.introduction,
+                githubId = request.githubId,
+                blogUrl = request.blogUrl,
+                clearImage = true
+            )
+        )
+    }
+
     @PostMapping("{targetUserId}/interest")
     fun addInterest(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
