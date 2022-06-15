@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: favorite-api
+spec:
+  hosts:
+    - "guam-favorite.jon-snow-korea.com"
+  gateways:
+    - istio-system/waffle-ingressgateway
+  http:
+    - route:
+        - destination:
+            host: favorite-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: favorite-api
+spec:
+  selector:
+    app: favorite-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080

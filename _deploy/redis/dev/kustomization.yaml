@@ -1,5 +1,0 @@
-resources:
-  - namespace.yaml
-  - service.yaml
-  - config.yaml
-  - statefulset.yaml

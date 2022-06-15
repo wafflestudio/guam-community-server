@@ -16,7 +16,7 @@ class UserQueryServiceImpl(
 ) : UserQueryService {
 
     // FIXME: baseUrl 프로퍼티로 등록, 어느 패키지로 보낼까
-    private val webClient = webClientBuilder.baseUrl("guam.jon-snow-korea.com/user")
+    private val webClient = webClientBuilder.baseUrl("http://guam-user.jon-snow-korea.com")
         .build()
 
     override suspend fun get(userId: Long): User {

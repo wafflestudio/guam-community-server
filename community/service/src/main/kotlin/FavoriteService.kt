@@ -17,7 +17,7 @@ class FavoriteServiceImpl(
     webClientBuilder: WebClient.Builder,
 ) : FavoriteService {
     // FIXME: baseUrl 프로퍼티로 등록, 어느 패키지로 보낼까
-    private val client = webClientBuilder.baseUrl("guam.jon-snow-korea.com/favorite").build()
+    private val client = webClientBuilder.baseUrl("http://guam-favorite.jon-snow-korea.com").build()
 
     override fun getPostFavorite(userId: Long, postId: Long): PostFavorite = runBlocking {
         val response = client.get()

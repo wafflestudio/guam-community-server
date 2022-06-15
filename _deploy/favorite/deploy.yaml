@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: favorite-api
 spec:
   selector:
     matchLabels:
-      app: api
+      app: favorite-api
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: api
+        app: favorite-api
     spec:
       containers:
-        - name: api
+        - name: favorite-api
           image: pfcjeong/guam-favorite:latest
           imagePullPolicy: Always
           ports:
@@ -34,3 +34,5 @@ spec:
             requests:
               cpu: 128m
               memory: 256Mi
+            limits:
+              memory: 384Mi

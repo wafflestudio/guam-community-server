@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: user-api
 spec:
   selector:
     matchLabels:
-      app: api
+      app: user-api
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: api
+        app: user-api
     spec:
       containers:
-        - name: api
-          image: pfcjeong/waffle-guam-server:latest
+        - name: user-api
+          image: pfcjeong/guam-user:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -34,4 +34,5 @@ spec:
             requests:
               cpu: 128m
               memory: 256Mi
-
+            limits:
+              memory: 384Mi

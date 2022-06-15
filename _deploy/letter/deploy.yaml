@@ -1,19 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: letter-api
 spec:
   selector:
     matchLabels:
-      app: api
+      app: letter-api
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
-        app: api
+        app: letter-api
     spec:
       containers:
-        - name: api
-          image: pfcjeong/guam-user:latest
+        - name: letter-api
+          image: pfcjeong/guam-letter:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -32,3 +34,5 @@ spec:
             requests:
               cpu: 128m
               memory: 256Mi
+            limits:
+              memory: 384Mi

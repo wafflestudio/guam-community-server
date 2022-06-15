@@ -1,30 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: gateway-api
 spec:
   selector:
     matchLabels:
-      app: api
+      app: gateway-api
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: api
+        app: gateway-api
     spec:
       containers:
-        - name: api
-          image: pfcjeong/guam-letter:latest
+        - name: gateway-api
+          image: pfcjeong/guam-gateway:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_CLOUD_VAULT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: guam-secret
-                  key: vaulttoken
           readinessProbe:
             initialDelaySeconds: 5
             httpGet:
@@ -34,3 +28,5 @@ spec:
             requests:
               cpu: 128m
               memory: 256Mi
+            limits:
+              memory: 384Mi

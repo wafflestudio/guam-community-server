@@ -12,14 +12,8 @@ spring:
       enabled: true
       routes:
         # user
-        - id: user_route
-          uri: http://api.guam-user-dev.svc.cluster.local
-          predicates:
-            - Path=/user/api/v1/users, /user/api/v1/users/{id}
-          filters:
-            - RewritePath=/user(?<segment>/?.*), $\{segment}
         - id: user_auth_route
-          uri: http://api.guam-user-dev.svc.cluster.local
+          uri: http://guam-user.jon-snow-korea.com
           predicates:
             - Path=/community/api/v1/users/**
           filters:
@@ -27,23 +21,16 @@ spring:
             - Guam
         # favorite
         - id: favorite_auth_route
-          uri: http://api.guam-favorite-dev.svc.cluster.local
+          uri: http://guam-favorite.jon-snow-korea.com
           predicates:
             - Path=/community/api/v1/{parent:\w+}/{id:\d+}/{type:(?:likes|scraps)}, /community/api/v1/posts/{postId:\d+}/{parent:\w+}/{id:\d+}/{type:(?:likes)}
             - Method=POST,DELETE
           filters:
             - SetPath=/api/v1/{type}/{parent}/{id}
             - Guam
-        - id: favorite_route
-          uri: http://api.guam-favorite-dev.svc.cluster.local
-          predicates:
-            - Path=/favorite/**
-            - Method=GET
-          filters:
-            - RewritePath=/favorite(?<segment>/?.*), $\{segment}
         # letter
         - id: letter_auth_route
-          uri: http://api.guam-letter-dev.svc.cluster.local
+          uri: http://guam-letter.jon-snow-korea.com
           predicates:
             - Path=/community/api/v1/letters/**, /community/api/v1/blocks/**
           filters:
@@ -51,7 +38,7 @@ spring:
             - Guam
         # community
         - id: community_route
-          uri: http://api.guam-community-dev.svc.cluster.local
+          uri: http://guam-community.jon-snow-korea.com
           predicates:
             - Path=/community/api/v1/posts
             - Method=GET
@@ -59,7 +46,7 @@ spring:
             - RewritePath=/community(?<segment>/?.*), $\{segment}
             - GuamAnonymous
         - id: community_auth_route
-          uri: http://api.guam-community-dev.svc.cluster.local
+          uri: http://guam-community.jon-snow-korea.com
           predicates:
             - Path=/community/**
           filters:

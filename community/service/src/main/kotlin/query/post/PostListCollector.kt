@@ -4,7 +4,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostEntity
-import waffle.guam.community.data.jdbc.post.PostEntity_
 import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.domain.post.PostList
@@ -17,7 +16,7 @@ class PostListCollector(
     override fun get(id: Query): PostList {
         val baseSpec = boardId(id.boardId) * status(PostEntity.Status.VALID)
         val spec = if (id.beforePostId == null) baseSpec else baseSpec * beforePostId(id.beforePostId)
-        val pageable = PageRequest.of(id.page, id.size, Sort.by(Sort.Direction.DESC, PostEntity_.ID))
+        val pageable = PageRequest.of(id.page, id.size, Sort.by(Sort.Direction.DESC, "id"))
 
         return PostList(postRepository.findAll(spec, pageable))
     }

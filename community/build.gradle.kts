@@ -99,4 +99,3 @@ task("dockerPush") {
         }
     }
 }
-
