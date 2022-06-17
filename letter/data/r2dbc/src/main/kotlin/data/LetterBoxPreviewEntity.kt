@@ -9,8 +9,14 @@ data class LetterBoxPreviewEntity(
     val lastLetterEntity: LetterEntity,
 )
 
-fun LetterBoxPreviewEntity.pairId(userId: Long) = when (userId) {
+fun LetterBoxPreviewEntity.pairId(userId: Long): Long = when (userId) {
     lowId -> highId
     highId -> lowId
+    else -> throw RuntimeException("")
+}
+
+fun LetterBoxPreviewEntity.isDeleted(userId: Long): Boolean = when (userId) {
+    lowId -> lowDeleteMarkedId == lastLetterEntity.id
+    highId -> highDeleteMarkedId == lastLetterEntity.id
     else -> throw RuntimeException("")
 }

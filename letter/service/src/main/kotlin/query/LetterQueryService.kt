@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import waffle.guam.favorite.service.domain.LetterBox
 import waffle.guam.favorite.service.domain.LetterBoxPreview
 import waffle.guam.favorite.service.domain.toDomain
+import waffle.guam.letter.data.r2dbc.data.isDeleted
 import waffle.guam.letter.data.r2dbc.data.pairId
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxPreviewRepository
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxRepository
@@ -29,6 +30,7 @@ class LetterQueryServiceImpl(
     // TODO: block
     override suspend fun getLetterBoxPreviews(userId: Long): List<LetterBoxPreview> {
         val entities = letterBoxPreviewRepository.findAll(userId = userId)
+            .filterNot { it.isDeleted(userId) }
             .sortedByDescending { it.lastLetterEntity.createdAt }
 
         val pairUsers = userQueryService.get(userIds = entities.map { it.pairId(userId) })
@@ -37,7 +39,7 @@ class LetterQueryServiceImpl(
             LetterBoxPreview(
                 userId = userId,
                 pair = pairUsers[it.pairId(userId)]!!,
-                lastLetter = it.lastLetterEntity?.toDomain()
+                lastLetter = it.lastLetterEntity.toDomain()
             )
         }
     }
@@ -52,7 +54,7 @@ class LetterQueryServiceImpl(
             LetterBox(
                 userId = userId,
                 pair = userQueryService.get(pairId),
-                letters = lb.letters!!.map { it.toDomain() }
+                letters = lb.letters!!.sortedByDescending { it.createdAt }.map { it.toDomain() }
             )
         }
     }
