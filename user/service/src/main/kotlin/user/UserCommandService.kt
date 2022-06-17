@@ -61,7 +61,7 @@ class UserCommandServiceImpl(
             user.profileImage = null
         } else if (command.profileImage != null) {
             user.profileImage =
-                imageClient.upload(command.userId, command.profileImage).path.substring(1) // '/' 제거해서 저장
+                imageClient.upload(command.userId, command.profileImage).path
         }
 
         return User(user)
