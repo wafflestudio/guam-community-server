@@ -15,7 +15,7 @@ spring:
         - id: user_auth_route
           uri: http://guam-user.jon-snow-korea.com
           predicates:
-            - Path=/community/api/v1/users/**, /community/api/v1/push**
+            - Path=/community/api/v1/users/**, /community/api/v1/push/**
           filters:
             - RewritePath=/community(?<segment>/?.*), $\{segment}
             - Guam
