@@ -61,7 +61,7 @@ class UserCommandServiceImpl(
             user.profileImage = null
         } else if (command.profileImage != null) {
             user.profileImage =
-                imageClient.upload(command.userId, command.profileImage).path
+                imageClient.upload(command.userId, command.profileImage).path.removePrefix("/")
         }
 
         return User(user)
