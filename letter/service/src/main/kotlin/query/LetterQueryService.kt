@@ -31,7 +31,6 @@ class LetterQueryServiceImpl(
     override suspend fun getLetterBoxPreviews(userId: Long): List<LetterBoxPreview> {
         val entities = letterBoxPreviewRepository.findAll(userId = userId)
             .filterNot { it.isDeleted(userId) }
-            .sortedByDescending { it.lastLetterEntity.createdAt }
 
         val pairUsers = userQueryService.get(userIds = entities.map { it.pairId(userId) })
 
@@ -48,7 +47,7 @@ class LetterQueryServiceImpl(
         return letterBoxRepository.find(
             userId = userId,
             pairId = pairId,
-            letterSize = size,
+            size = size,
             letterIdSmallerThan = letterIdSmallerThan
         )?.let { lb ->
             LetterBox(

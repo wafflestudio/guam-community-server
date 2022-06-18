@@ -35,7 +35,7 @@ internal class LetterBoxRepositoryTest @Autowired constructor(
         assertThat(lb.letters!!.size).isEqualTo(lb2.letters!!.size + 1)
         assertThat(lb.letters!!.drop(1)).isEqualTo(lb2.letters)
 
-        val lb3 = repository.find(userId = 1, pairId = 2, letterSize = 1)!!
+        val lb3 = repository.find(userId = 1, pairId = 2, size = 1)!!
         assertThat(lb3.letters!!.size).isEqualTo(1)
         assertThat(lb3.letters!!.first().id).isEqualTo(lastLetterId)
     }

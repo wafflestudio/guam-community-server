@@ -8,7 +8,7 @@ import org.springframework.r2dbc.core.flow
 import org.springframework.stereotype.Service
 import waffle.guam.letter.data.r2dbc.data.LetterBoxEntity
 import waffle.guam.letter.data.r2dbc.data.LetterEntity
-import waffle.guam.letter.data.r2dbc.data.deleteMarkedId
+import waffle.guam.letter.data.r2dbc.data.getDeleteMarkedId
 import waffle.guam.letter.data.r2dbc.getBoolean
 import waffle.guam.letter.data.r2dbc.getLocalDateTime
 import waffle.guam.letter.data.r2dbc.getLong
@@ -17,14 +17,12 @@ import java.lang.Long.min
 import kotlin.math.max
 
 interface LetterBoxRepository {
-    suspend fun find(
-        userId: Long,
-        pairId: Long,
-        letterSize: Int? = null,
-        letterIdSmallerThan: Long? = null,
-    ): LetterBoxEntity?
+    suspend fun find(userId: Long, pairId: Long, size: Int? = null, letterIdSmallerThan: Long? = null): LetterBoxEntity?
 
     suspend fun save(letterBox: LetterBoxEntity): LetterBoxEntity
+
+    suspend fun findOrSave(userId: Long, pairId: Long): LetterBoxEntity =
+        find(userId, pairId) ?: save(LetterBoxEntity(userId = userId, pairId = pairId))
 }
 
 @Service
@@ -36,16 +34,16 @@ internal class LetterBoxRepositoryImpl(
     override suspend fun find(
         userId: Long,
         pairId: Long,
-        letterSize: Int?,
+        size: Int?,
         letterIdSmallerThan: Long?,
     ): LetterBoxEntity? {
-        if (letterSize == 0) {
+        if (size == 0) {
             // no join with letters
             return findSimple(userId, pairId)
         }
 
         val letterBox = findSimple(userId, pairId) ?: return null
-        val deleteMarkedId = letterBox.deleteMarkedId(userId)
+        val deleteMarkedId = letterBox.getDeleteMarkedId(userId)
 
         var where = "WHERE letter_box_id = ${letterBox.id}"
         if (letterIdSmallerThan != null) {
@@ -55,10 +53,10 @@ internal class LetterBoxRepositoryImpl(
             where += " AND id > $deleteMarkedId"
         }
 
-        val limit = if (letterSize == null) {
+        val limit = if (size == null) {
             ""
         } else {
-            "LIMIT $letterSize"
+            "LIMIT $size"
         }
 
         val letters = dbClient.sql("SELECT * FROM letters $where ORDER by id DESC $limit")

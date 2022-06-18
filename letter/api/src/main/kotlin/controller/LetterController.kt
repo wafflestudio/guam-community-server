@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import waffle.guam.favorite.service.command.ClearLetterBox
 import waffle.guam.favorite.service.command.CreateLetter
-import waffle.guam.favorite.service.command.EmptyLetterBox
 import waffle.guam.favorite.service.command.LetterCommandService
 import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.domain.Letter
@@ -41,18 +41,18 @@ class LetterController(
         @PathVariable pairId: Long,
         @RequestParam(defaultValue = "50") size: Int,
         @RequestParam(required = false) beforeLetterId: Long?,
-    ): LetterResponse {
+    ): LetterListResponse {
+        // read all
+        letterCommandService.readLetterBox(ReadLetterBox(userId = userId, pairId = pairId))
+
         val letterBox = letterQueryService.getLetterBox(
             userId = userId,
             pairId = pairId,
             size = size,
             letterIdSmallerThan = beforeLetterId
-        )?.let {
-            // 조회 시, 모든 쪽지를 읽음 처리
-            letterCommandService.readLetterBox(ReadLetterBox(userId = userId, letterBox = it))
-        }
+        )
 
-        return LetterResponse(
+        return LetterListResponse(
             userId = userId,
             pairId = pairId,
             letters = letterBox?.letters ?: emptyList()
@@ -69,18 +69,18 @@ class LetterController(
                 senderId = userId,
                 receiverId = request.to,
                 text = request.text,
-                images = request.image
+                images = request.image?.takeIf { it.isNotEmpty() }
             )
         )
     }
 
     @DeleteMapping("/{pairId}")
-    suspend fun deleteLetterBox(
+    suspend fun clearLetterBox(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
         @PathVariable pairId: Long,
     ) {
-        return letterCommandService.emptyLetterBox(
-            EmptyLetterBox(
+        return letterCommandService.clearLetterBox(
+            ClearLetterBox(
                 userId = userId,
                 pairId = pairId
             )
@@ -93,7 +93,7 @@ data class LetterBoxResponse(
     val letterBoxes: List<LetterBoxPreview>,
 )
 
-data class LetterResponse(
+data class LetterListResponse(
     val userId: Long,
     val pairId: Long,
     val letters: List<Letter>,

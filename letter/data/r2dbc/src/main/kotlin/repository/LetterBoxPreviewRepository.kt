@@ -31,6 +31,7 @@ class LetterBoxPreviewRepositoryImpl(
                     GROUP BY lb.id
                 ) AS lb
                 INNER JOIN letters AS l on lb.letter_id = l.id
+                ORDER BY l_created_at DESC
             """.trimIndent()
         )
             .bind("userId", userId)

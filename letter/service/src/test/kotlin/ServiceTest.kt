@@ -57,6 +57,9 @@ class ServiceTestApplication(
     @Primary
     @Service
     class MockImageCommandService : ImageCommandService {
-        override suspend fun upload(letterId: Long, image: FilePart): String = "DEV/LETTER/$letterId/1.png"
+
+        override suspend fun upload(letterBoxId: Long, images: List<FilePart>): List<String> {
+            return images.mapIndexed { index, _ -> "DEV/LETTER/$letterBoxId/$index.png" }
+        }
     }
 }

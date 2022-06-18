@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import java.time.Duration
 
 interface ImageCommandService {
-    suspend fun upload(letterBoxId: Long, image: FilePart): String
+    suspend fun upload(letterBoxId: Long, images: List<FilePart>): List<String>
 }
 
 @EnableConfigurationProperties(S3Properties::class)
@@ -40,7 +40,13 @@ class ImageCommandServiceImpl(
         else -> "LOCAL"
     }
 
-    override suspend fun upload(letterBoxId: Long, image: FilePart): String {
+    override suspend fun upload(letterBoxId: Long, images: List<FilePart>): List<String> {
+        require(images.isNotEmpty())
+
+        return images.map { upload(letterBoxId = letterBoxId, image = it) }
+    }
+
+    private suspend fun upload(letterBoxId: Long, image: FilePart): String {
         val path = resolveFilename(letterBoxId = letterBoxId, image = image)
         val dataBuffer = image.content().awaitFirst()
 

@@ -5,8 +5,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import waffle.guam.favorite.service.ServiceTest
+import waffle.guam.favorite.service.command.ClearLetterBox
 import waffle.guam.favorite.service.command.CreateLetter
-import waffle.guam.favorite.service.command.EmptyLetterBox
 import waffle.guam.favorite.service.command.LetterCommandService
 import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.query.LetterQueryService
@@ -61,7 +61,7 @@ class LetterServiceTest @Autowired constructor(
     fun `쪽지함을 비우면 나의 쪽지함의 쪽지가 사라진다`(): Unit = runBlocking {
         letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
         letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "2", images = null))
-        letterCommandService.emptyLetterBox(EmptyLetterBox(userId = 1, pairId = 2))
+        letterCommandService.clearLetterBox(ClearLetterBox(userId = 1, pairId = 2))
 
         val myLetterBox = letterQueryService.getLetterBox(
             userId = 1,
@@ -100,14 +100,10 @@ class LetterServiceTest @Autowired constructor(
             assertThat(letters.none { it.isRead }).isTrue
         }
 
-        val lbAfterRead = letterCommandService.readLetterBox(ReadLetterBox(1L, letterBox))
-        lbAfterRead.run {
-            assertThat(letters.none { it.sentTo == 1L && !it.isRead }).isTrue // 내가 받은 쪽지는 모두 읽음 처리된다.
-            assertThat(letters.none { it.sentTo == 2L && it.isRead }).isTrue // 상대방이 받은 쪽지는 읽음 처리되지 않는다.
-        }
+        letterCommandService.readLetterBox(ReadLetterBox(userId = 1, pairId = 2))
 
-        val lbAfterReadFromDb = letterQueryService.getLetterBox(userId = 1, pairId = 2, size = 10)
-        lbAfterReadFromDb!!.run {
+        val lbAfterRead = letterQueryService.getLetterBox(userId = 1, pairId = 2, size = 10)
+        lbAfterRead!!.run {
             assertThat(letters.none { it.sentTo == 1L && !it.isRead }).isTrue // 내가 받은 쪽지는 모두 읽음 처리된다.
             assertThat(letters.none { it.sentTo == 2L && it.isRead }).isTrue // 상대방이 받은 쪽지는 읽음 처리되지 않는다.
         }

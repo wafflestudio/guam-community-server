@@ -4,18 +4,16 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.service.domain.Letter
-import waffle.guam.favorite.service.domain.LetterBox
-import waffle.guam.favorite.service.domain.setReadBy
 import waffle.guam.favorite.service.domain.toDomain
-import waffle.guam.letter.data.r2dbc.data.LetterBoxEntity
 import waffle.guam.letter.data.r2dbc.data.LetterEntity
+import waffle.guam.letter.data.r2dbc.data.clear
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxRepository
 import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 
 interface LetterCommandService {
     suspend fun createLetter(command: CreateLetter): Letter
-    suspend fun emptyLetterBox(command: EmptyLetterBox)
-    suspend fun readLetterBox(command: ReadLetterBox): LetterBox
+    suspend fun clearLetterBox(command: ClearLetterBox)
+    suspend fun readLetterBox(command: ReadLetterBox)
 }
 
 @Service
@@ -25,19 +23,14 @@ class LetterCommandServiceImpl(
     private val imageCommandService: ImageCommandService,
 ) : LetterCommandService {
 
-    // TODO: block, image
+    // TODO: block
+    // TODO: 실패시 이미지 삭제
     @Transactional
     override suspend fun createLetter(command: CreateLetter): Letter {
         val (userId, pairId, text, images) = command
 
-        val letterBox = letterBoxRepository.find(userId = userId, pairId = pairId)
-            ?: letterBoxRepository.save(LetterBoxEntity(userId = userId, pairId = pairId))
-
-        val imagePaths = if (images != null && images.isNotEmpty()) {
-            images.map { imageCommandService.upload(letterBoxId = letterBox.id, image = it) }
-        } else {
-            null
-        }
+        val letterBox = letterBoxRepository.findOrSave(userId = userId, pairId = pairId)
+        val imagePaths = images?.let { imageCommandService.upload(letterBoxId = letterBox.id, images = it) }
 
         val letter = letterRepository.save(
             LetterEntity(
@@ -53,36 +46,23 @@ class LetterCommandServiceImpl(
     }
 
     @Transactional
-    override suspend fun emptyLetterBox(command: EmptyLetterBox) {
+    override suspend fun clearLetterBox(command: ClearLetterBox) {
         val (userId, pairId) = command
 
-        val letterBox = letterBoxRepository.find(userId = userId, pairId = pairId, letterSize = 1)
+        val letterBox = letterBoxRepository.find(userId = userId, pairId = pairId, size = 1)
             ?: throw RuntimeException()
-        val lastLetter = letterBox.letters?.firstOrNull()
 
-        when {
-            lastLetter != null && letterBox.lowId == userId -> {
-                letterBoxRepository.save(letterBox.copy(lowDeleteMarkedId = lastLetter.id))
-            }
-            lastLetter != null && letterBox.highId == userId -> {
-                letterBoxRepository.save(letterBox.copy(highDeleteMarkedId = lastLetter.id))
-            }
-        }
+        letterBoxRepository.save(letterBox.clear(userId))
     }
 
     @Transactional
-    override suspend fun readLetterBox(command: ReadLetterBox): LetterBox {
-        val (userId, letterBox) = command
+    override suspend fun readLetterBox(command: ReadLetterBox) {
+        val (userId, pairId) = command
 
-        if (userId != letterBox.userId) {
-            throw RuntimeException()
-        }
+        val letterBox = letterBoxRepository.find(userId = userId, pairId = pairId)
+            ?: throw RuntimeException()
 
         letterRepository.readAll(userId = userId, letterBoxId = letterBox.id)
-
-        return letterBox.copy(
-            letters = letterBox.letters.map { it.setReadBy(userId) }
-        )
     }
 }
 
@@ -93,12 +73,12 @@ data class CreateLetter(
     val images: List<FilePart>?,
 )
 
-data class EmptyLetterBox(
+data class ClearLetterBox(
     val userId: Long,
     val pairId: Long,
 )
 
 data class ReadLetterBox(
     val userId: Long,
-    val letterBox: LetterBox,
+    val pairId: Long,
 )
