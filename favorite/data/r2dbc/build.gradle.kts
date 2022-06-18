@@ -3,7 +3,9 @@ dependencies {
     implementation("org.springframework:spring-context")
 
     runtimeOnly("io.r2dbc:r2dbc-h2")
-    runtimeOnly("dev.miku:r2dbc-mysql")
+    runtimeOnly("io.r2dbc:r2dbc-pool")
+//    runtimeOnly("dev.miku:r2dbc-mysql")
+    runtimeOnly("com.github.jasync-sql:jasync-r2dbc-mysql:2.0.8")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 }
