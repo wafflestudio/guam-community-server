@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import waffle.guam.favorite.service.domain.Letter
+import waffle.guam.favorite.service.domain.LetterBox
+import waffle.guam.favorite.service.domain.setReadBy
 import waffle.guam.favorite.service.domain.toDomain
 import waffle.guam.letter.data.r2dbc.data.LetterBoxEntity
 import waffle.guam.letter.data.r2dbc.data.LetterEntity
@@ -13,6 +15,7 @@ import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 interface LetterCommandService {
     suspend fun createLetter(command: CreateLetter): Letter
     suspend fun emptyLetterBox(command: EmptyLetterBox)
+    suspend fun readLetterBox(command: ReadLetterBox): LetterBox
 }
 
 @Service
@@ -57,6 +60,21 @@ class LetterCommandServiceImpl(
             }
         }
     }
+
+    @Transactional
+    override suspend fun readLetterBox(command: ReadLetterBox): LetterBox {
+        val (userId, letterBox) = command
+
+        if (userId != letterBox.userId) {
+            throw RuntimeException()
+        }
+
+        letterRepository.readAll(userId = userId, letterBoxId = letterBox.id)
+
+        return letterBox.copy(
+            letters = letterBox.letters.map { it.setReadBy(userId) }
+        )
+    }
 }
 
 data class CreateLetter(
@@ -69,4 +87,9 @@ data class CreateLetter(
 data class EmptyLetterBox(
     val userId: Long,
     val pairId: Long,
+)
+
+data class ReadLetterBox(
+    val userId: Long,
+    val letterBox: LetterBox,
 )

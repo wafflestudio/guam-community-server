@@ -15,7 +15,7 @@ data class Letter(
     val createdAt: Instant,
 )
 
-fun LetterEntity.toDomain() = Letter(
+fun LetterEntity.toDomain(): Letter = Letter(
     id = id,
     letterBoxId = letterBoxId,
     sentBy = sentBy,
@@ -25,3 +25,10 @@ fun LetterEntity.toDomain() = Letter(
     isRead = isRead,
     createdAt = createdAt.toInstant(ZoneOffset.UTC),
 )
+
+fun Letter.setReadBy(userId: Long): Letter =
+    if (sentTo == userId) {
+        copy(isRead = true)
+    } else {
+        this
+    }

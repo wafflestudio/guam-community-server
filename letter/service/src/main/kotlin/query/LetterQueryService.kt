@@ -52,6 +52,7 @@ class LetterQueryServiceImpl(
             letterIdSmallerThan = letterIdSmallerThan
         )?.let { lb ->
             LetterBox(
+                id = lb.id,
                 userId = userId,
                 pair = userQueryService.get(pairId),
                 letters = lb.letters!!.sortedByDescending { it.createdAt }.map { it.toDomain() }

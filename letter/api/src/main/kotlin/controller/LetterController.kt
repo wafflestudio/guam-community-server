@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 import waffle.guam.favorite.service.command.CreateLetter
 import waffle.guam.favorite.service.command.EmptyLetterBox
 import waffle.guam.favorite.service.command.LetterCommandService
+import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.domain.Letter
 import waffle.guam.favorite.service.domain.LetterBoxPreview
 import waffle.guam.favorite.service.query.LetterQueryService
@@ -46,7 +47,10 @@ class LetterController(
             pairId = pairId,
             size = size,
             letterIdSmallerThan = beforeLetterId
-        )
+        )?.let {
+            // 조회 시, 모든 쪽지를 읽음 처리
+            letterCommandService.readLetterBox(ReadLetterBox(userId = userId, letterBox = it))
+        }
 
         return LetterResponse(
             userId = userId,
