@@ -8,9 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Primary
 import org.springframework.context.event.EventListener
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
 import org.springframework.stereotype.Service
 import org.springframework.test.context.event.BeforeTestExecutionEvent
+import waffle.guam.favorite.service.command.ImageCommandService
 import waffle.guam.favorite.service.domain.User
 import waffle.guam.favorite.service.query.UserQueryService
 
@@ -50,5 +52,11 @@ class ServiceTestApplication(
                 interests = listOf()
             )
         }
+    }
+
+    @Primary
+    @Service
+    class MockImageCommandService : ImageCommandService {
+        override suspend fun upload(letterId: Long, image: FilePart): String = "DEV/LETTER/$letterId/1.png"
     }
 }

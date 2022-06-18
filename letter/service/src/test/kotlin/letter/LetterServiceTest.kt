@@ -10,18 +10,16 @@ import waffle.guam.favorite.service.command.EmptyLetterBox
 import waffle.guam.favorite.service.command.LetterCommandService
 import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.query.LetterQueryService
-import waffle.guam.letter.data.r2dbc.repository.LetterDao
 
 @ServiceTest
 class LetterServiceTest @Autowired constructor(
     private val letterCommandService: LetterCommandService,
     private val letterQueryService: LetterQueryService,
-    private val letterDao: LetterDao
 ) {
 
     @Test
     fun `첫 쪽지를 보내면 쪽지함과 쪽지가 생성된다`(): Unit = runBlocking {
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", image = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
 
         val letterBox = letterQueryService.getLetterBox(userId = 1, pairId = 2, size = 10)
 
@@ -39,9 +37,9 @@ class LetterServiceTest @Autowired constructor(
 
     @Test
     fun `쪽지함을 조회할 때, 인자로 받은 id보다 작은 id의 쪽지만 조회된다`(): Unit = runBlocking {
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", image = null))
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", image = null))
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", image = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
 
         val letterBox = letterQueryService.getLetterBox(userId = 1, pairId = 2, size = 10)
         val latestLetterId = letterBox!!.letters.first().id
@@ -61,8 +59,8 @@ class LetterServiceTest @Autowired constructor(
 
     @Test
     fun `쪽지함을 비우면 나의 쪽지함의 쪽지가 사라진다`(): Unit = runBlocking {
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", image = null))
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "2", image = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "2", images = null))
         letterCommandService.emptyLetterBox(EmptyLetterBox(userId = 1, pairId = 2))
 
         val myLetterBox = letterQueryService.getLetterBox(
@@ -92,9 +90,9 @@ class LetterServiceTest @Autowired constructor(
 
     @Test
     fun `쪽지함을 읽으면 내가 받은 쪽지가 모두 읽음 처리 된다`(): Unit = runBlocking {
-        letterCommandService.createLetter(CreateLetter(senderId = 2, receiverId = 1, text = "1", image = null))
-        letterCommandService.createLetter(CreateLetter(senderId = 2, receiverId = 1, text = "2", image = null))
-        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "3", image = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 2, receiverId = 1, text = "1", images = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 2, receiverId = 1, text = "2", images = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "3", images = null))
 
         val letterBox = letterQueryService.getLetterBox(userId = 1, pairId = 2, size = 10)
         letterBox!!.run {

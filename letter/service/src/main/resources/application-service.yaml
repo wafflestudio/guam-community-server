@@ -9,15 +9,20 @@ spring:
     url: # in vault
     username: # in vault
     password: # in vault
-  redis:
-    host: # in vault
-    port: # in vault
+
+letter:
+  aws:
+    s3:
+      accessKey: "" # vault
+      secretKey: "" # vault
+      bucket: "" # vault
+      region: "" # vault
 ---
 spring.config.activate.on-profile: dev
 
-spring.config.import: vault://kv/dev/like
+spring.config.import: vault://kv/dev/letter
 
 ---
 spring.config.activate.on-profile: prod
 
-spring.config.import: vault://kv/prod/like
+spring.config.import: vault://kv/prod/letter

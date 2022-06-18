@@ -1,8 +1,8 @@
 package waffle.guam.favorite.service.command
 
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 import waffle.guam.favorite.service.domain.Letter
 import waffle.guam.favorite.service.domain.LetterBox
 import waffle.guam.favorite.service.domain.setReadBy
@@ -22,25 +22,34 @@ interface LetterCommandService {
 class LetterCommandServiceImpl(
     private val letterBoxRepository: LetterBoxRepository,
     private val letterRepository: LetterRepository,
+    private val imageCommandService: ImageCommandService,
 ) : LetterCommandService {
 
     // TODO: block, image
     @Transactional
     override suspend fun createLetter(command: CreateLetter): Letter {
-        val (userId, pairId, text, image) = command
+        val (userId, pairId, text, images) = command
 
         val letterBox = letterBoxRepository.find(userId = userId, pairId = pairId)
             ?: letterBoxRepository.save(LetterBoxEntity(userId = userId, pairId = pairId))
 
-        return letterRepository.save(
+        val imagePaths = if (images != null && images.isNotEmpty()) {
+            images.map { imageCommandService.upload(letterBoxId = letterBox.id, image = it) }
+        } else {
+            null
+        }
+
+        val letter = letterRepository.save(
             LetterEntity(
                 letterBoxId = letterBox.id,
                 sentBy = userId,
                 sentTo = pairId,
                 text = text,
-                imagePath = null,
+                imagePath = imagePaths?.joinToString(","),
             )
-        ).toDomain()
+        )
+
+        return letter.toDomain()
     }
 
     @Transactional
@@ -81,7 +90,7 @@ data class CreateLetter(
     val senderId: Long,
     val receiverId: Long,
     val text: String,
-    val image: MultipartFile?,
+    val images: List<FilePart>?,
 )
 
 data class EmptyLetterBox(

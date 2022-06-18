@@ -1,5 +1,6 @@
 package waffle.guam.letter.api.controller
 
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
 import waffle.guam.favorite.service.command.CreateLetter
 import waffle.guam.favorite.service.command.EmptyLetterBox
 import waffle.guam.favorite.service.command.LetterCommandService
@@ -62,14 +62,14 @@ class LetterController(
     @PostMapping("")
     suspend fun sendLetter(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
-        @ModelAttribute req: SendLetterRequest,
+        @ModelAttribute request: SendLetterRequest,
     ): Letter {
         return letterCommandService.createLetter(
             CreateLetter(
                 senderId = userId,
-                receiverId = req.to,
-                text = req.text,
-                image = req.image
+                receiverId = request.to,
+                text = request.text,
+                images = request.image
             )
         )
     }
@@ -102,5 +102,5 @@ data class LetterResponse(
 data class SendLetterRequest(
     val to: Long,
     val text: String,
-    val image: MultipartFile?,
+    val image: List<FilePart>?,
 )
