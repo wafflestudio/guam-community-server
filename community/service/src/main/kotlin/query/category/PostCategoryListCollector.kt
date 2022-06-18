@@ -6,8 +6,12 @@ import org.springframework.stereotype.Service
 import waffle.guam.community.data.GuamCacheFactory
 import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
-import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.post.fetchCategories
+import waffle.guam.community.data.jdbc.post.postId
+import waffle.guam.community.data.jdbc.post.postIds
+import waffle.guam.community.data.jdbc.post.throwIfNotContainIds
+import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.post.PostUpdated
@@ -19,7 +23,7 @@ import java.time.Duration
 @Service
 class PostCategoryListCollector(
     private val postRepository: PostRepository,
-) : MultiCollector<PostCategoryList, PostId>, PostQueryGenerator {
+) : MultiCollector<PostCategoryList, PostId> {
     override fun get(id: PostId): PostCategoryList =
         postRepository.findOne(spec = postId(id) * fetchCategories())
             ?.toPostCategoryList()

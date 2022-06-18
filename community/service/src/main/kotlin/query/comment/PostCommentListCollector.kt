@@ -4,8 +4,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.GuamCacheFactory
-import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.post.fetchComments
+import waffle.guam.community.data.jdbc.post.postId
+import waffle.guam.community.data.jdbc.post.postIds
+import waffle.guam.community.data.jdbc.post.throwIfNotContainIds
+import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.UserService
@@ -19,7 +23,7 @@ import waffle.guam.community.service.query.MultiCollector
 class PostCommentListCollector(
     private val postRepository: PostRepository,
     private val userService: UserService,
-) : MultiCollector<PostCommentList, PostId>, PostQueryGenerator {
+) : MultiCollector<PostCommentList, PostId> {
     override fun get(id: PostId): PostCommentList {
         val post = postRepository.findOne(spec = postId(id) * fetchComments()) ?: throw PostNotFound()
         val userMap = userService.multiGet(post.comments.map { it.userId })

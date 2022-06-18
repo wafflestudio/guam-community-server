@@ -20,4 +20,8 @@ class UserPostCommentController(
         @RequestParam(required = false) beforeCommentId: Long?,
         @RequestParam(required = false) sortByLikes: Boolean?,
     ): List<MyCommentView> = userCommentDisplay.getUserComments(userId, beforeCommentId, sortByLikes ?: false)
+
+    @GetMapping("/test")
+    fun test() {
+    }
 }

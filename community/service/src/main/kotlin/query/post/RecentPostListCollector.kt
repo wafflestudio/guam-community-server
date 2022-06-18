@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.GuamCacheFactory
-import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.command.post.PostCreated
 import waffle.guam.community.service.command.post.PostDeleted
@@ -15,7 +14,7 @@ import waffle.guam.community.service.query.Collector
 @Service
 class RecentPostListCollector(
     private val postListCollector: PostListCollector,
-) : Collector<PostList, BoardId>, PostQueryGenerator {
+) : Collector<PostList, BoardId> {
     companion object {
         const val RECENT_POSTS_SIZE = 20
     }

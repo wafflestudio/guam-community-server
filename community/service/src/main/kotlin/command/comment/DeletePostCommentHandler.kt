@@ -4,8 +4,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
-import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.post.fetchComments
+import waffle.guam.community.data.jdbc.post.postId
+import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.Forbidden
 import waffle.guam.community.service.PostCommentNotFound
 import waffle.guam.community.service.PostNotFound
@@ -16,7 +18,7 @@ import waffle.guam.community.service.command.Result
 @Service
 class DeletePostCommentHandler(
     private val postRepository: PostRepository,
-) : CommandHandler<DeletePostComment, PostCommentDeleted>, PostQueryGenerator {
+) : CommandHandler<DeletePostComment, PostCommentDeleted> {
 
     @Transactional
     override fun handle(command: DeletePostComment): PostCommentDeleted {

@@ -7,8 +7,10 @@ import waffle.guam.community.data.jdbc.board.BoardRepository
 import waffle.guam.community.data.jdbc.category.CategoryRepository
 import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
-import waffle.guam.community.data.jdbc.post.PostQueryGenerator
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.post.fetchCategories
+import waffle.guam.community.data.jdbc.post.postId
+import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.BadBoardId
 import waffle.guam.community.service.BadCategoryId
 import waffle.guam.community.service.Forbidden
@@ -24,7 +26,7 @@ class UpdatePostHandler(
     private val postRepository: PostRepository,
     private val categoryRepository: CategoryRepository,
     private val boardRepository: BoardRepository,
-) : CommandHandler<UpdatePost, PostUpdated>, PostQueryGenerator {
+) : CommandHandler<UpdatePost, PostUpdated> {
 
     @Transactional
     override fun handle(command: UpdatePost): PostUpdated {
