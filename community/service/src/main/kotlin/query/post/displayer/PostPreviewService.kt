@@ -72,7 +72,7 @@ class PostPreviewServiceImpl(
     }
 
     override fun getFavoritePostPreviews(userId: Long, rankFrom: Int): PostPreviewList {
-        val postIds = favoriteService.getRankedPosts(rankFrom, rankFrom + PAGE_SIZE - 1)
+        val postIds = favoriteService.getRankedPosts(userId, rankFrom, rankFrom + PAGE_SIZE - 1)
             .let { PageImpl(it.take(PAGE_SIZE), PageRequest.of(0, PAGE_SIZE), it.size.toLong()) }
 
         return getCategoryAndComments(userId, postIds)

@@ -72,6 +72,15 @@ class PostController(
         userId = userContext.id,
     )
 
+    @GetMapping("/favorites")
+    fun searchPosts(
+        userContext: UserContext,
+        @RequestParam(required = false, defaultValue = "0") rankFrom: Int,
+    ) = postDisplayer.getFavoritePostPreviews(
+        userId = userContext.id,
+        rankFrom = rankFrom,
+    )
+
     @GetMapping("/{postId}")
     fun getPost(
         userContext: UserContext,
