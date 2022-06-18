@@ -32,9 +32,10 @@ class PostDisplayer(
     private val favoriteServce: FavoriteService,
     private val postCategoryListCollector: PostCategoryListCollector.CacheImpl,
     private val postCommentListCollector: PostCommentListCollector.CacheImpl,
+    private val postPreviewService: PostPreviewService,
 ) {
     fun getPostPreviewList(
-        boardId: Long,
+        boardId: Long?,
         userId: Long,
         beforePostId: Long? = null,
         page: Int? = null,
@@ -43,18 +44,10 @@ class PostDisplayer(
         // page 값이 null인 경우, beforePostId는 어떤 값이든 상관 없음
         require(page.isNull || beforePostId.isNull)
 
-        return if (beforePostId.isNull && (page == 0 || page == null)) {
-            // Cache for recent posts
-            recentPostListCollector.get(boardId).fillData(userId)
+        return if (page != null) {
+            postPreviewService.getRecentPreviews(userId = userId, boardId = boardId, page = page)
         } else {
-            // No cache for old posts
-            val query = PostListCollector.Query(
-                boardId = boardId.takeIf { it > 0L },
-                beforePostId = beforePostId,
-                page = page ?: 0,
-                size = 20
-            )
-            postListCollector.get(query).fillData(userId)
+            postPreviewService.getRecentPreviews(userId = userId, boardId = boardId, before = beforePostId)
         }
     }
 
@@ -64,15 +57,12 @@ class PostDisplayer(
         userId: Long,
         beforePostId: Long?,
     ): PostPreviewList =
-        // No cache for searched posts
-        searchedPostListCollector.get(
-            SearchedPostListCollector.Query(
-                categoryId = categoryId,
-                keyword = keyword,
-                beforePostId = beforePostId,
-                size = 20
-            )
-        ).fillData(userId)
+        postPreviewService.getSearchedPostPreview(
+            userId = userId,
+            categoryId = categoryId,
+            keyword = keyword,
+            before = beforePostId,
+        )
 
     fun getPostDetail(postId: Long, userId: Long): PostDetail =
         postCollector.get(postId).fillData(userId)

@@ -6,6 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 
 interface FavoriteService {
+    fun getRankedPosts(rankFrom: Int, rankTo: Int): List<PostId>
     fun getPostFavorite(userId: Long, postId: Long): PostFavorite
     fun getPostFavorite(userId: Long, postIds: List<Long>): Map<Long, PostFavorite>
     fun getCommentFavorite(userId: Long, commentId: Long): CommentFavorite
@@ -18,6 +19,10 @@ class FavoriteServiceImpl(
 ) : FavoriteService {
     // FIXME: baseUrl 프로퍼티로 등록, 어느 패키지로 보낼까
     private val client = webClientBuilder.baseUrl("http://guam-favorite.jon-snow-korea.com").build()
+
+    override fun getRankedPosts(rankFrom: Int, rankTo: Int): List<PostId> {
+        TODO("Not yet implemented")
+    }
 
     override fun getPostFavorite(userId: Long, postId: Long): PostFavorite = runBlocking {
         val response = client.get()

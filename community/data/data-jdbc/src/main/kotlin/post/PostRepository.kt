@@ -2,6 +2,7 @@ package waffle.guam.community.data.jdbc.post
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import waffle.guam.community.data.jdbc.`in`
@@ -14,6 +15,7 @@ import javax.persistence.criteria.JoinType
 
 interface PostRepository : JpaRepository<PostEntity, Long> {
     fun findAll(spec: Specification<PostEntity>): List<PostEntity>
+    fun findAll(spec: Specification<PostEntity>, sort: Sort): List<PostEntity>
     fun findAll(spec: Specification<PostEntity>, pageable: Pageable): Page<PostEntity>
     fun findOne(spec: Specification<PostEntity>): PostEntity?
 }
@@ -22,7 +24,7 @@ fun postId(postId: Long): Specification<PostEntity> = eq("id", postId)
 
 fun postIds(postIds: Collection<Long>): Specification<PostEntity> = `in`("id", postIds)
 
-fun beforePostId(postId: Long): Specification<PostEntity> = lt("id", postId)
+fun beforePostId(postId: Long?): Specification<PostEntity> = lt("id", postId)
 
 fun status(status: PostEntity.Status): Specification<PostEntity> = eq("status", status)
 
@@ -41,6 +43,7 @@ fun fetchCategories(): Specification<PostEntity> = Specification { root, query, 
 
 fun fetchComments(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
     query.distinct(true)
+    // fixme VALID comment 만 가져오기
     root.fetch<PostEntity, PostCommentEntity>("comments", JoinType.LEFT)
     criteriaBuilder.conjunction()
 }

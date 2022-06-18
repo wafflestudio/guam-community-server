@@ -53,7 +53,7 @@ class PostController(
         @RequestParam(required = false) beforePostId: Long?,
         @RequestParam(required = false) page: Int?,
     ) = postDisplayer.getPostPreviewList(
-        boardId = boardId ?: 0L,
+        boardId = boardId,
         page = page,
         userId = userContext.id,
         beforePostId = beforePostId,
