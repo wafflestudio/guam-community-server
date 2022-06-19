@@ -49,8 +49,8 @@ class PostDisplayer(
     fun getUserPostPreviews(userId: Long, beforePostId: Long?): PostPreviewList =
         postPreviewService.getUserPostPreviews(userId, beforePostId)
 
-    fun getUserScrappedPostPreviews(userId: Long, beforePostId: Long?): PostPreviewList =
-        postPreviewService.getUserScrappedPostPreviews(userId, beforePostId)
+    fun getUserScrappedPostPreviews(userId: Long, page: Int): PostPreviewList =
+        postPreviewService.getUserScrappedPostPreviews(userId, page)
 
     fun getPostDetail(postId: Long, userId: Long): PostDetail =
         postDetailService.getDetail(userId, postId)

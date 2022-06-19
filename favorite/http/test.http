@@ -1,3 +1,6 @@
 ### 좋아요 rank
 GET {{ host }}/likes/comments/count?postCommentIds=281&userId=35
 #X-GATEWAY-USER-ID: 35
+
+### user scrapped post Ids
+GET {{ host }}/views/user?userId=12&page=0

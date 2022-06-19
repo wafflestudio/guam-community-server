@@ -23,6 +23,6 @@ class UserPostController(
     fun userScrappedPosts(
         userContext: UserContext,
         @PathVariable userId: Long,
-        @RequestParam(required = false) beforePostId: Long?,
-    ): PostPreviewList = postDisplay.getUserScrappedPostPreviews(userId, beforePostId)
+        @RequestParam(required = false) page: Int?,
+    ): PostPreviewList = postDisplay.getUserScrappedPostPreviews(userId, page = page ?: 0)
 }

@@ -1,24 +1,28 @@
 package waffle.guam.favorite.api.controller
 
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.favorite.api.SuccessResponse
 import waffle.guam.favorite.service.command.ScrapCreateHandler
 import waffle.guam.favorite.service.command.ScrapDeleteHandler
 import waffle.guam.favorite.service.model.Scrap
+import waffle.guam.favorite.service.query.ScrapUserStore
 
-@RequestMapping("/api/v1/scraps/posts")
+@RequestMapping("/api/v1/scraps")
 @RestController
 class ScrapController(
     private val scrapCreateHandler: ScrapCreateHandler,
     private val scrapDeleteHandler: ScrapDeleteHandler,
+    private val scrapUserStore: ScrapUserStore,
 ) {
 
-    @PostMapping("/{postId}")
+    @PostMapping("/posts/{postId}")
     suspend fun create(
         @PathVariable postId: Long,
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
@@ -30,7 +34,7 @@ class ScrapController(
         return SuccessResponse(Unit)
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/posts/{postId}")
     suspend fun delete(
         @PathVariable postId: Long,
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
@@ -40,5 +44,14 @@ class ScrapController(
         )
 
         return SuccessResponse(Unit)
+    }
+
+    @GetMapping("/user")
+    suspend fun getUserScrappedPostIds(
+        @RequestParam userId: Long,
+        @RequestParam page: Int,
+    ): SuccessResponse<List<Long>> {
+        val response = scrapUserStore.getScrappedPostIds(userId, page)
+        return SuccessResponse(response)
     }
 }

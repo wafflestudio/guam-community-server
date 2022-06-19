@@ -55,7 +55,7 @@ interface PostPreviewService {
 
     fun getUserScrappedPostPreviews(
         userId: Long,
-        before: PostId?,
+        page: Int,
     ): PostPreviewList
 }
 
@@ -84,9 +84,7 @@ class PostPreviewServiceImpl(
 
     override fun getFavoritePostPreviews(userId: Long, rankFrom: Int): PostPreviewList {
         val postIds = favoriteService.getRankedPosts(userId, rankFrom, rankFrom + PAGE_SIZE - 1)
-            .let { PageImpl(it.take(PAGE_SIZE), PageRequest.of(0, PAGE_SIZE), it.size.toLong()) }
-
-        return getCategoryAndComments(userId, postIds)
+        return getCategoryAndComments(userId, postIds.toPage())
     }
 
     override fun getSearchedPostPreview(
@@ -104,9 +102,8 @@ class PostPreviewServiceImpl(
         val postIds = postRepository.findAll(spec, SORT)
             .filter(searchFilter(categoryId, keyword))
             .map { it.id }
-            .let { PageImpl(it.take(PAGE_SIZE), PageRequest.of(0, PAGE_SIZE), it.size.toLong()) }
 
-        return getCategoryAndComments(userId, postIds)
+        return getCategoryAndComments(userId, postIds.toPage())
     }
 
     override fun getUserPostPreviews(userId: Long, before: PostId?): PostPreviewList {
@@ -115,8 +112,13 @@ class PostPreviewServiceImpl(
         return getCategoryAndComments(userId, postIds)
     }
 
-    override fun getUserScrappedPostPreviews(userId: Long, before: PostId?): PostPreviewList {
-        TODO()
+    override fun getUserScrappedPostPreviews(userId: Long, page: Int): PostPreviewList {
+        val postIds = favoriteService.getUserScrappedPosts(userId, page = page)
+        val postList = getCategoryAndComments(userId, postIds.toPage())
+        val postMap = postList.content.associateBy { it.id }
+        return postIds
+            .map { postId -> postMap[postId]!! }
+            .let { posts -> PostPreviewList(posts, postList.hasNext) }
     }
 
     private fun getCategoryAndComments(userId: Long, postIds: Page<Long>): PostPreviewList = runBlocking {
@@ -127,6 +129,10 @@ class PostPreviewServiceImpl(
         posts
             .map { PostPreview(userId = userId, post = it, users = users.await(), favorites = favorites.await()) }
             .let { PostPreviewList(content = it, hasNext = postIds.hasNext()) }
+    }
+
+    private fun List<PostId>.toPage(): Page<Long> {
+        return PageImpl(take(PAGE_SIZE), PageRequest.of(0, PAGE_SIZE), size.toLong())
     }
 
     companion object {
