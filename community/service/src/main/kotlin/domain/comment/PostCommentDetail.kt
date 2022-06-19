@@ -33,7 +33,7 @@ fun PostCommentDetail(d: PostComment, favorite: CommentFavorite, callerId: UserI
         createdAt = d.createdAt,
         updatedAt = d.updatedAt,
         isMine = d.user.id == callerId,
-        isLiked = favorite.liked,
+        isLiked = favorite.like,
     )
 
 fun AnonymousComments(commentList: List<PostCommentDetail>, writerId: Long): List<PostCommentDetail> {

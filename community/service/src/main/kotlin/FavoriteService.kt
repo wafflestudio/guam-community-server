@@ -86,5 +86,5 @@ data class PostFavorite(
 data class CommentFavorite(
     val postCommentId: Long,
     val count: Int,
-    val liked: Boolean,
+    val like: Boolean,
 )
