@@ -52,6 +52,7 @@ class LetterCommandServiceImpl(
         val letterBox = letterBoxRepository.find(userId = userId, pairId = pairId, size = 1)
             ?: throw RuntimeException()
 
+        letterRepository.readAll(userId = userId, letterBoxId = letterBox.id)
         letterBoxRepository.save(letterBox.clear(userId))
     }
 

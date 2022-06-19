@@ -17,13 +17,24 @@ import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.domain.Letter
 import waffle.guam.favorite.service.domain.LetterBoxPreview
 import waffle.guam.favorite.service.query.LetterQueryService
+import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 
 @RequestMapping("/api/v1/letters")
 @RestController
 class LetterController(
     private val letterCommandService: LetterCommandService,
     private val letterQueryService: LetterQueryService,
+    private val letterRepository: LetterRepository
 ) {
+
+    @GetMapping("/me")
+    suspend fun getMe(
+        @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
+    ): LetterMeResponse {
+        return LetterMeResponse(
+            unRead = letterRepository.countBySentToAndIsRead(userId = userId, isRead = false)
+        )
+    }
 
     @GetMapping("")
     suspend fun getLetterBoxPreviews(
@@ -87,6 +98,10 @@ class LetterController(
         )
     }
 }
+
+data class LetterMeResponse(
+    val unRead: Int
+)
 
 data class LetterBoxResponse(
     val userId: Long,

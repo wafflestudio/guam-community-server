@@ -10,11 +10,13 @@ import waffle.guam.favorite.service.command.CreateLetter
 import waffle.guam.favorite.service.command.LetterCommandService
 import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.query.LetterQueryService
+import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 
 @ServiceTest
 class LetterServiceTest @Autowired constructor(
     private val letterCommandService: LetterCommandService,
     private val letterQueryService: LetterQueryService,
+    private val letterRepository: LetterRepository,
 ) {
 
     @Test
@@ -58,9 +60,10 @@ class LetterServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `쪽지함을 비우면 나의 쪽지함의 쪽지가 사라진다`(): Unit = runBlocking {
+    fun `쪽지함을 비우면 나의 쪽지함에서 쪽지가 사라지고, 내부적으로는 내가 받은 쪽지가 모두 읽음 처리된다`(): Unit = runBlocking {
         letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "1", images = null))
         letterCommandService.createLetter(CreateLetter(senderId = 1, receiverId = 2, text = "2", images = null))
+        letterCommandService.createLetter(CreateLetter(senderId = 2, receiverId = 1, text = "3", images = null))
         letterCommandService.clearLetterBox(ClearLetterBox(userId = 1, pairId = 2))
 
         val myLetterBox = letterQueryService.getLetterBox(
@@ -82,10 +85,12 @@ class LetterServiceTest @Autowired constructor(
             letterIdSmallerThan = null
         )
         pairLetterBox!!.run {
-            assertThat(letters.size).isEqualTo(2) // 상대방의 쪽지함의 쪽지는 비워지지 않는다.
+            assertThat(letters.size).isEqualTo(3) // 상대방의 쪽지함의 쪽지는 비워지지 않는다.
             assertThat(userId).isEqualTo(2L)
             assertThat(pair.id).isEqualTo(1L)
         }
+
+        assertThat(letterRepository.countBySentToAndIsRead(userId = 1L, isRead = false)).isEqualTo(0)
     }
 
     @Test

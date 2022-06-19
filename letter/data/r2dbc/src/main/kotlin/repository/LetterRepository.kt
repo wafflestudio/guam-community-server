@@ -9,6 +9,7 @@ import waffle.guam.letter.data.r2dbc.data.LetterEntity
 interface LetterRepository {
     suspend fun save(letter: LetterEntity): LetterEntity
     suspend fun readAll(userId: Long, letterBoxId: Long)
+    suspend fun countBySentToAndIsRead(userId: Long, isRead: Boolean): Int
 }
 
 @Service
@@ -26,6 +27,12 @@ class LetterRepositoryImpl(
             .fetch()
             .awaitOneOrNull()
     }
+
+    override suspend fun countBySentToAndIsRead(userId: Long, isRead: Boolean): Int {
+        return letterDao.countBySentToAndIsRead(userId, isRead)
+    }
 }
 
-interface LetterDao : CoroutineCrudRepository<LetterEntity, Long>
+interface LetterDao : CoroutineCrudRepository<LetterEntity, Long> {
+    suspend fun countBySentToAndIsRead(userId: Long, isRead: Boolean): Int
+}
