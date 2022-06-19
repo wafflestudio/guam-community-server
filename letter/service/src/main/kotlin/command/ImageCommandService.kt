@@ -1,7 +1,7 @@
 package waffle.guam.favorite.service.command
 
-import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -20,6 +20,7 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.S3Configuration
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import java.io.File
 import java.time.Duration
 
 interface ImageCommandService {
@@ -47,26 +48,29 @@ class ImageCommandServiceImpl(
     }
 
     private suspend fun upload(letterBoxId: Long, image: FilePart): String {
-        val path = resolveFilename(letterBoxId = letterBoxId, image = image)
-        val dataBuffer = image.content().awaitFirst()
+        val path = resolvePath(letterBoxId = letterBoxId, image = image)
+        val file = File("temp_$letterBoxId").also {
+            image.transferTo(it).awaitSingleOrNull()
+            it.deleteOnExit()
+        }
 
         Mono.fromFuture(
             s3Client.putObject(
                 PutObjectRequest.builder()
                     .bucket(s3Properties.bucket)
-                    .contentLength(dataBuffer.readableByteCount().toLong())
+                    .contentLength(file.length())
                     .contentType(image.headers().contentType!!.type)
                     .key(path)
                     .acl("public-read")
                     .build(),
-                AsyncRequestBody.fromByteBuffer(dataBuffer.asByteBuffer()),
+                AsyncRequestBody.fromFile(file)
             )
         ).awaitSingle()
 
-        return path
+        return path.toString()
     }
 
-    private fun resolveFilename(letterBoxId: Long, image: FilePart): String {
+    private fun resolvePath(letterBoxId: Long, image: FilePart): String {
         val uid = System.currentTimeMillis() // TODO: UUID로 하고싶은데 blocking call..
         val extension = image.filename().split(".")[1]
 
