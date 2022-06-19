@@ -1,0 +1,3 @@
+### 좋아요 rank
+GET {{ host }}/likes/comments/count?postCommentIds=281&userId=35
+#X-GATEWAY-USER-ID: 35

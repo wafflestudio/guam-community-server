@@ -1,6 +1,3 @@
-GET {{ base_url }}/auth?token={{ accessToken }}
-Content-Type: application/json
-
 ### USER_ME
 
 GET {{ base_url }}/users/me
