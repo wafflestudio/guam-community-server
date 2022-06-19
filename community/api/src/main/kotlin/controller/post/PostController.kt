@@ -46,6 +46,12 @@ class PostController(
         @PathVariable postId: Long,
     ) = deletePostHandler.handle(DeletePost(postId = postId, userId = userContext.id))
 
+    @GetMapping("/{postId}")
+    fun getPost(
+        userContext: UserContext,
+        @PathVariable postId: Long,
+    ) = postDisplayer.getPostDetail(postId = postId, userId = userContext.id)
+
     @GetMapping("")
     fun getPosts(
         userContext: UserContext,
@@ -73,17 +79,11 @@ class PostController(
     )
 
     @GetMapping("/favorites")
-    fun searchPosts(
+    fun getFavoritePosts(
         userContext: UserContext,
         @RequestParam(required = false, defaultValue = "0") rankFrom: Int,
     ) = postDisplayer.getFavoritePostPreviews(
         userId = userContext.id,
         rankFrom = rankFrom,
     )
-
-    @GetMapping("/{postId}")
-    fun getPost(
-        userContext: UserContext,
-        @PathVariable postId: Long,
-    ) = postDisplayer.getPostDetail(postId = postId, userId = userContext.id)
 }
