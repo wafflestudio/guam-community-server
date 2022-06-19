@@ -17,7 +17,7 @@ import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
 import waffle.guam.community.service.command.post.UpdatePostHandler
-import waffle.guam.community.service.query.post.displayer.PostDisplayer
+import waffle.guam.community.service.query.post.PostDisplayer
 
 @RequestMapping("api/v1/posts")
 @RestController

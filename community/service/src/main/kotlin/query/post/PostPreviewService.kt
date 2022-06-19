@@ -1,4 +1,4 @@
-package waffle.guam.community.service.query.post.displayer
+package waffle.guam.community.service.query.post
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -15,6 +15,7 @@ import waffle.guam.community.data.jdbc.post.fetchCategories
 import waffle.guam.community.data.jdbc.post.fetchComments
 import waffle.guam.community.data.jdbc.post.postIds
 import waffle.guam.community.data.jdbc.post.status
+import waffle.guam.community.data.jdbc.post.userId
 import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.FavoriteService
 import waffle.guam.community.service.PostId
@@ -43,6 +44,16 @@ interface PostPreviewService {
     fun getSearchedPostPreview(
         categoryId: Long?,
         keyword: String,
+        userId: Long,
+        before: PostId?,
+    ): PostPreviewList
+
+    fun getUserPostPreviews(
+        userId: Long,
+        before: PostId?,
+    ): PostPreviewList
+
+    fun getUserScrappedPostPreviews(
         userId: Long,
         before: PostId?,
     ): PostPreviewList
@@ -96,6 +107,16 @@ class PostPreviewServiceImpl(
             .let { PageImpl(it.take(PAGE_SIZE), PageRequest.of(0, PAGE_SIZE), it.size.toLong()) }
 
         return getCategoryAndComments(userId, postIds)
+    }
+
+    override fun getUserPostPreviews(userId: Long, before: PostId?): PostPreviewList {
+        val spec = beforePostId(before) * userId(userId) * status(PostEntity.Status.VALID)
+        val postIds = postRepository.findAll(spec, PageRequest.of(0, PAGE_SIZE)).map { it.id }
+        return getCategoryAndComments(userId, postIds)
+    }
+
+    override fun getUserScrappedPostPreviews(userId: Long, before: PostId?): PostPreviewList {
+        TODO()
     }
 
     private fun getCategoryAndComments(userId: Long, postIds: Page<Long>): PostPreviewList = runBlocking {

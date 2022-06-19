@@ -32,6 +32,8 @@ fun statusIn(statuses: List<PostEntity.Status>): Specification<PostEntity> = `in
 
 fun boardId(boardId: Long?): Specification<PostEntity> = eq("boardId", boardId)
 
+fun userId(userId: Long?): Specification<PostEntity> = eq("userId", userId)
+
 fun fetchCategories(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
     query.distinct(true)
     root.fetch<PostEntity, PostCategoryEntity>("categories", JoinType.LEFT)
