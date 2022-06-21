@@ -52,6 +52,12 @@ class PostController(
         @PathVariable postId: Long,
     ) = postDisplayer.getPostDetail(postId = postId, userId = userContext.id)
 
+    @GetMapping("/{postId}/summary")
+    fun getPostSummary(
+        userContext: UserContext,
+        @PathVariable postId: Long,
+    ) = postDisplayer.getPostDto(postId = postId, userId = userContext.id)
+
     @GetMapping("")
     fun getPosts(
         userContext: UserContext,

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -19,11 +20,19 @@ import waffle.guam.community.data.jdbc.post.userId
 import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.FavoriteService
 import waffle.guam.community.service.PostId
+import waffle.guam.community.service.PostNotFound
+import waffle.guam.community.service.UserId
 import waffle.guam.community.service.UserService
+import waffle.guam.community.service.domain.post.Post
 import waffle.guam.community.service.domain.post.PostPreview
 import waffle.guam.community.service.domain.post.PostPreviewList
 
 interface PostPreviewService {
+    fun getPostDtoOnly(
+        userId: UserId,
+        postId: PostId,
+    ): Post
+
     fun getRecentPreviews(
         userId: Long,
         boardId: Long? = null,
@@ -65,6 +74,11 @@ class PostPreviewServiceImpl(
     private val favoriteService: FavoriteService,
     private val userService: UserService,
 ) : PostPreviewService {
+
+    override fun getPostDtoOnly(userId: UserId, postId: PostId): Post =
+        postRepository.findByIdOrNull(postId)
+            ?.let { entity -> Post(entity) }
+            ?: throw PostNotFound(postId)
 
     override fun getRecentPreviews(userId: Long, boardId: Long?, before: PostId?): PostPreviewList {
         val spec = boardId(boardId) * status(PostEntity.Status.VALID) * beforePostId(before)

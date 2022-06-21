@@ -6,7 +6,6 @@ import waffle.guam.community.service.PostFavorite
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.category.PostCategory
-import waffle.guam.community.service.domain.comment.PostComment
 import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.domain.user.User
 import java.time.Instant
@@ -28,36 +27,32 @@ data class PostPreview(
     val isMine: Boolean,
     val isLiked: Boolean,
     val isScrapped: Boolean,
-) {
-    companion object {
-        fun of(
-            post: Post,
-            user: User,
-            category: PostCategory?,
-            comments: List<PostComment>?,
-            favorite: PostFavorite,
-            callerId: Long,
-        ): PostPreview {
-            return PostPreview(
-                id = post.id,
-                boardId = post.boardId,
-                user = if (post.isAnonymous) AnonymousUser() else user,
-                title = post.title,
-                content = post.content,
-                imagePaths = post.imagePaths,
-                status = post.status,
-                createdAt = post.createdAt,
-                updatedAt = post.updatedAt,
-                category = category,
-                likeCount = favorite.likeCnt,
-                commentCount = comments?.size ?: 0,
-                scrapCount = favorite.scrapCnt,
-                isMine = post.userId == callerId,
-                isLiked = favorite.like,
-                isScrapped = favorite.scrap
-            )
-        }
-    }
+)
+
+fun PostPreview(
+    post: PostEntity,
+    user: User,
+    favorite: PostFavorite,
+    callerId: Long,
+): PostPreview {
+    return PostPreview(
+        id = post.id,
+        boardId = post.boardId,
+        user = if (post.isAnonymous) AnonymousUser() else user,
+        title = post.title,
+        content = post.content,
+        imagePaths = post.images,
+        status = post.status.name,
+        createdAt = post.createdAt,
+        updatedAt = post.updatedAt,
+        category = post.categories.singleOrNull()?.let(::PostCategory),
+        likeCount = favorite.likeCnt,
+        commentCount = post.comments.size,
+        scrapCount = favorite.scrapCnt,
+        isMine = post.userId == callerId,
+        isLiked = favorite.like,
+        isScrapped = favorite.scrap
+    )
 }
 
 fun PostPreview(
