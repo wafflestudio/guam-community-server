@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 import waffle.guam.community.service.GuamException
 import waffle.guam.community.service.Log
 import javax.persistence.EntityExistsException
@@ -13,6 +14,10 @@ import javax.persistence.EntityExistsException
 @ControllerAdvice
 class ExceptionHandler {
     companion object : Log
+
+    @ExceptionHandler(value = [MaxUploadSizeExceededException::class])
+    fun fileSize(e: MaxUploadSizeExceededException) =
+        ResponseEntity("파일 사이즈가 너무 큽니다.", HttpStatus.PAYLOAD_TOO_LARGE)
 
     @ExceptionHandler(value = [EntityExistsException::class, DataIntegrityViolationException::class])
     fun entityExists(e: EntityExistsException) =
