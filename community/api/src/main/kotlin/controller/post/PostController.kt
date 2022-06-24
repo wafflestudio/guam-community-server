@@ -17,7 +17,7 @@ import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
 import waffle.guam.community.service.command.post.UpdatePostHandler
-import waffle.guam.community.service.query.post.displayer.PostDisplayer
+import waffle.guam.community.service.query.post.PostDisplayer
 
 @RequestMapping("api/v1/posts")
 @RestController
@@ -51,6 +51,12 @@ class PostController(
         userContext: UserContext,
         @PathVariable postId: Long,
     ) = postDisplayer.getPostDetail(postId = postId, userId = userContext.id)
+
+    @GetMapping("/{postId}/summary")
+    fun getPostSummary(
+        userContext: UserContext,
+        @PathVariable postId: Long,
+    ) = postDisplayer.getPostDto(postId = postId, userId = userContext.id)
 
     @GetMapping("")
     fun getPosts(

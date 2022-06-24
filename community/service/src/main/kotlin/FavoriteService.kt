@@ -11,6 +11,7 @@ interface FavoriteService {
     fun getPostFavorite(userId: Long, postIds: List<Long>): Map<Long, PostFavorite>
     fun getCommentFavorite(userId: Long, commentId: Long): CommentFavorite
     fun getCommentFavorite(userId: Long, commentIds: List<Long>): Map<Long, CommentFavorite>
+    fun getUserScrappedPosts(userId: Long, page: Int): List<PostId>
 }
 
 @Service
@@ -67,6 +68,14 @@ class FavoriteServiceImpl(
             .awaitBody<CommentFavoriteResponse>()
 
         return@runBlocking response.data.associateBy { it.postCommentId }
+    }
+
+    override fun getUserScrappedPosts(userId: Long, page: Int): List<PostId> = runBlocking {
+        client.get()
+            .uri("/api/v1/views/user?userId=$userId&page=$page")
+            .accept().retrieve()
+            .awaitBody<List<Long>>()
+            .sortedDescending()
     }
 
     private data class PostFavoriteResponse(

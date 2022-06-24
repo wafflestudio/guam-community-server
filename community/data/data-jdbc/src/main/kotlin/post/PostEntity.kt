@@ -49,6 +49,9 @@ class PostEntity(
     val isAnonymous: Boolean
         get() = boardId == 1L
 
+    val isDeleted: Boolean
+        get() = status == Status.DELETED
+
     enum class Status {
         VALID, DELETED
     }
