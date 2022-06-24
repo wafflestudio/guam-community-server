@@ -32,15 +32,11 @@ class NotificationController(
         )
     }
 
+    // TODO: papi로
     @PostMapping("/create")
     fun createNotifications(
-        @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
         @RequestBody request: CreateNotificationRequest,
     ): List<Notification> {
-        if (userId != request.producerId) {
-            throw UnAuthorized()
-        }
-
         return commandService.create(
             command = CreateNotification(request)
         )

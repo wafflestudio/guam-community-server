@@ -55,7 +55,4 @@ class PostDisplayer(
 
     fun getPostDetail(postId: Long, userId: Long): PostDetail =
         postDetailService.getDetail(userId, postId)
-
-    fun getPostDto(postId: Long, userId: Long): Post =
-        postPreviewService.getPostDtoOnly(userId, postId)
 }
