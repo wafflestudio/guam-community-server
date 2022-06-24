@@ -1,9 +1,9 @@
 package waffle.guam.community.service.domain.comment
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.client.CommentFavorite
-import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.domain.user.User
 import java.time.Instant
 
@@ -19,7 +19,11 @@ data class PostCommentDetail(
     val updatedAt: Instant,
     val isMine: Boolean,
     val isLiked: Boolean,
-)
+) {
+    @get:JsonIgnore
+    val isAnonymous: Boolean
+        get() = user.isAnonymous
+}
 
 fun PostCommentDetail(d: PostComment, favorite: CommentFavorite, callerId: UserId) =
     PostCommentDetail(
@@ -35,17 +39,3 @@ fun PostCommentDetail(d: PostComment, favorite: CommentFavorite, callerId: UserI
         isMine = d.user.id == callerId,
         isLiked = favorite.like,
     )
-
-fun AnonymousComments(commentList: List<PostCommentDetail>, writerId: Long): List<PostCommentDetail> {
-    val userIdOrder = commentList
-        .filter { it.user.id != writerId }
-        .sortedBy { it.createdAt }
-        .distinctBy { it.user.id }
-        .mapIndexed { idx, comment -> comment.user.id to idx + 1 }
-        .toMap()
-
-    return commentList.map {
-        val suffix = userIdOrder[it.user.id] ?: "(글쓴이)"
-        it.copy(user = AnonymousUser(suffix.toString()), mentionIds = listOf()) // todo 익명 멘션
-    }
-}

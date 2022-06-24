@@ -3,7 +3,6 @@ package waffle.guam.community.service.domain.post
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
-import waffle.guam.community.service.UserId
 import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.user.AnonymousUser
@@ -30,51 +29,54 @@ data class PostPreview(
 )
 
 fun PostPreview(
+    userId: Long,
     post: PostEntity,
     user: User,
     favorite: PostFavorite,
-    callerId: Long,
 ): PostPreview {
+    require(!post.isAnonymous)
     return PostPreview(
         id = post.id,
         boardId = post.boardId,
-        user = if (post.isAnonymous) AnonymousUser() else user,
         title = post.title,
         content = post.content,
         imagePaths = post.images,
+        commentCount = post.comments.size,
         status = post.status.name,
         createdAt = post.createdAt,
         updatedAt = post.updatedAt,
-        category = post.categories.singleOrNull()?.let(::PostCategory),
+        isMine = post.userId == userId,
+        category = post.categories.firstOrNull()?.let(::PostCategory),
+        user = user,
         likeCount = favorite.likeCnt,
-        commentCount = post.comments.size,
         scrapCount = favorite.scrapCnt,
-        isMine = post.userId == callerId,
         isLiked = favorite.like,
-        isScrapped = favorite.scrap
+        isScrapped = favorite.scrap,
     )
 }
 
-fun PostPreview(
+fun AnonymousPostPreview(
     userId: Long,
     post: PostEntity,
-    users: Map<UserId, User>,
-    favorites: Map<PostId, PostFavorite>,
-) = PostPreview(
-    id = post.id,
-    boardId = post.boardId,
-    title = post.title,
-    content = post.content,
-    imagePaths = post.images,
-    commentCount = post.comments.size,
-    status = post.status.name,
-    createdAt = post.createdAt,
-    updatedAt = post.updatedAt,
-    isMine = post.userId == userId,
-    category = post.categories.firstOrNull()?.let(::PostCategory),
-    user = if (post.isAnonymous) AnonymousUser() else users[post.userId]!!,
-    likeCount = favorites[post.id]!!.likeCnt,
-    scrapCount = favorites[post.id]!!.scrapCnt,
-    isLiked = favorites[post.id]!!.like,
-    isScrapped = favorites[post.id]!!.scrap,
-)
+    favorite: PostFavorite,
+): PostPreview {
+    require(post.isAnonymous)
+    return PostPreview(
+        id = post.id,
+        boardId = post.boardId,
+        title = post.title,
+        content = post.content,
+        imagePaths = post.images,
+        commentCount = post.comments.size,
+        status = post.status.name,
+        createdAt = post.createdAt,
+        updatedAt = post.updatedAt,
+        isMine = post.userId == userId,
+        category = post.categories.firstOrNull()?.let(::PostCategory),
+        user = AnonymousUser(),
+        likeCount = favorite.likeCnt,
+        scrapCount = favorite.scrapCnt,
+        isLiked = favorite.like,
+        isScrapped = favorite.scrap,
+    )
+}

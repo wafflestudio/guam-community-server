@@ -25,10 +25,13 @@ class PostCommentService(
         val commentList = fetchList(id = postId)
         val commentIds = commentList.content.map { it.id }
         val commentFavorite = favoriteService.getCommentFavorite(userId = userId, commentIds = commentIds)
+        val commentDetailList = commentList.content.map { PostCommentDetail(it, commentFavorite[it.id]!!, userId) }
 
         return PostCommentDetailList(
             postId = postId,
-            content = commentList.content.map { PostCommentDetail(it, commentFavorite[it.id]!!, userId) },
+            commentList = commentDetailList,
+            writerId = commentList.writerId,
+            isAnonymous = commentList.isAnonymousPost,
         )
     }
 
