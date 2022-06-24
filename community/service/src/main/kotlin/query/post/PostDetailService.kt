@@ -9,11 +9,11 @@ import waffle.guam.community.data.jdbc.post.fetchCategories
 import waffle.guam.community.data.jdbc.post.postId
 import waffle.guam.community.data.jdbc.post.status
 import waffle.guam.community.data.jdbc.times
-import waffle.guam.community.service.FavoriteService
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.UserService
+import waffle.guam.community.service.client.FavoriteService
+import waffle.guam.community.service.client.UserService
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.comment.PostCommentDetail
 import waffle.guam.community.service.domain.post.Post

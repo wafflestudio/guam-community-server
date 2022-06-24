@@ -1,8 +1,8 @@
 package waffle.guam.community.service.domain.comment
 
-import waffle.guam.community.service.CommentFavorite
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
+import waffle.guam.community.service.client.CommentFavorite
 import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.domain.user.User
 import java.time.Instant

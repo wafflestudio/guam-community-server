@@ -1,9 +1,9 @@
 package waffle.guam.community.service.query.comment.displayer
 
 import org.springframework.stereotype.Service
-import waffle.guam.community.service.FavoriteService
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
+import waffle.guam.community.service.client.FavoriteService
 import waffle.guam.community.service.domain.comment.AnonymousComments
 import waffle.guam.community.service.domain.comment.PostCommentDetail
 import waffle.guam.community.service.domain.comment.PostCommentDetailList

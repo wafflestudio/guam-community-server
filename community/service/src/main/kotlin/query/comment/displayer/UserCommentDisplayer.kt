@@ -3,7 +3,7 @@ package waffle.guam.community.service.query.comment.displayer
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
-import waffle.guam.community.service.FavoriteService
+import waffle.guam.community.service.client.FavoriteService
 import waffle.guam.community.service.domain.comment.MyCommentView
 
 @Service

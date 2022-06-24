@@ -12,7 +12,7 @@ import waffle.guam.community.data.jdbc.post.throwIfNotContainIds
 import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.PostNotFound
-import waffle.guam.community.service.UserService
+import waffle.guam.community.service.client.UserService
 import waffle.guam.community.service.command.comment.PostCommentCreated
 import waffle.guam.community.service.command.comment.PostCommentDeleted
 import waffle.guam.community.service.command.comment.PostCommentUpdated

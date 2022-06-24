@@ -2,8 +2,8 @@ package waffle.guam.community.service.domain.post
 
 import waffle.guam.community.data.jdbc.board.BoardName
 import waffle.guam.community.service.BoardId
-import waffle.guam.community.service.PostFavorite
 import waffle.guam.community.service.PostId
+import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.comment.AnonymousComments
 import waffle.guam.community.service.domain.comment.PostCommentDetail

@@ -1,9 +1,10 @@
-package waffle.guam.community.service
+package waffle.guam.community.service.client
 
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import waffle.guam.community.service.PostId
 
 interface FavoriteService {
     fun getRankedPosts(userId: Long, rankFrom: Int, rankTo: Int): List<PostId>
@@ -17,19 +18,17 @@ interface FavoriteService {
 @Service
 class FavoriteServiceImpl(
     webClientBuilder: WebClient.Builder,
-) : FavoriteService {
-    // FIXME: baseUrl 프로퍼티로 등록, 어느 패키지로 보낼까
-    private val client = webClientBuilder.baseUrl("http://guam-favorite.jon-snow-korea.com").build()
+) : ClientService(webClientBuilder, BaseURL.FAVORITE), FavoriteService {
 
     override fun getRankedPosts(userId: Long, rankFrom: Int, rankTo: Int): List<PostId> = runBlocking {
-        client.get()
+        webClient.get()
             .uri("/api/v1/views/rank?from=$rankFrom&to=$rankTo&userId=$userId")
             .accept().retrieve()
             .awaitBody()
     }
 
     override fun getPostFavorite(userId: Long, postId: Long): PostFavorite = runBlocking {
-        val response = client.get()
+        val response = webClient.get()
             .uri("/api/v1/views?postIds={postId}&userId={userId}", postId, userId)
             .accept()
             .retrieve()
@@ -39,7 +38,7 @@ class FavoriteServiceImpl(
     }
 
     override fun getPostFavorite(userId: Long, postIds: List<Long>): Map<Long, PostFavorite> = runBlocking {
-        val response = client.get()
+        val response = webClient.get()
             .uri("/api/v1/views?postIds={postId}&userId={userId}", postIds.joinToString(","), userId)
             .accept()
             .retrieve()
@@ -49,7 +48,7 @@ class FavoriteServiceImpl(
     }
 
     override fun getCommentFavorite(userId: Long, commentId: Long): CommentFavorite = runBlocking {
-        val response = client.get()
+        val response = webClient.get()
             .uri("/api/v1/likes/comments/count?postCommentIds={commentId}&userId={userId}", commentId, userId)
             .accept()
             .retrieve()
@@ -61,7 +60,7 @@ class FavoriteServiceImpl(
     override fun getCommentFavorite(userId: Long, commentIds: List<Long>): Map<Long, CommentFavorite> = runBlocking {
         val commentIdStr = commentIds.joinToString(",")
 
-        val response = client.get()
+        val response = webClient.get()
             .uri("/api/v1/likes/comments/count?postCommentIds={commentId}&userId={userId}", commentIdStr, userId)
             .accept()
             .retrieve()
@@ -71,7 +70,7 @@ class FavoriteServiceImpl(
     }
 
     override fun getUserScrappedPosts(userId: Long, page: Int): List<PostId> = runBlocking {
-        client.get()
+        webClient.get()
             .uri("/api/v1/views/user?userId=$userId&page=$page")
             .accept().retrieve()
             .awaitBody<List<Long>>()
