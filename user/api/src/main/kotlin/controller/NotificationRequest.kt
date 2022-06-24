@@ -27,7 +27,7 @@ fun ReadNotification(request: ReadNotificationRequest) = ReadNotification(
 )
 
 fun CreateNotification(request: CreateNotificationRequest) = CreateNotification(
-    producerId = 0,
+    producerId = request.producerId,
     infos = request.infos.map {
         CreateNotification.Info(
             consumerId = it.consumerId,
