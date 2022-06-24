@@ -35,8 +35,8 @@ class PostDetailService(
             ?: throw PostNotFound(postId)
     }
 
-    fun PostEntity.fillData(callerId: Long): PostDetail = runBlocking {
-        val favorite = async { favoriteService.getPostFavorite(userId = userId, postId = id) }
+    private fun PostEntity.fillData(callerId: Long): PostDetail = runBlocking {
+        val favorite = async { favoriteService.getPostFavorite(userId = callerId, postId = id) }
         val commentList = async { postCommentListCollector.get(id = id) }
         val commentIds = commentList.await().content.map { it.id }
         val commentFavorite = async { favoriteService.getCommentFavorite(userId = callerId, commentIds = commentIds) }.await()

@@ -13,10 +13,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
+interface UploadImageListHandler : CommandHandler<UploadImageList, ImageListUploaded>
+
 @Service
-class UploadImageListHandler(
+class UploadImageListHandlerImpl(
     private val storageClient: StorageClient,
-) : CommandHandler<UploadImageList, ImageListUploaded> {
+) : UploadImageListHandler {
     override fun handle(command: UploadImageList): ImageListUploaded {
         val dirPath: Path = Paths
             .get("${storageClient.storagePrefix}/${command.type}/${command.parentId}")
