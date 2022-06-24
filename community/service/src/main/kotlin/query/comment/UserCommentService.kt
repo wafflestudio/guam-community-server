@@ -1,4 +1,4 @@
-package waffle.guam.community.service.query.comment.displayer
+package waffle.guam.community.service.query.comment
 
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -7,7 +7,7 @@ import waffle.guam.community.service.client.FavoriteService
 import waffle.guam.community.service.domain.comment.MyCommentView
 
 @Service
-class UserCommentDisplayer(
+class UserCommentService(
     private val commentRepository: PostCommentRepository,
     private val favoriteService: FavoriteService,
 ) {

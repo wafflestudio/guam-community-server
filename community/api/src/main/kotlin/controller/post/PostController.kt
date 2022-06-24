@@ -17,7 +17,8 @@ import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
 import waffle.guam.community.service.command.post.UpdatePostHandler
-import waffle.guam.community.service.query.post.PostDisplayer
+import waffle.guam.community.service.query.post.PostDetailService
+import waffle.guam.community.service.query.post.PostPreviewService
 
 @RequestMapping("api/v1/posts")
 @RestController
@@ -25,7 +26,8 @@ class PostController(
     private val createPostHandler: CreatePostHandler,
     private val updatePostHandler: UpdatePostHandler,
     private val deletePostHandler: DeletePostHandler,
-    private val postDisplayer: PostDisplayer,
+    private val postPreviewService: PostPreviewService,
+    private val postDetailService: PostDetailService,
 ) {
     @PostMapping("")
     fun createPost(
@@ -50,31 +52,40 @@ class PostController(
     fun getPost(
         userContext: UserContext,
         @PathVariable postId: Long,
-    ) = postDisplayer.getPostDetail(postId = postId, userId = userContext.id)
+    ) = postDetailService.getDetail(postId = postId, userId = userContext.id)
+
+    @GetMapping("", params = ["!page"])
+    fun getPosts(
+        userContext: UserContext,
+        @RequestParam(required = false) boardId: Long?,
+        @RequestParam(required = false) beforePostId: Long?,
+    ) = postPreviewService.getRecentPreviews(
+        boardId = boardId,
+        userId = userContext.id,
+        before = beforePostId,
+    )
 
     @GetMapping("")
     fun getPosts(
         userContext: UserContext,
         @RequestParam(required = false) boardId: Long?,
-        @RequestParam(required = false) beforePostId: Long?,
-        @RequestParam(required = false) page: Int?,
-    ) = postDisplayer.getPostPreviewList(
+        @RequestParam(required = false, defaultValue = "0") page: Int,
+    ) = postPreviewService.getRecentPreviews(
         boardId = boardId,
         page = page,
         userId = userContext.id,
-        beforePostId = beforePostId,
     )
 
-    @GetMapping("", params = ["keyword"])
+    @GetMapping("/search", params = ["keyword"])
     fun searchPosts(
         userContext: UserContext,
         @RequestParam keyword: String,
         @RequestParam(required = false) categoryId: Long?,
         @RequestParam(required = false) beforePostId: Long?,
-    ) = postDisplayer.getSearchedPostPreviewList(
+    ) = postPreviewService.getSearchedPostPreview(
         categoryId = categoryId,
         keyword = keyword,
-        beforePostId = beforePostId,
+        before = beforePostId,
         userId = userContext.id,
     )
 
@@ -82,7 +93,7 @@ class PostController(
     fun getFavoritePosts(
         userContext: UserContext,
         @RequestParam(required = false, defaultValue = "0") rankFrom: Int,
-    ) = postDisplayer.getFavoritePostPreviews(
+    ) = postPreviewService.getFavoritePostPreviews(
         userId = userContext.id,
         rankFrom = rankFrom,
     )

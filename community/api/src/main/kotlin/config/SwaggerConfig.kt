@@ -28,12 +28,16 @@ class SwaggerConfig {
             .builder()
             .group("Guam")
             .addOperationCustomizer { operation, _ ->
-                operation.addParametersItem(
-                    Parameter()
-                        .`in`("header")
-                        .required(false)
-                        .name(GATEWAY_HEADER_NAME)
-                )
+                val headerParameter = Parameter()
+                    .`in`("header")
+                    .required(false)
+                    .name(GATEWAY_HEADER_NAME)
+
+                operation.apply {
+                    if (parameters?.contains(headerParameter) != true) {
+                        addParametersItem(headerParameter)
+                    }
+                }
             }
             .build()
     }

@@ -6,12 +6,17 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.user.User
-import waffle.guam.community.service.query.MultiCollector
+
+interface UserService {
+    fun get(id: UserId): User
+
+    fun multiGet(ids: Collection<UserId>): Map<UserId, User>
+}
 
 @Service
-class UserService(
+class UserServiceImpl(
     webClientBuilder: WebClient.Builder,
-) : ClientService(webClientBuilder, BaseURL.USER), MultiCollector<User, UserId> {
+) : ClientService(webClientBuilder, BaseURL.USER), UserService {
 
     override fun get(id: UserId): User = runBlocking {
         webClient.get()
