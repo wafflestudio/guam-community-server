@@ -21,11 +21,11 @@ class PostCommentService(
     private val favoriteService: FavoriteService,
 ) {
 
-    fun fetchPostCommentList(postId: PostId, userId: UserId): PostCommentDetailList {
+    fun fetchPostCommentList(postId: PostId, callerId: UserId): PostCommentDetailList {
         val commentList = fetchList(id = postId)
         val commentIds = commentList.content.map { it.id }
-        val commentFavorite = favoriteService.getCommentFavorite(userId = userId, commentIds = commentIds)
-        val commentDetailList = commentList.content.map { PostCommentDetail(it, commentFavorite[it.id]!!, userId) }
+        val commentFavorite = favoriteService.getCommentFavorite(userId = callerId, commentIds = commentIds)
+        val commentDetailList = commentList.content.map { PostCommentDetail(it, commentFavorite[it.id]!!, callerId) }
 
         return PostCommentDetailList(
             postId = postId,

@@ -39,7 +39,7 @@ class PostDetailService(
 
     private fun PostEntity.fillData(callerId: Long): PostDetail = runBlocking {
         val favorite = async { favoriteService.getPostFavorite(userId = callerId, postId = id) }
-        val comments = async { postCommentService.fetchPostCommentList(userId = callerId, postId = id) }
+        val comments = async { postCommentService.fetchPostCommentList(callerId = callerId, postId = id) }
         val user = if (isAnonymous) AnonymousUser() else userService.get(id = userId)
 
         PostDetail(

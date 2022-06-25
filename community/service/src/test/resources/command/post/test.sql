@@ -1,3 +1,9 @@
+delete from boards;
+delete from post_categories;
+delete from post_comments;
+delete from categories;
+delete from posts;
+
 insert into boards (id, title) values (1, 'chat'), (2, 'study');
 insert into categories (id, title) values (1, 'Programming'), (2, 'Data Science');
 

@@ -1,5 +1,6 @@
 package waffle.guam.community.service.domain.post
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
@@ -26,7 +27,11 @@ data class PostPreview(
     val isMine: Boolean,
     val isLiked: Boolean,
     val isScrapped: Boolean,
-)
+) {
+    @get:JsonIgnore
+    val isAnonymous: Boolean
+        get() = boardId == 1L
+}
 
 fun PostPreview(
     userId: Long,

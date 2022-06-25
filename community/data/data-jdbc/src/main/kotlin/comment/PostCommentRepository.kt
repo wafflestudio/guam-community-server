@@ -6,5 +6,6 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface PostCommentRepository : JpaRepository<PostCommentEntity, Long> {
-    fun findAllByUserIdAndIdLessThanOrderByIdDesc(userId: Long, beforeId: Long, pageable: Pageable): Page<PostCommentEntity>
+    fun findAll(spec: Specification<PostCommentEntity>): List<PostCommentEntity>
+    fun findAllByUserIdAndIdLessThanAndStatusOrderByIdDesc(userId: Long, beforeId: Long, status: PostCommentEntity.Status, pageable: Pageable): Page<PostCommentEntity>
 }

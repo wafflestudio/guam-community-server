@@ -40,7 +40,10 @@ fun PostDetail(
     favorite: PostFavorite,
 ): PostDetail {
     require(post.isAnonymous == user.isAnonymous)
-    require(post.isAnonymous == comments.all { it.isAnonymous })
+    if (comments.isNotEmpty()) {
+        require(post.isAnonymous == comments.all { it.isAnonymous })
+    }
+
     return PostDetail(
         id = post.id,
         boardId = post.boardId,
