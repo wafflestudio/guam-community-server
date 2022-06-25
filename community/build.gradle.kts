@@ -37,12 +37,15 @@ allprojects {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.springframework.boot:spring-boot-starter-test") {
+            exclude(module = "mockito-core")
+        }
     }
 
-    val mockkVersion = "1.10.+"
+    val mockkVersion = "1.12.+"
     dependencies {
         testImplementation("io.mockk:mockk:$mockkVersion")
+        testImplementation("com.ninja-squad:springmockk:3.1.1")
     }
 
     tasks.withType<KotlinCompile> {

@@ -33,7 +33,7 @@ class S3Client(
 }
 
 @ConstructorBinding
-@ConfigurationProperties("cloud.s3")
+@ConfigurationProperties("cloud.aws.s3")
 data class CloudS3Properties(
     val bucket: String = "guam"
 )

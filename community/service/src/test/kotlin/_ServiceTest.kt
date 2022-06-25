@@ -10,8 +10,7 @@ import waffle.guam.community.service.command.image.UploadImageListHandler
 
 @Import(HibernateConfig::class)
 @SpringBootApplication
-class TestApplication(
-) {
+class TestApplication {
 
     @Primary
     @Service
