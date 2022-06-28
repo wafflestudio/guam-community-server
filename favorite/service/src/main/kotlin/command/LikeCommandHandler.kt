@@ -32,11 +32,11 @@ class LikeDeleteHandler(
 ) : LikeCommandHandler() {
 
     override suspend fun internalHandle(like: Like): LikeDeleted {
-        if (!like.exists()) {
+        val updatedRows = likeRepository.deleteByPostIdAndUserId(postId = like.postId, userId = like.userId)
+
+        if (updatedRows < 1) {
             throw LikeNotFoundException()
         }
-
-        likeRepository.deleteByPostIdAndUserId(postId = like.postId, userId = like.userId)
 
         return LikeDeleted(like)
     }

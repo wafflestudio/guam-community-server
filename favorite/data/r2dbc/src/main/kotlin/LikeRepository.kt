@@ -5,6 +5,6 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface LikeRepository : CoroutineCrudRepository<LikeEntity, Long> {
     suspend fun existsByPostIdAndUserId(postId: Long, userId: Long): Boolean
-    suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long)
+    suspend fun deleteByPostIdAndUserId(postId: Long, userId: Long): Int
     fun findAllByPostIdInAndUserId(postIds: List<Long>, userId: Long): Flow<LikeEntity>
 }
