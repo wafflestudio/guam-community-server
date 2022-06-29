@@ -38,14 +38,14 @@ class CommentLikeDeleteHandler(
 ) : CommentLikeCommandHandler() {
 
     override suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent {
-        if (!commentLike.exists()) {
-            throw CommentLikeNotFoundException()
-        }
-
-        commentLikeRepository.deleteByPostCommentIdAndUserId(
+        val updatedRows = commentLikeRepository.deleteByPostCommentIdAndUserId(
             postCommentId = commentLike.postCommentId,
             userId = commentLike.userId
         )
+
+        if (updatedRows < 1) {
+            throw CommentLikeNotFoundException()
+        }
 
         return CommentLikeDeleted(commentLike)
     }

@@ -32,11 +32,11 @@ class ScrapDeleteHandler(
 ) : ScrapCommandHandler() {
 
     override suspend fun internalHandle(scrap: Scrap): ScrapDeleted {
-        if (!scrap.exists()) {
+        val updatedRows = scrapRepository.deleteByPostIdAndUserId(postId = scrap.postId, userId = scrap.userId)
+
+        if (updatedRows < 1) {
             throw ScrapNotFoundException()
         }
-
-        scrapRepository.deleteByPostIdAndUserId(postId = scrap.postId, userId = scrap.userId)
 
         return ScrapDeleted(scrap)
     }
