@@ -3,7 +3,6 @@ package waffle.guam.community.service.query.post
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.post.fetchCategories
@@ -28,7 +27,6 @@ class PostDetailService(
     private val favoriteService: FavoriteService,
     private val postCommentService: PostCommentService,
 ) {
-    @Transactional(readOnly = true)
     fun getDetail(userId: UserId, postId: PostId): PostDetail {
         val postSpec = fetchCategories() * postId(postId) * status(PostEntity.Status.VALID)
 

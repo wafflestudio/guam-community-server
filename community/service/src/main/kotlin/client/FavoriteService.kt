@@ -1,6 +1,9 @@
 package waffle.guam.community.service.client
 
 import kotlinx.coroutines.runBlocking
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
@@ -16,9 +19,13 @@ interface FavoriteService {
 }
 
 @Service
+@EnableConfigurationProperties(FavoriteServiceProperties::class)
 class FavoriteServiceImpl(
     webClientBuilder: WebClient.Builder,
-) : ClientService(webClientBuilder, BaseURL.FAVORITE), FavoriteService {
+    favoriteServiceProperties: FavoriteServiceProperties,
+) : FavoriteService {
+
+    private val webClient = webClientBuilder.baseUrl(favoriteServiceProperties.baseUrl).build()
 
     override fun getRankedPosts(userId: Long, rankFrom: Int, rankTo: Int): List<PostId> = runBlocking {
         webClient.get()
@@ -98,4 +105,10 @@ data class CommentFavorite(
     val postCommentId: Long,
     val count: Int,
     val like: Boolean,
+)
+
+@ConstructorBinding
+@ConfigurationProperties("guam.services.favorite")
+data class FavoriteServiceProperties(
+    val baseUrl: String = ""
 )

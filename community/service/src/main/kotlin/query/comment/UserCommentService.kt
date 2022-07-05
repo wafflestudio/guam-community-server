@@ -20,7 +20,6 @@ class UserCommentService(
             pageable = PageRequest.of(0, 20)
         )
             .content
-            .sortedByDescending { it.id }
         val favorites = favoriteService.getCommentFavorite(userId = userId, commentIds = comments.map { it.id })
 
         return comments.map { MyCommentView(it, favorites[it.id]!!) }

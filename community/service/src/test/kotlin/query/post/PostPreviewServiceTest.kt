@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -17,14 +16,11 @@ import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.post.PostPreview
-import waffle.guam.community.service.domain.post.PostPreviewList
 import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.query.post.PostPreviewService
 import java.util.stream.Stream
-import kotlin.math.exp
 
 @Sql("classpath:/query/post/test.sql")
 @ServiceTest
@@ -145,7 +141,6 @@ internal class PostPreviewServiceTest @Autowired constructor(
                     isScrapped = favorite.scrap,
                 )
             }
-
     }
 
     companion object {
