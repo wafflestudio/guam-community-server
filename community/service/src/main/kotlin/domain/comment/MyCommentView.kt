@@ -1,7 +1,7 @@
 package waffle.guam.community.service.domain.comment
 
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
-import waffle.guam.community.service.CommentFavorite
+import waffle.guam.community.service.client.CommentFavorite
 import java.time.Instant
 
 data class MyCommentView(

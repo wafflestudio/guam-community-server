@@ -12,20 +12,20 @@ import waffle.guam.community.controller.comment.req.CreatePostCommentRequest
 import waffle.guam.community.service.command.comment.CreatePostCommentHandler
 import waffle.guam.community.service.command.comment.DeletePostComment
 import waffle.guam.community.service.command.comment.DeletePostCommentHandler
-import waffle.guam.community.service.query.comment.displayer.PostCommentDisplayer
+import waffle.guam.community.service.query.comment.PostCommentService
 
 @RequestMapping("/api/v1/posts")
 @RestController
 class PostCommentController(
     private val createPostCommentHandler: CreatePostCommentHandler,
     private val deletePostCommentHandler: DeletePostCommentHandler,
-    private val postCommentDisplayer: PostCommentDisplayer,
+    private val postCommentService: PostCommentService,
 ) {
     @GetMapping("/{postId}/comments")
     fun get(
         userContext: UserContext,
         @PathVariable postId: Long,
-    ) = postCommentDisplayer.getPostCommentList(postId, userContext.id)
+    ) = postCommentService.fetchPostCommentList(postId, userContext.id)
 
     @PostMapping("/{postId}/comments")
     fun create(

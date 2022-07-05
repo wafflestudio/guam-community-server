@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.UserContext
 import waffle.guam.community.service.domain.comment.MyCommentView
-import waffle.guam.community.service.query.comment.displayer.UserCommentDisplayer
+import waffle.guam.community.service.query.comment.UserCommentService
 
 @RestController
 class UserPostCommentController(
-    private val userCommentDisplay: UserCommentDisplayer,
+    private val userCommentService: UserCommentService,
 ) {
 
     @GetMapping("/api/v1/comments/users/{userId}")
@@ -19,9 +19,5 @@ class UserPostCommentController(
         @PathVariable userId: Long,
         @RequestParam(required = false) beforeCommentId: Long?,
         @RequestParam(required = false) sortByLikes: Boolean?,
-    ): List<MyCommentView> = userCommentDisplay.getUserComments(userId, beforeCommentId, sortByLikes ?: false)
-
-    @GetMapping("/test")
-    fun test() {
-    }
+    ): List<MyCommentView> = userCommentService.getUserComments(userId, beforeCommentId, sortByLikes ?: false)
 }

@@ -17,6 +17,12 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+guam:
+  services:
+    user:
+      baseUrl: http://guam-user.jon-snow-korea.com
+    favorite:
+      baseUrl: http://guam-favorite.jon-snow-korea.com
 ---
 spring.config.activate.on-profile: dev
 

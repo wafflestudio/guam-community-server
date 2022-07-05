@@ -2,7 +2,21 @@ package waffle.guam.community
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Service
+import waffle.guam.community.service.command.image.ImageListUploaded
+import waffle.guam.community.service.command.image.UploadImageList
+import waffle.guam.community.service.command.image.UploadImageListHandler
 
 @Import(HibernateConfig::class)
 @SpringBootApplication
-class TestApplication
+class TestApplication {
+
+    @Primary
+    @Service
+    class MockImageHandler : UploadImageListHandler {
+        override fun handle(command: UploadImageList): ImageListUploaded {
+            return ImageListUploaded(command.images.mapIndexed { i, _ -> "TEST/$i" })
+        }
+    }
+}
