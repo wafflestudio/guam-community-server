@@ -4,6 +4,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import waffle.guam.favorite.service.ServiceProperties
 import waffle.guam.favorite.service.command.CommentLikeCreated
 import waffle.guam.favorite.service.command.LikeCreated
 import waffle.guam.favorite.service.infra.NotificationServiceImpl.CreateNotificationRequest.Info
@@ -18,11 +19,12 @@ interface NotificationService {
 @Service
 class NotificationServiceImpl(
     private val community: CommunityService,
+    properties: ServiceProperties,
     webClientBuilder: WebClient.Builder,
 ) : NotificationService {
 
     private val notification = webClientBuilder
-        .baseUrl("http://guam-user.jon-snow-korea.com")
+        .baseUrl(properties.notification.url)
         .build()
 
     override suspend fun notify(event: LikeCreated) {
