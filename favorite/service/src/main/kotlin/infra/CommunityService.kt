@@ -3,6 +3,7 @@ package waffle.guam.favorite.service.infra
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import waffle.guam.favorite.service.ServiceProperties
 
 interface CommunityService {
     suspend fun getPost(postId: Long): Post?
@@ -11,10 +12,11 @@ interface CommunityService {
 
 @Service
 class CommunityServiceImpl(
+    properties: ServiceProperties,
     webClientBuilder: WebClient.Builder,
 ) : CommunityService {
     private val community = webClientBuilder
-        .baseUrl("http://guam-community.jon-snow-korea.com")
+        .baseUrl(properties.community.url)
         .build()
 
     override suspend fun getPost(postId: Long): Post? {
