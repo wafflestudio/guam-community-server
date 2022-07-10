@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.jdbc.post.PostSearchRepository
 import waffle.guam.community.data.jdbc.post.beforePostId
 import waffle.guam.community.data.jdbc.post.boardId
 import waffle.guam.community.data.jdbc.post.fetchCategories
@@ -25,6 +26,7 @@ import waffle.guam.community.service.client.UserService
 import waffle.guam.community.service.domain.post.AnonymousPostPreview
 import waffle.guam.community.service.domain.post.PostPreview
 import waffle.guam.community.service.domain.post.PostPreviewList
+import waffle.guam.community.service.domain.post.SearchedPostPreviewList
 import waffle.guam.community.service.domain.user.User
 
 interface PostPreviewService {
@@ -50,7 +52,7 @@ interface PostPreviewService {
         keyword: String,
         userId: Long,
         before: PostId?,
-    ): PostPreviewList
+    ): SearchedPostPreviewList
 
     fun getUserPostPreviews(
         userId: Long,
@@ -66,6 +68,7 @@ interface PostPreviewService {
 @Service
 class PostPreviewServiceImpl(
     private val postRepository: PostRepository,
+    private val postSearchRepository: PostSearchRepository,
     private val favoriteService: FavoriteService,
     private val userService: UserService,
 ) : PostPreviewService {
@@ -100,18 +103,10 @@ class PostPreviewServiceImpl(
         keyword: String,
         userId: Long,
         before: PostId?,
-    ): PostPreviewList {
-        fun searchFilter(categoryId: Long?, keyword: String): (PostEntity) -> Boolean = { post ->
-            (post.title.contains(keyword) || post.content.contains(keyword)) &&
-                (categoryId == null || post.categories.any { it.category.id == categoryId })
-        }
-
-        val spec = fetchCategories() * beforePostId(before) * status(PostEntity.Status.VALID)
-        val postIds = postRepository.findAll(spec, SORT)
-            .filter(searchFilter(categoryId, keyword))
-            .map { it.id }
-
-        return getCategoryAndComments(userId, postIds.toPage())
+    ): SearchedPostPreviewList {
+        val (totalCount, result) = postSearchRepository.search(keyword, before, categoryId, pageable = PageRequest.of(0, PAGE_SIZE))
+        val resultIds = result.map { it.id }
+        return SearchedPostPreviewList(totalCount, getCategoryAndComments(userId, resultIds.toPage()))
     }
 
     override fun getUserPostPreviews(userId: Long, before: PostId?): PostPreviewList {

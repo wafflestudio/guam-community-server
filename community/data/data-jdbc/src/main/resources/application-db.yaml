@@ -8,6 +8,13 @@ spring:
         format_sql: true
         jdbc:
           batch_size: 1000
+        search:
+          default:
+            indexmanager: elasticsearch
+            elasticsearch:
+              host: localhost:9200
+              index_schema_management_strategy: update
+              required_index_status: yellow
     show-sql: true
 ---
 spring:

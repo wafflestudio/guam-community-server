@@ -11,6 +11,8 @@ allOpen {
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.hibernate.search:hibernate-search-mapper-orm:6.1.5.Final")
+    implementation("org.hibernate.search:hibernate-search-backend-elasticsearch:6.1.5.Final")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("mysql:mysql-connector-java")

@@ -1,5 +1,7 @@
 package waffle.guam.community.data.jdbc.post
 
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
 import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
@@ -21,6 +23,7 @@ import javax.persistence.Table
  */
 @Table(name = "posts")
 @Entity
+@Indexed
 class PostEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -30,8 +33,10 @@ class PostEntity(
 
     val userId: Long,
 
+    @FullTextField
     var title: String,
 
+    @FullTextField
     var content: String,
 
     @Convert(converter = ImagePathsConverter::class)
