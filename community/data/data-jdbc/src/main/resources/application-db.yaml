@@ -13,7 +13,7 @@ spring:
             indexmanager: elasticsearch
             elasticsearch:
               host: localhost:9200
-              index_schema_management_strategy: update
+              index_schema_management_strategy: drop-and-create # TODO 교체
               required_index_status: yellow
     show-sql: true
 ---

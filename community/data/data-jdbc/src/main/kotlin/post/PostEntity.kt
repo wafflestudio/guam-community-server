@@ -1,7 +1,9 @@
 package waffle.guam.community.data.jdbc.post
 
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded
 import waffle.guam.community.data.jdbc.BaseTimeEntity
 import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
@@ -27,6 +29,7 @@ import javax.persistence.Table
 class PostEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GenericField
     val id: Long = 0L,
 
     var boardId: Long,
@@ -43,9 +46,11 @@ class PostEntity(
     var images: List<String> = emptyList(),
 
     @Enumerated(value = EnumType.STRING)
+    @GenericField
     var status: Status = Status.VALID,
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @IndexedEmbedded
     val categories: MutableSet<PostCategoryEntity> = mutableSetOf(),
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
