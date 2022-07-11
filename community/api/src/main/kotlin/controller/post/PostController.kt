@@ -89,6 +89,18 @@ class PostController(
         userId = userContext.id,
     )
 
+    @GetMapping("/search/count")
+    fun searchPostCount(
+        userContext: UserContext,
+        @RequestParam keyword: String,
+        @RequestParam(required = false) categoryId: Long?,
+        @RequestParam(required = false) beforePostId: Long?,
+    ) = postPreviewService.getSearchResultCount(
+        categoryId = categoryId,
+        keyword = keyword,
+        before = beforePostId,
+    )
+
     @GetMapping("/favorites")
     fun getFavoritePosts(
         userContext: UserContext,

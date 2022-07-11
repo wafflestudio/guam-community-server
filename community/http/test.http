@@ -6,7 +6,7 @@ X-GATEWAY-USER-ID: 9
 
 ### POST_DETAIL - ID: 1
 
-GET {{ base_url }}/posts/
+GET {{ base_url }}/posts/search?keyword=허락된건
 Content-Type: application/json
 X-GATEWAY-USER-ID: 9
 

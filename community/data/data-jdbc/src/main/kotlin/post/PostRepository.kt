@@ -11,11 +11,15 @@ import waffle.guam.community.data.jdbc.category.PostCategoryEntity
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.eq
 import waffle.guam.community.data.jdbc.lt
+import waffle.guam.community.data.jdbc.times
+import javax.persistence.criteria.Join
 import javax.persistence.criteria.JoinType
 
 interface PostRepository : JpaRepository<PostEntity, Long> {
     fun findAll(spec: Specification<PostEntity>): List<PostEntity>
     fun findAll(spec: Specification<PostEntity>, sort: Sort): List<PostEntity>
+
+    fun count(spec: Specification<PostEntity>): Long
     fun findAll(spec: Specification<PostEntity>, pageable: Pageable): Page<PostEntity>
     fun findOne(spec: Specification<PostEntity>): PostEntity?
 }
@@ -43,17 +47,37 @@ fun fetchCategories(): Specification<PostEntity> = Specification { root, query, 
     criteriaBuilder.conjunction()
 }
 
+fun fetchCategoriesIdMatching(id: Long?): Specification<PostEntity> {
+    return fetchCategories() * Specification { _, criteriaQuery, criteriaBuilder ->
+        if (id == null) {
+            null
+        } else {
+            criteriaBuilder.equal(
+                criteriaQuery.from(PostCategoryEntity::class.java).get<Any>("id"),
+                id,
+            )
+        }
+    }
+}
+
 fun fetchComments(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
     query.distinct(true)
-    // fixme VALID comment 만 가져오기
-    root.fetch<PostEntity, PostCommentEntity>("comments", JoinType.LEFT)
+    val fetchJoin = root.fetch<PostEntity, PostCommentEntity>("comments", JoinType.LEFT) as Join<*, *>
+    criteriaBuilder.equal(fetchJoin.get<Any>("status"), PostCommentEntity.Status.VALID)
     criteriaBuilder.conjunction()
 }
 
-fun Collection<PostEntity>.throwIfNotContainIds(postIds: Collection<Long>) = apply {
-    val missed = postIds - map { it.id }.toSet()
+fun fulltext(keyword: String): Specification<PostEntity> {
+    return Specification { root, criteriaQuery, criteriaBuilder ->
+        val match = criteriaBuilder.function(
+            "match", Double::class.java,
+            root.get<PostEntity>("title"),
+            root.get<PostEntity>("content"),
+            criteriaBuilder.literal(keyword),
+        )
 
-    if (missed.isNotEmpty()) {
-        throw RuntimeException()
+        if (keyword.isNotBlank()) {
+            criteriaBuilder.greaterThan(match, 0.0)
+        } else null
     }
 }

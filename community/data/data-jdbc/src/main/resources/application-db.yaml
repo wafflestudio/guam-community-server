@@ -8,6 +8,7 @@ spring:
         format_sql: true
         jdbc:
           batch_size: 1000
+        dialect: waffle.guam.community.data.jdbc.CustomMySqlDialect
     show-sql: true
 ---
 spring:
@@ -22,3 +23,4 @@ spring:
     properties:
       hibernate:
         show_sql: true
+        dialect: waffle.guam.community.data.jdbc.CustomMySqlDialect

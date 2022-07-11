@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -44,6 +45,7 @@ internal class PostPreviewServiceTest @Autowired constructor(
     @DisplayName("다양한 조건으로 게시글을 검색할 수 있다")
     @ParameterizedTest
     @MethodSource("search")
+    @Disabled("contains MySQL specific feature. not testable in H2 environment")
     fun getSearchedPostPreview(
         categoryId: Long?,
         keyword: String,
