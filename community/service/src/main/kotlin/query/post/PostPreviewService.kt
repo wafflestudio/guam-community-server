@@ -12,7 +12,9 @@ import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.post.beforePostId
 import waffle.guam.community.data.jdbc.post.boardId
 import waffle.guam.community.data.jdbc.post.fetchCategories
+import waffle.guam.community.data.jdbc.post.fetchCategoriesIdMatching
 import waffle.guam.community.data.jdbc.post.fetchComments
+import waffle.guam.community.data.jdbc.post.fulltext
 import waffle.guam.community.data.jdbc.post.postIds
 import waffle.guam.community.data.jdbc.post.status
 import waffle.guam.community.data.jdbc.post.userId
@@ -51,6 +53,12 @@ interface PostPreviewService {
         userId: Long,
         before: PostId?,
     ): PostPreviewList
+
+    fun getSearchResultCount(
+        categoryId: Long?,
+        keyword: String,
+        before: PostId?,
+    ): Long
 
     fun getUserPostPreviews(
         userId: Long,
@@ -101,17 +109,19 @@ class PostPreviewServiceImpl(
         userId: Long,
         before: PostId?,
     ): PostPreviewList {
-        fun searchFilter(categoryId: Long?, keyword: String): (PostEntity) -> Boolean = { post ->
-            (post.title.contains(keyword) || post.content.contains(keyword)) &&
-                (categoryId == null || post.categories.any { it.category.id == categoryId })
-        }
-
-        val spec = fetchCategories() * beforePostId(before) * status(PostEntity.Status.VALID)
-        val postIds = postRepository.findAll(spec, SORT)
-            .filter(searchFilter(categoryId, keyword))
-            .map { it.id }
+        val spec = fetchCategoriesIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        val postIds = postRepository.findAll(spec, SORT).map { it.id }
 
         return getCategoryAndComments(userId, postIds.toPage())
+    }
+
+    override fun getSearchResultCount(
+        categoryId: Long?,
+        keyword: String,
+        before: PostId?,
+    ): Long {
+        val spec = fetchCategoriesIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        return postRepository.count(spec)
     }
 
     override fun getUserPostPreviews(userId: Long, before: PostId?): PostPreviewList {
