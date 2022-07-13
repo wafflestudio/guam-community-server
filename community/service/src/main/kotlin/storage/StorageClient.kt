@@ -7,4 +7,6 @@ interface StorageClient {
     val storagePrefix: ImageStorage
     fun upload(objectPath: String, file: File)
     fun upload(files: List<File>)
+
+    fun getPresignedUrl(path: String): String
 }

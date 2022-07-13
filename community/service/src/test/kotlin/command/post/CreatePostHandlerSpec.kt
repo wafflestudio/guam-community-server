@@ -30,7 +30,7 @@ class CreatePostHandlerSpec @Autowired constructor(
         userId = 2L,
         title = "Test Post",
         content = "This is Post Test",
-        images = emptyList(),
+        imageFilePaths = emptyList(),
         categoryId = 2L
     )
 

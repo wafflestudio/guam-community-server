@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 import waffle.guam.community.service.command.image.ImageListUploaded
+import waffle.guam.community.service.command.image.ImagePath
 import waffle.guam.community.service.command.image.UploadImageList
 import waffle.guam.community.service.command.image.UploadImageListHandler
 
@@ -16,7 +17,9 @@ class TestApplication {
     @Service
     class MockImageHandler : UploadImageListHandler {
         override fun handle(command: UploadImageList): ImageListUploaded {
-            return ImageListUploaded(command.images.mapIndexed { i, _ -> "TEST/$i" })
+            return command.imagePaths.mapIndexed { i, _ -> "TEST/$i" }
+                .map { ImagePath(it, it) }
+                .let { ImageListUploaded(it) }
         }
     }
 }

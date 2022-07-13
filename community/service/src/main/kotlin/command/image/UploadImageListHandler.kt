@@ -1,52 +1,43 @@
 package waffle.guam.community.service.command.image
 
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.Result
 import waffle.guam.community.service.domain.image.ImageType
 import waffle.guam.community.service.storage.StorageClient
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 interface UploadImageListHandler : CommandHandler<UploadImageList, ImageListUploaded>
-
 @Service
 class UploadImageListHandlerImpl(
     private val storageClient: StorageClient,
-) : UploadImageListHandler {
-    override fun handle(command: UploadImageList): ImageListUploaded {
-        val dirPath: Path = Paths
-            .get("${storageClient.storagePrefix}/${command.type}/${command.parentId}")
-            .apply(Files::createDirectories)
-
-        val files: List<File> = command.images.copyTo(dirPath)
-
-        storageClient.upload(files)
-
-        return files.map { it.path }.let(::ImageListUploaded)
-    }
-
-    private fun List<MultipartFile>.copyTo(directory: Path) = filterNot { it.isEmpty }.mapIndexed { idx, file ->
-        val storageFileName = "$idx.${file.originalFilename?.substringAfterLast(".", "")}"
-        val copiedPath = directory.resolve(storageFileName)
-        file.inputStream.use { inputStream ->
-            Files.copy(inputStream, copiedPath, StandardCopyOption.REPLACE_EXISTING)
-            copiedPath.toFile()
-        }
+) : CommandHandler<UploadImageList, ImageListUploaded> {
+    override fun handle(command: UploadImageList): ImageListUploaded = command.run {
+        imagePaths.map { path ->
+            val remotePath = "${storageClient.storagePrefix}/$parentId/$type/$path"
+            val preSignedUrl = storageClient.getPresignedUrl(remotePath)
+            ImagePath(remotePath, preSignedUrl)
+        }.let(::ImageListUploaded)
     }
 }
 
 data class UploadImageList(
     val parentId: Long,
     val type: ImageType,
-    val images: List<MultipartFile>,
+    val imagePaths: List<String>,
 ) : Command
 
 data class ImageListUploaded(
-    val imagePaths: List<String>,
-) : Result
+    private val imagePaths: List<ImagePath>,
+) : Result {
+    val dbPaths: List<String>
+        get() = imagePaths.map { it.resultPath }
+
+    val preSignedUrls: List<String>
+        get() = imagePaths.map { it.presignedUrl }
+}
+
+data class ImagePath(
+    val resultPath: String,
+    val presignedUrl: String,
+)
