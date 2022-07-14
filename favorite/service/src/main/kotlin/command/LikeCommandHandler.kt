@@ -59,7 +59,7 @@ abstract class LikeCommandHandler : CommandHandler<Like, LikeEvent> {
     protected abstract suspend fun internalHandle(like: Like): LikeEvent
 }
 
-sealed class LikeEvent(val eventTime: Instant = Instant.now())
+sealed class LikeEvent(override val eventTime: Instant = Instant.now()): Event
 data class LikeCreated(val like: Like) : LikeEvent()
 data class LikeDeleted(val like: Like) : LikeEvent()
 
