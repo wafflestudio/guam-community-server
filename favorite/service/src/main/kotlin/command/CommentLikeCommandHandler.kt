@@ -68,7 +68,7 @@ abstract class CommentLikeCommandHandler : CommandHandler<CommentLike, CommentLi
     protected abstract suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent
 }
 
-sealed class CommentLikeEvent(val eventTime: Instant = Instant.now())
+sealed class CommentLikeEvent(override val eventTime: Instant = Instant.now()): Event
 data class CommentLikeCreated(val commentLike: CommentLike) : CommentLikeEvent()
 data class CommentLikeDeleted(val commentLike: CommentLike) : CommentLikeEvent()
 
