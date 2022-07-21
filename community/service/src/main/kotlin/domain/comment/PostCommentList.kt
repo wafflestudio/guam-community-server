@@ -28,6 +28,6 @@ fun PostCommentList(
         content = e.comments
             .filter { comment -> comment.status == PostCommentEntity.Status.VALID }
             .map { comment -> PostComment(comment, userMap[comment.userId]!!) }
-            .sortedByDescending { comment -> comment.id }
+            .sortedBy { comment -> comment.id }
     )
 }
