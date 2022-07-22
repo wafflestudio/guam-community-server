@@ -71,7 +71,7 @@ internal class PostCommentServiceTest @Autowired constructor(
     private fun getAnswer(postId: PostId, callerId: UserId, users: Map<CommentId, User>): List<PostCommentDetail> {
         return postRepository.getById(postId).comments
             .filter { it.status == PostCommentEntity.Status.VALID }
-            .sortedByDescending { it.id }
+            .sortedBy { it.id }
             .map {
                 val fav = stubCommentFavorite(it.id)
                 PostCommentDetail(

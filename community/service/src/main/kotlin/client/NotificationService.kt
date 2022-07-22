@@ -1,5 +1,6 @@
 package waffle.guam.community.service.client
 
+import kotlinx.coroutines.runBlocking
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -9,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 
 interface NotificationService {
-    suspend fun notify(request: NotificationRequest)
+    fun notify(request: NotificationRequest)
 }
 
 @Service
@@ -22,7 +23,7 @@ class NotificationServiceImpl(
         .baseUrl(notificationServiceProperties.baseUrl)
         .build()
 
-    override suspend fun notify(request: NotificationRequest) {
+    override fun notify(request: NotificationRequest) = runBlocking {
         notification.post()
             .uri("/api/v1/push/create")
             .contentType(MediaType.APPLICATION_JSON)
