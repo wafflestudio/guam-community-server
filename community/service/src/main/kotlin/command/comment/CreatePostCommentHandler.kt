@@ -11,7 +11,7 @@ import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.EventResult
 import waffle.guam.community.service.command.image.UploadImageList
 import waffle.guam.community.service.command.image.UploadImageListHandler
 import waffle.guam.community.service.domain.image.ImageType
@@ -77,4 +77,4 @@ data class PostCommentCreated(
     val isAnonymous: Boolean,
     val writerId: Long,
     val preSignedUrls: List<String>,
-) : Result
+) : EventResult

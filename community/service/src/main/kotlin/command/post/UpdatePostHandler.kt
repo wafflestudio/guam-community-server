@@ -19,7 +19,7 @@ import waffle.guam.community.service.InvalidArgumentException
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.EventResult
 
 @Service
 class UpdatePostHandler(
@@ -105,4 +105,4 @@ data class PostUpdated(
     val postId: Long,
     val boardId: Long,
     val userId: Long,
-) : Result
+) : EventResult
