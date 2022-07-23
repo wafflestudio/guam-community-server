@@ -11,7 +11,7 @@ interface UploadImageListHandler : CommandHandler<UploadImageList, ImageListUplo
 @Service
 class UploadImageListHandlerImpl(
     private val storageClient: StorageClient,
-) : CommandHandler<UploadImageList, ImageListUploaded> {
+) : UploadImageListHandler {
     override fun handle(command: UploadImageList): ImageListUploaded = command.run {
         imagePaths.map { path ->
             val remotePath = "${storageClient.storagePrefix}/$parentId/$type/$path"
