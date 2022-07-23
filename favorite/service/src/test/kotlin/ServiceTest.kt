@@ -17,8 +17,7 @@ import redis.embedded.RedisServer
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.COMMENT_LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.SCRAP_KEY
-import waffle.guam.favorite.service.command.CommentLikeCreated
-import waffle.guam.favorite.service.command.LikeCreated
+import waffle.guam.favorite.service.command.Event
 import waffle.guam.favorite.service.infra.NotificationService
 
 @SpringBootTest("spring.cloud.vault.enabled=false")
@@ -29,8 +28,7 @@ annotation class ServiceTest {
     @Primary
     @Service
     class TestNotificationService : NotificationService {
-        override suspend fun notify(event: LikeCreated) {}
-        override suspend fun notify(event: CommentLikeCreated) {}
+        override suspend fun notify(event: Event) {}
     }
 
     @Service
