@@ -3,7 +3,7 @@ package waffle.guam.community.service.command.image
 import org.springframework.stereotype.Service
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.EventResult
 import waffle.guam.community.service.domain.image.ImageType
 import waffle.guam.community.service.storage.StorageClient
 
@@ -29,7 +29,7 @@ data class UploadImageList(
 
 data class ImageListUploaded(
     private val imagePaths: List<ImagePath>,
-) : Result {
+) : EventResult {
     val dbPaths: List<String>
         get() = imagePaths.map { it.resultPath }
 

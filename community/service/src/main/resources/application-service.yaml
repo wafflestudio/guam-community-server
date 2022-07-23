@@ -23,6 +23,8 @@ guam:
       baseUrl: http://guam-user.jon-snow-korea.com
     favorite:
       baseUrl: http://guam-favorite.jon-snow-korea.com
+    notification:
+      baseUrl: http://guam-user.jon-snow-korea.com
 ---
 spring.config.activate.on-profile: dev
 

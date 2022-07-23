@@ -9,7 +9,7 @@ import waffle.guam.community.service.Forbidden
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.EventResult
 
 @Service
 class DeletePostHandler(
@@ -45,4 +45,4 @@ data class PostDeleted(
     val postId: Long,
     val boardId: Long,
     val userId: Long,
-) : Result
+) : EventResult

@@ -13,8 +13,8 @@ import waffle.guam.community.service.BadCategoryId
 import waffle.guam.community.service.GuamBadRequest
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
 import waffle.guam.community.service.command.image.ImageListUploaded
+import waffle.guam.community.service.command.EventResult
 import waffle.guam.community.service.command.image.UploadImageList
 import waffle.guam.community.service.command.image.UploadImageListHandler
 import waffle.guam.community.service.domain.image.ImageType
@@ -88,4 +88,4 @@ data class PostCreated(
     val boardId: Long,
     val userId: Long,
     val presignedUrls: List<String>,
-) : Result
+) : EventResult

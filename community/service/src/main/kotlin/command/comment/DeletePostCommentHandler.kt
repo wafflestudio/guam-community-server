@@ -13,7 +13,7 @@ import waffle.guam.community.service.PostCommentNotFound
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
-import waffle.guam.community.service.command.Result
+import waffle.guam.community.service.command.EventResult
 
 @Service
 class DeletePostCommentHandler(
@@ -54,4 +54,4 @@ data class PostCommentDeleted(
     val postId: Long,
     val commentId: Long,
     val userId: Long,
-) : Result
+) : EventResult
