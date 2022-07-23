@@ -1,6 +1,5 @@
 package waffle.guam.community.controller.post.req
 
-import org.springframework.web.multipart.MultipartFile
 import waffle.guam.community.service.command.post.CreatePost
 
 data class CreatePostRequest(
@@ -8,14 +7,14 @@ data class CreatePostRequest(
     val title: String,
     val content: String,
     val categoryId: Long,
-    val images: List<MultipartFile>?,
+    val imageFilePaths: List<String>?,
 ) {
     fun toCommand(userId: Long): CreatePost = CreatePost(
         userId = userId,
         boardId = boardId,
         title = title,
         content = content,
-        images = images ?: listOf(),
+        imageFilePaths = imageFilePaths ?: listOf(),
         categoryId = categoryId,
     )
 }

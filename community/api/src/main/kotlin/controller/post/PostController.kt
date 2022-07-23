@@ -2,7 +2,6 @@ package waffle.guam.community.controller.post
 
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,7 +31,7 @@ class PostController(
     @PostMapping("")
     fun createPost(
         userContext: UserContext,
-        @ModelAttribute req: CreatePostRequest,
+        @RequestBody req: CreatePostRequest,
     ) = createPostHandler.handle(req.toCommand(userContext.id))
 
     @PatchMapping("/{postId}")

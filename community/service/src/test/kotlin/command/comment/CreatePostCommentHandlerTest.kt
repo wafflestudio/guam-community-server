@@ -23,7 +23,7 @@ internal class CreatePostCommentHandlerTest @Autowired constructor(
         postId = 1L,
         userId = 1L,
         content = "this is test",
-        images = emptyList(),
+        imageFilePaths = emptyList(),
         mentionIds = listOf(1, 2, 3),
     )
 
@@ -46,6 +46,7 @@ internal class CreatePostCommentHandlerTest @Autowired constructor(
                 isAnonymous = true,
                 writerId = 1L,
                 mentionIds = listOf(1, 2, 3),
+                preSignedUrls = listOf(),
             )
         )
     }

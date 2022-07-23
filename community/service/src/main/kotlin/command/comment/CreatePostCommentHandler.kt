@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
@@ -25,12 +24,12 @@ class CreatePostCommentHandler(
 
     @Transactional
     override fun handle(command: CreatePostComment): PostCommentCreated {
-        val (postId, userId, content, images, mentionIds) = command
+        val (postId, userId, content, imageFilePaths, mentionIds) = command
 
         val post = postRepository.findByIdOrNull(postId) ?: throw PostNotFound(postId)
+        val comment = post.addCommentBy(userId, content, mentionIds)
 
-        post.addCommentBy(userId, content, images, mentionIds)
-
+        val presignedUrls = comment.addImages(imageFilePaths)
         return PostCommentCreated(
             postId = postId,
             postUserId = post.userId,
@@ -38,25 +37,25 @@ class CreatePostCommentHandler(
             writerId = userId,
             mentionIds = mentionIds,
             isAnonymous = post.isAnonymous,
+            preSignedUrls = presignedUrls,
         )
     }
 
     private fun PostEntity.addCommentBy(
         userId: Long,
         content: String,
-        images: List<MultipartFile>,
         mentionIds: List<UserId>,
-    ) {
-        PostCommentEntity(post = this, userId = userId, content = content)
-            .apply { addImages(images) }
+    ): PostCommentEntity {
+        return PostCommentEntity(post = this, userId = userId, content = content)
             .apply { setMentionedUserIds(mentionIds) }
-            .let(comments::add)
+            .also(comments::add)
     }
 
-    // TODO: rollback uploaded image on error
-    private fun PostCommentEntity.addImages(imageList: List<MultipartFile>) {
-        val uploadImageRequest = UploadImageList(parentId = id, type = ImageType.POST, images = imageList)
-        images.addAll(uploadImageListHandler.handle(uploadImageRequest).imagePaths)
+    private fun PostCommentEntity.addImages(imageFilePaths: List<String>): List<String> {
+        val uploadImageRequest = UploadImageList(parentId = id, type = ImageType.POST, imagePaths = imageFilePaths)
+        return uploadImageListHandler.handle(uploadImageRequest)
+            .also { images.addAll(it.dbPaths) }
+            .preSignedUrls
     }
 }
 
@@ -64,7 +63,7 @@ data class CreatePostComment(
     val postId: Long,
     val userId: Long,
     val content: String,
-    val images: List<MultipartFile>,
+    val imageFilePaths: List<String>,
     val mentionIds: List<UserId>,
 ) : Command
 
@@ -77,4 +76,5 @@ data class PostCommentCreated(
     @get:JsonIgnore
     val isAnonymous: Boolean,
     val writerId: Long,
+    val preSignedUrls: List<String>,
 ) : Result
