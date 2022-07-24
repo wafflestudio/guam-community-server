@@ -20,7 +20,7 @@ class UserEntity(
     val email: String? = null,
 
     @Column(length = 10, unique = true)
-    var nickname: String? = null,
+    var nickname: String = "",
 
     @Column(length = 200)
     var introduction: String? = null,

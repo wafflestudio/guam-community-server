@@ -5,14 +5,14 @@ import waffle.guam.user.infra.db.UserEntity
 data class User(
     val id: Long,
     val email: String?,
-    val nickname: String?,
+    val nickname: String,
     val introduction: String?,
     val githubId: String?,
     val blogUrl: String?,
     val profileImage: String?,
     val interests: List<Interest>,
 ) {
-    val isProfileSet: Boolean get() = nickname?.isNotBlank() ?: false
+    val isProfileSet: Boolean get() = nickname.isNotBlank()
 }
 
 data class Interest(
