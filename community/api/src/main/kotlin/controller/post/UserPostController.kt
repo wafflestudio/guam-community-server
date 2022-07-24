@@ -10,18 +10,18 @@ import waffle.guam.community.service.domain.post.PostPreviewList
 import waffle.guam.community.service.query.post.PostPreviewService
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/posts")
 class UserPostController(
     private val postPreviewService: PostPreviewService,
 ) {
-    @GetMapping("/{userId}/posts/my")
+    @GetMapping("/users/{userId}/my")
     fun userPosts(
         userContext: UserContext,
         @PathVariable userId: Long,
         @RequestParam(required = false) beforePostId: Long?,
     ): PostPreviewList = postPreviewService.getUserPostPreviews(userId, beforePostId)
 
-    @GetMapping("/{userId}/posts/scrapped")
+    @GetMapping("/users/{userId}/scrapped")
     fun userScrappedPosts(
         userContext: UserContext,
         @PathVariable userId: Long,
