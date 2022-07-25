@@ -126,7 +126,7 @@ class PostPreviewServiceImpl(
 
     override fun getUserPostPreviews(userId: Long, before: PostId?): PostPreviewList {
         val spec = beforePostId(before) * userId(userId) * status(PostEntity.Status.VALID)
-        val postIds = postRepository.findAll(spec, PageRequest.of(0, PAGE_SIZE)).map { it.id }
+        val postIds = postRepository.findAll(spec, PageRequest.of(0, PAGE_SIZE, SORT)).map { it.id }
         return getCategoryAndComments(userId, postIds)
     }
 

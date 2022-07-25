@@ -30,8 +30,10 @@ class FavoriteServiceImpl(
     override fun getRankedPosts(userId: Long, rankFrom: Int, rankTo: Int): List<PostId> = runBlocking {
         webClient.get()
             .uri("/api/v1/views/rank?from=$rankFrom&to=$rankTo&userId=$userId")
-            .accept().retrieve()
-            .awaitBody()
+            .accept()
+            .retrieve()
+            .awaitBody<PostIdsResponse>()
+            .data
     }
 
     override fun getPostFavorite(userId: Long, postId: Long): PostFavorite = runBlocking {
@@ -80,7 +82,7 @@ class FavoriteServiceImpl(
         webClient.get()
             .uri("/api/v1/scraps/user?userId=$userId&page=$page")
             .accept().retrieve()
-            .awaitBody<ScrappedPostsResponse>()
+            .awaitBody<PostIdsResponse>()
             .data
             .sortedDescending()
     }
@@ -93,7 +95,7 @@ class FavoriteServiceImpl(
         val data: List<CommentFavorite>,
     )
 
-    private data class ScrappedPostsResponse(
+    private data class PostIdsResponse(
         val data: List<Long>,
     )
 }
