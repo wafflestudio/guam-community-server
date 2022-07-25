@@ -13,7 +13,6 @@ import waffle.guam.user.service.UserNotFound
 import waffle.guam.user.service.user.UserCommandService.CreateInterest
 import waffle.guam.user.service.user.UserCommandService.DeleteInterest
 import waffle.guam.user.service.user.UserCommandService.UpdateUser
-import javax.validation.constraints.Min
 
 interface UserCommandService : CommandService {
     fun updateUser(command: UpdateUser): User
@@ -22,7 +21,6 @@ interface UserCommandService : CommandService {
 
     data class UpdateUser(
         val userId: Long,
-        @field:Min(value = 2, message = "Nickname should be greater than 1.")
         val nickname: String?,
         val introduction: String?,
         val githubId: String?,

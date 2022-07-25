@@ -20,6 +20,7 @@ import waffle.guam.user.service.user.UserCommandService.CreateInterest
 import waffle.guam.user.service.user.UserCommandService.DeleteInterest
 import waffle.guam.user.service.user.UserCommandService.UpdateUser
 import waffle.guam.user.service.user.UserQueryService
+import javax.validation.Valid
 
 @RequestMapping("/api/v1/users")
 @RestController
@@ -53,7 +54,7 @@ class UserController(
     fun updateUser(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
         @PathVariable targetUserId: Long,
-        @ModelAttribute request: UpdateUserRequest,
+        @Valid @ModelAttribute request: UpdateUserRequest,
     ): User {
         if (userId != targetUserId) {
             throw UnAuthorized()
@@ -76,7 +77,7 @@ class UserController(
     fun updateUserJson(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
         @PathVariable targetUserId: Long,
-        @RequestBody request: UpdateUserRequest,
+        @Valid @RequestBody request: UpdateUserRequest,
     ): User {
         if (userId != targetUserId) {
             throw UnAuthorized()
