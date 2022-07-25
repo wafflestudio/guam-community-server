@@ -47,17 +47,21 @@ fun fetchCategories(): Specification<PostEntity> = Specification { root, query, 
     criteriaBuilder.conjunction()
 }
 
-fun fetchCategoriesIdMatching(id: Long?): Specification<PostEntity> {
-    return fetchCategories() * Specification { _, criteriaQuery, criteriaBuilder ->
+fun categoryIdMatching(id: Long?, fetchCategories: Boolean = false): Specification<PostEntity> {
+    val baseSpec = Specification<PostEntity> { root, _, criteriaBuilder ->
         if (id == null) {
             null
         } else {
             criteriaBuilder.equal(
-                criteriaQuery.from(PostCategoryEntity::class.java).get<Any>("id"),
+                root.join<PostEntity, PostCategoryEntity>("categories").get<CategoryEntity>("category").get<Any>("id"),
                 id,
             )
         }
     }
+
+    return if (fetchCategories) {
+        baseSpec * fetchCategories()
+    } else baseSpec
 }
 
 fun fetchComments(): Specification<PostEntity> = Specification { root, query, criteriaBuilder ->
@@ -68,7 +72,7 @@ fun fetchComments(): Specification<PostEntity> = Specification { root, query, cr
 }
 
 fun fulltext(keyword: String): Specification<PostEntity> {
-    return Specification { root, criteriaQuery, criteriaBuilder ->
+    return Specification { root, _, criteriaBuilder ->
         val match = criteriaBuilder.function(
             "match", Double::class.java,
             root.get<PostEntity>("title"),

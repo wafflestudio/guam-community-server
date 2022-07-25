@@ -3,4 +3,11 @@ GET {{ host }}/likes/comments/count?postCommentIds=281&userId=35
 #X-GATEWAY-USER-ID: 35
 
 ### user scrapped post Ids
-GET {{ host }}/views/user?userId=12&page=0
+GET {{host}}/posts/users/8/scrapped
+Content-Type: application/json
+X-GATEWAY-USER-ID: 8
+
+### post search count
+GET {{host}}/posts/search?keyword=apple&categoryId=1
+Content-Type: application/json
+X-GATEWAY-USER-ID: 8

@@ -12,7 +12,7 @@ import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.post.beforePostId
 import waffle.guam.community.data.jdbc.post.boardId
 import waffle.guam.community.data.jdbc.post.fetchCategories
-import waffle.guam.community.data.jdbc.post.fetchCategoriesIdMatching
+import waffle.guam.community.data.jdbc.post.categoryIdMatching
 import waffle.guam.community.data.jdbc.post.fetchComments
 import waffle.guam.community.data.jdbc.post.fulltext
 import waffle.guam.community.data.jdbc.post.postIds
@@ -109,7 +109,7 @@ class PostPreviewServiceImpl(
         userId: Long,
         before: PostId?,
     ): PostPreviewList {
-        val spec = fetchCategoriesIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        val spec = categoryIdMatching(categoryId, fetchCategories = true) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
         val postIds = postRepository.findAll(spec, SORT).map { it.id }
 
         return getCategoryAndComments(userId, postIds.toPage())
@@ -120,7 +120,7 @@ class PostPreviewServiceImpl(
         keyword: String,
         before: PostId?,
     ): Long {
-        val spec = fetchCategoriesIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        val spec = categoryIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
         return postRepository.count(spec)
     }
 
