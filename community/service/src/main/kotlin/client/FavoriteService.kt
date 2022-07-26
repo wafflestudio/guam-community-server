@@ -32,8 +32,9 @@ class FavoriteServiceImpl(
             .uri("/api/v1/views/rank?from=$rankFrom&to=$rankTo&userId=$userId")
             .accept()
             .retrieve()
-            .awaitBody<PostIdsResponse>()
+            .awaitBody<LikeScrapFavoriteResponse>()
             .data
+            .map { it.postId }
     }
 
     override fun getPostFavorite(userId: Long, postId: Long): PostFavorite = runBlocking {
@@ -87,6 +88,10 @@ class FavoriteServiceImpl(
             .sortedDescending()
     }
 
+    private data class LikeScrapFavoriteResponse(
+        val data: List<LikeScrapResponse>
+    )
+
     private data class PostFavoriteResponse(
         val data: List<PostFavorite>,
     )
@@ -99,6 +104,14 @@ class FavoriteServiceImpl(
         val data: List<Long>,
     )
 }
+
+data class LikeScrapResponse(
+    val postId: Long,
+    val likeCnt: Int,
+    val scrapCnt: Int,
+    val like: Boolean,
+    val scrap: Boolean,
+)
 
 data class PostFavorite(
     val postId: Long,

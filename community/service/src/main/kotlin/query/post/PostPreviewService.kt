@@ -99,7 +99,7 @@ class PostPreviewServiceImpl(
         val postList = getCategoryAndComments(userId, postIds.toPage())
         val postMap = postList.content.associateBy { it.id }
         return postIds
-            .map { postId -> postMap[postId]!! }
+            .mapNotNull { postId -> postMap[postId] }
             .let { posts -> PostPreviewList(posts, postList.hasNext) }
     }
 
