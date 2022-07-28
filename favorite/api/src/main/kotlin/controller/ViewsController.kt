@@ -20,7 +20,6 @@ class ViewsController(
     private val scrapCountStore: ScrapCountStore,
     private val scrapUserStore: ScrapUserStore,
 ) {
-
     @GetMapping
     suspend fun getPostLikeScrap(
         @RequestParam postIds: List<Long>,
@@ -48,11 +47,12 @@ class ViewsController(
 
     @GetMapping("/rank")
     suspend fun getRankedPostLikeScrap(
+        @RequestParam(required = false) boardId: Long? = null,
         @RequestParam from: Int, // inclusive
         @RequestParam to: Int, // inclusive
         @RequestParam userId: Long,
     ): SuccessResponse<List<LikeScrapResponse>> {
-        val rank = likeCountStore.getRank(from = from, to = to)
+        val rank = likeCountStore.getRank(boardId = boardId, from = from, to = to)
 
         return getPostLikeScrap(postIds = rank, userId = userId)
     }
