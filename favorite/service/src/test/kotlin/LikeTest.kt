@@ -51,7 +51,7 @@ class LikeTest @Autowired constructor(
             it.setRollbackOnly()
 
             // 순위 존재 x
-            assertThat(likeRankStore.getRank(0, 100)).isEqualTo(emptyList<Long>())
+            assertThat(likeRankStore.getRank(from = 0, to = 100)).isEqualTo(emptyList<Long>())
             assertThat(likeCountStore.getCount(1L)).isEqualTo(0)
             assertThat(likeCountStore.getCount(2L)).isEqualTo(0)
             assertThat(likeCountStore.getCount(3L)).isEqualTo(0)
@@ -66,7 +66,7 @@ class LikeTest @Autowired constructor(
             likeCreateHandler.handle(Like(postId = 3L, userId = 1L))
 
             // 2(3개) > 1(2개) > 3(1개)
-            assertThat(likeRankStore.getRank(0, 100)).isEqualTo(listOf(2L, 1L, 3L))
+            assertThat(likeRankStore.getRank(from = 0, to = 100)).isEqualTo(listOf(2L, 1L, 3L))
             assertThat(likeCountStore.getCount(2L)).isEqualTo(3)
             assertThat(likeCountStore.getCount(1L)).isEqualTo(2)
             assertThat(likeCountStore.getCount(3L)).isEqualTo(1)
@@ -78,7 +78,7 @@ class LikeTest @Autowired constructor(
             likeDeleteHandler.handle(Like(postId = 2L, userId = 3L))
 
             // 1(2개) > 3(1개) > 2(0개)
-            assertThat(likeRankStore.getRank(0, 100)).isEqualTo(listOf(1L, 3L, 2L))
+            assertThat(likeRankStore.getRank(from = 0, to = 100)).isEqualTo(listOf(1L, 3L, 2L))
             assertThat(likeCountStore.getCount(1L)).isEqualTo(2)
             assertThat(likeCountStore.getCount(3L)).isEqualTo(1)
             assertThat(likeCountStore.getCount(2L)).isEqualTo(0)

@@ -17,8 +17,11 @@ import redis.embedded.RedisServer
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.COMMENT_LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.SCRAP_KEY
-import waffle.guam.favorite.service.command.Event
+import waffle.guam.favorite.service.infra.Comment
+import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.infra.NotificationService
+import waffle.guam.favorite.service.infra.NotificationService.CreateNotificationRequest
+import waffle.guam.favorite.service.infra.Post
 
 @SpringBootTest("spring.cloud.vault.enabled=false")
 annotation class ServiceTest {
@@ -28,7 +31,26 @@ annotation class ServiceTest {
     @Primary
     @Service
     class TestNotificationService : NotificationService {
-        override suspend fun notify(event: Event) {}
+        override suspend fun notify(request: CreateNotificationRequest) {}
+    }
+
+    @Primary
+    @Service
+    class TestCommunity : CommunityService {
+        override suspend fun getPost(postId: Long): Post? =
+            basePost.copy(id = postId)
+
+        override suspend fun getPosts(postIds: List<Long>): Map<Long, Post> =
+            postIds.associateWith { basePost.copy(id = it) }
+
+        override suspend fun getComment(commentId: Long): Comment? =
+            baseComment.copy(id = commentId)
+
+        private val basePost: Post =
+            Post(id = 0, boardId = 1, userId = 0, title = "", content = "", status = "", isAnonymous = false)
+
+        private val baseComment: Comment =
+            Comment(id = 0, postId = 1, userId = 0, content = "", status = "", isAnonymous = false)
     }
 
     @Service
