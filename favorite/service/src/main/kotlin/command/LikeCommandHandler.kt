@@ -59,9 +59,14 @@ abstract class LikeCommandHandler : CommandHandler<Like, LikeEvent> {
     protected abstract suspend fun internalHandle(like: Like): LikeEvent
 }
 
-sealed class LikeEvent(override val eventTime: Instant = Instant.now()): Event
-data class LikeCreated(val like: Like) : LikeEvent()
-data class LikeDeleted(val like: Like) : LikeEvent()
+sealed class LikeEvent(
+    override val eventTime: Instant = Instant.now(),
+) : Event {
+    abstract val like: Like
+}
+
+data class LikeCreated(override val like: Like) : LikeEvent()
+data class LikeDeleted(override val like: Like) : LikeEvent()
 
 class DuplicateLikeException(
     override val status: Int = 409,

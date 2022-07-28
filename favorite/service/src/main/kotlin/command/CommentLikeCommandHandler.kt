@@ -68,9 +68,12 @@ abstract class CommentLikeCommandHandler : CommandHandler<CommentLike, CommentLi
     protected abstract suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent
 }
 
-sealed class CommentLikeEvent(override val eventTime: Instant = Instant.now()): Event
-data class CommentLikeCreated(val commentLike: CommentLike) : CommentLikeEvent()
-data class CommentLikeDeleted(val commentLike: CommentLike) : CommentLikeEvent()
+sealed class CommentLikeEvent(override val eventTime: Instant = Instant.now()) : Event {
+    abstract val commentLike: CommentLike
+}
+
+data class CommentLikeCreated(override val commentLike: CommentLike) : CommentLikeEvent()
+data class CommentLikeDeleted(override val commentLike: CommentLike) : CommentLikeEvent()
 
 class DuplicateCommentLikeException(
     override val status: Int = 409,
