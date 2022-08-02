@@ -57,7 +57,7 @@ allprojects {
 
 // docker
 task("dockerBuild") {
-    dependsOn("api:bootJar")
+    dependsOn("app:api:bootJar")
 
     doLast {
         val dir = project.mkdir(File(project.buildDir, "tmp"))
@@ -71,6 +71,7 @@ task("dockerBuild") {
 
         project.copy {
             val jar = project
+                .childProjects["app"]!!
                 .childProjects["api"]!!
                 .tasks.getByName<Jar>("bootJar")
 
