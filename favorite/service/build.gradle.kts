@@ -7,4 +7,5 @@ dependencies {
 
     implementation("org.springframework.kafka:spring-kafka")
     implementation("io.projectreactor.kafka:reactor-kafka")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }

@@ -1,5 +1,6 @@
 package waffle.guam.favorite.service.infra
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.reactor.awaitSingle
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -19,7 +20,7 @@ interface FavoriteKafkaProducer {
 // TODO: property 주입
 @Service
 class FavoriteKafkaProducerImpl : FavoriteKafkaProducer {
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = jacksonObjectMapper().also { it.registerModule(JavaTimeModule()) }
     private val kafkaProducer = ReactiveKafkaProducerTemplate<String, String>(
         SenderOptions.create(
             KafkaProperties().apply {

@@ -14,15 +14,9 @@ class ServiceConfig
 @ConfigurationProperties("favorite.infra")
 @ConstructorBinding
 data class ServiceProperties(
-    val community: Community,
-    val notification: Notification
+    val community: Community
 ) {
-
     data class Community(
-        val url: String
-    )
-
-    data class Notification(
         val url: String
     )
 }
