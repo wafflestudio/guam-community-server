@@ -25,6 +25,7 @@ class CommunityServiceImpl(
             .retrieve()
             .awaitBody<PostResponse>()
             .posts[postId]
+            ?.takeIf { it.status == "VALID" }
     }
 
     override suspend fun getComment(commentId: Long): Comment? {

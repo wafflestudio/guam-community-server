@@ -17,8 +17,6 @@ favorite:
   infra:
     community:
       url: http://guam-community.jon-snow-korea.com
-    notification:
-      url: http://guam-user.jon-snow-korea.com
 ---
 spring.config.activate.on-profile: dev
 

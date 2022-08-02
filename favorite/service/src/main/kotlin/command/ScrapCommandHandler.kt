@@ -1,10 +1,14 @@
 package waffle.guam.favorite.service.command
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.data.r2dbc.ScrapEntity
 import waffle.guam.favorite.data.r2dbc.ScrapRepository
 import waffle.guam.favorite.service.ServiceError
+import waffle.guam.favorite.service.infra.CommunityService
+import waffle.guam.favorite.service.infra.Post
 import waffle.guam.favorite.service.model.Scrap
 import waffle.guam.favorite.service.saga.ScrapSaga
 import java.time.Instant
@@ -13,15 +17,20 @@ import java.time.Instant
 class ScrapCreateHandler(
     override val scrapRepository: ScrapRepository,
     override val scrapSaga: ScrapSaga,
+    private val community: CommunityService,
 ) : ScrapCommandHandler() {
-    override suspend fun internalHandle(scrap: Scrap): ScrapCreated {
+    override suspend fun internalHandle(scrap: Scrap): ScrapCreated = coroutineScope {
+        val post = async {
+            community.getPost(scrap.postId) ?: throw RuntimeException("Valid Post Not Found")
+        }
+
         if (scrap.exists()) {
             throw DuplicateScrapException()
         }
 
         scrapRepository.save(ScrapEntity(postId = scrap.postId, userId = scrap.userId))
 
-        return ScrapCreated(scrap)
+        ScrapCreated(scrap = scrap, post = post.await())
     }
 }
 
@@ -59,8 +68,8 @@ abstract class ScrapCommandHandler : CommandHandler<Scrap, ScrapEvent> {
     protected abstract suspend fun internalHandle(scrap: Scrap): ScrapEvent
 }
 
-sealed class ScrapEvent(override val eventTime: Instant = Instant.now()): Event
-data class ScrapCreated(val scrap: Scrap) : ScrapEvent()
+sealed class ScrapEvent(override val eventTime: Instant = Instant.now()) : Event
+data class ScrapCreated(val scrap: Scrap, val post: Post) : ScrapEvent()
 data class ScrapDeleted(val scrap: Scrap) : ScrapEvent()
 
 class DuplicateScrapException(

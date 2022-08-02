@@ -1,10 +1,14 @@
 package waffle.guam.favorite.service.command
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.data.r2dbc.LikeEntity
 import waffle.guam.favorite.data.r2dbc.LikeRepository
 import waffle.guam.favorite.service.ServiceError
+import waffle.guam.favorite.service.infra.CommunityService
+import waffle.guam.favorite.service.infra.Post
 import waffle.guam.favorite.service.model.Like
 import waffle.guam.favorite.service.saga.LikeSaga
 import java.time.Instant
@@ -13,15 +17,20 @@ import java.time.Instant
 class LikeCreateHandler(
     override val likeRepository: LikeRepository,
     override val likeSaga: LikeSaga,
+    private val community: CommunityService,
 ) : LikeCommandHandler() {
-    override suspend fun internalHandle(like: Like): LikeCreated {
+    override suspend fun internalHandle(like: Like): LikeCreated = coroutineScope {
+        val post = async {
+            community.getPost(like.postId) ?: throw RuntimeException("Valid Post Not Found")
+        }
+
         if (like.exists()) {
             throw DuplicateLikeException()
         }
 
         likeRepository.save(LikeEntity(postId = like.postId, userId = like.userId))
 
-        return LikeCreated(like)
+        LikeCreated(like = like, post = post.await())
     }
 }
 
@@ -59,8 +68,8 @@ abstract class LikeCommandHandler : CommandHandler<Like, LikeEvent> {
     protected abstract suspend fun internalHandle(like: Like): LikeEvent
 }
 
-sealed class LikeEvent(override val eventTime: Instant = Instant.now()): Event
-data class LikeCreated(val like: Like) : LikeEvent()
+sealed class LikeEvent(override val eventTime: Instant = Instant.now()) : Event
+data class LikeCreated(val like: Like, val post: Post) : LikeEvent()
 data class LikeDeleted(val like: Like) : LikeEvent()
 
 class DuplicateLikeException(
