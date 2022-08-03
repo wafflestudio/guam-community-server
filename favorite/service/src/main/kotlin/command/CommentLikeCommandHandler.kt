@@ -1,10 +1,14 @@
 package waffle.guam.favorite.service.command
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.data.r2dbc.CommentLikeEntity
 import waffle.guam.favorite.data.r2dbc.CommentLikeRepository
 import waffle.guam.favorite.service.ServiceError
+import waffle.guam.favorite.service.infra.Comment
+import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.model.CommentLike
 import waffle.guam.favorite.service.saga.CommentLikeSaga
 import java.time.Instant
@@ -13,9 +17,14 @@ import java.time.Instant
 class CommentLikeCreateHandler(
     override val commentLikeRepository: CommentLikeRepository,
     override val commentLikeSaga: CommentLikeSaga,
+    private val community: CommunityService,
 ) : CommentLikeCommandHandler() {
 
-    override suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent {
+    override suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent = coroutineScope {
+        val comment = async {
+            community.getComment(commentLike.postCommentId) ?: throw RuntimeException("Valid Comment Not Found.")
+        }
+
         if (commentLike.exists()) {
             throw DuplicateCommentLikeException()
         }
@@ -27,7 +36,7 @@ class CommentLikeCreateHandler(
             )
         )
 
-        return CommentLikeCreated(commentLike)
+        CommentLikeCreated(commentLike = commentLike, comment = comment.await())
     }
 }
 
@@ -68,8 +77,8 @@ abstract class CommentLikeCommandHandler : CommandHandler<CommentLike, CommentLi
     protected abstract suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent
 }
 
-sealed class CommentLikeEvent(override val eventTime: Instant = Instant.now()): Event
-data class CommentLikeCreated(val commentLike: CommentLike) : CommentLikeEvent()
+sealed class CommentLikeEvent(override val eventTime: Instant = Instant.now()) : Event
+data class CommentLikeCreated(val commentLike: CommentLike, val comment: Comment) : CommentLikeEvent()
 data class CommentLikeDeleted(val commentLike: CommentLike) : CommentLikeEvent()
 
 class DuplicateCommentLikeException(
