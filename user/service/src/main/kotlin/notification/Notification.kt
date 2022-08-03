@@ -1,6 +1,7 @@
 package waffle.guam.user.service.notification
 
 import waffle.guam.user.infra.db.NotificationEntity
+import waffle.guam.user.service.user.AnonymousUser
 import waffle.guam.user.service.user.User
 import java.time.Instant
 
@@ -30,4 +31,10 @@ fun Notification(e: NotificationEntity): Notification = Notification(
     linkUrl = e.linkUrl,
     isRead = e.isRead,
     createdAt = e.createdAt,
-)
+).maskIfAnonymous(e.isAnonymousEvent)
+
+fun Notification.maskIfAnonymous(isAnonymous: Boolean): Notification {
+    return if (isAnonymous) {
+        this.copy(userId = 0, writer = AnonymousUser())
+    } else this
+}
