@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: dev
+
+spring.config.import:
+  - classpath:application-service.yaml
