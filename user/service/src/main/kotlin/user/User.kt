@@ -29,3 +29,14 @@ fun User(entity: UserEntity): User = User(
     profileImage = entity.profileImage,
     interests = entity.interests.map { Interest(it) }
 )
+
+fun AnonymousUser(): User = User(
+    id = 0,
+    email = "",
+    nickname = "익명",
+    introduction = "",
+    githubId = "",
+    blogUrl = "",
+    profileImage = "",
+    interests = emptyList(),
+)
