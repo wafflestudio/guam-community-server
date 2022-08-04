@@ -10,7 +10,6 @@ internal data class PostCommentCreated(
     val content: String,
     val isAnonymous: Boolean,
     val writerId: Long,
-    val preSignedUrls: List<String>,
 ) : NotifyingEvent {
     override fun toRequest() = CreateNotification(
         producerId = writerId,

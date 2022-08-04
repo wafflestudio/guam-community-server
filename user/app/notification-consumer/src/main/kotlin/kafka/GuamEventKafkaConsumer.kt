@@ -1,6 +1,9 @@
 package waffle.guam.user.notification.kafka
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.KafkaHeaders
@@ -21,14 +24,16 @@ class GuamEventKafkaConsumer(
 
     @KafkaListener(
         id = "membership-changed",
-        topics = ["post-like-create", "post-scrap-create", "comment-like-create", "post-comment-created"],
+        topics = ["post-like-create", "post-scrap-create", "comment-like-create", "post-comment-create"],
         groupId = "notification-consumer"
     )
     fun consumeLikeEvent(
         @Header(KafkaHeaders.RECEIVED_TOPIC) topic: String,
         @Payload payload: String,
     ) {
-        val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+        val objectMapper = jacksonObjectMapper()
+            .registerModules(JavaTimeModule(), KotlinModule.Builder().build())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val notification = objectMapper.readValue(payload, events[topic]!!) as NotifyingEvent
         commandService.create(notification.toRequest())
     }
@@ -37,6 +42,6 @@ class GuamEventKafkaConsumer(
         "post-like-create" to PostLikeCreated::class.java,
         "post-scrap-create" to PostScrapCreated::class.java,
         "comment-like-create" to CommentLikeCreated::class.java,
-        "post-comment-created" to PostCommentCreated::class.java,
+        "post-comment-create" to PostCommentCreated::class.java,
     )
 }
