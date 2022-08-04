@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-api
+  name: user-app
 spec:
   selector:
     matchLabels:
-      app: user-api
+      app: user-app
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: user-api
+        app: user-app
     spec:
       # TODO 공통 부분 처리 못할까?
       containers:
