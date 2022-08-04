@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-api
+  name: notification-consumer
 spec:
   selector:
     matchLabels:
-      app: user-api
+      app: notification-consumer
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: user-api
+        app: notification-consumer
     spec:
       containers:
-        - name: user-api
-          image: pfcjeong/guam-user:latest
+        - name: notification-consumer
+          image: kangjirm/guam-notification-consumer:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
