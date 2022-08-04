@@ -32,16 +32,6 @@ class NotificationController(
         )
     }
 
-    // TODO: papi로
-    @PostMapping("/create")
-    fun createNotifications(
-        @RequestBody request: CreateNotificationRequest,
-    ): List<Notification> {
-        return commandService.create(
-            command = CreateNotification(request)
-        )
-    }
-
     @PostMapping("/read")
     fun readNotifications(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,

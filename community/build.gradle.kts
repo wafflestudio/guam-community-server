@@ -33,6 +33,7 @@ allprojects {
     }
 
     dependencies {
+        implementation("org.springframework.kafka:spring-kafka")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")

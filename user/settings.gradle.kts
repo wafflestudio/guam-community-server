@@ -1,3 +1,8 @@
 rootProject.name = "user"
 
-include("api", "service", "infra")
+include(
+    "app:api",
+    "app:notification-consumer",
+    "service",
+    "infra"
+)

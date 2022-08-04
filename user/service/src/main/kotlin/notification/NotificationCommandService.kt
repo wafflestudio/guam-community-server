@@ -59,8 +59,6 @@ class NotificationCommandServiceImpl(
                 )
             }
 
-        println(toCreate)
-
         return repository.saveAll(toCreate).map(::Notification)
     }
 

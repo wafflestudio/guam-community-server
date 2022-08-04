@@ -22,5 +22,5 @@ spring:
   jpa:
     properties:
       hibernate:
-        show_sql: true
+        show_sql: false
         dialect: waffle.guam.community.data.jdbc.CustomMySqlDialect
