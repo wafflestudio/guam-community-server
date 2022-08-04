@@ -58,7 +58,7 @@ class UserTest @Autowired constructor(
             assertThat(introduction).isEqualTo(null)
             assertThat(githubId).isEqualTo("githubId")
             assertThat(blogUrl).isEqualTo("blogUrl")
-            assertThat(profileImage).isEqualTo("/test/1.jpeg")
+            assertThat(profileImage).isEqualTo("test/1.jpeg")
         }
     }
 }
