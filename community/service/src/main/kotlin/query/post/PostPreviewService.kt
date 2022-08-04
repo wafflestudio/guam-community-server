@@ -11,8 +11,8 @@ import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.data.jdbc.post.beforePostId
 import waffle.guam.community.data.jdbc.post.boardId
-import waffle.guam.community.data.jdbc.post.fetchCategories
 import waffle.guam.community.data.jdbc.post.categoryIdMatching
+import waffle.guam.community.data.jdbc.post.fetchCategories
 import waffle.guam.community.data.jdbc.post.fetchComments
 import waffle.guam.community.data.jdbc.post.fulltext
 import waffle.guam.community.data.jdbc.post.postIds

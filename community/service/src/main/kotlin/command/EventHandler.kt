@@ -4,15 +4,15 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import waffle.guam.community.service.client.NotificationService
+import waffle.guam.community.service.CommunityKafkaProducer
 
 @Service
 class EventHandler(
-    private val notificationService: NotificationService,
+    private val communityKafkaProducer: CommunityKafkaProducer,
 ) {
     @EventListener
     @Async
     fun handleNotification(event: NotifyingEventResult) = runBlocking {
-        notificationService.notify(event.toRequest())
+        communityKafkaProducer.send(event)
     }
 }

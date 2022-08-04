@@ -9,7 +9,6 @@ import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.data.jdbc.post.PostRepository
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.client.NotificationRequest
 import waffle.guam.community.service.command.Command
 import waffle.guam.community.service.command.CommandHandler
 import waffle.guam.community.service.command.NotifyingEventResult
@@ -78,35 +77,4 @@ data class PostCommentCreated(
     val isAnonymous: Boolean,
     val writerId: Long,
     val preSignedUrls: List<String>,
-) : NotifyingEventResult {
-    override fun toRequest(): NotificationRequest {
-        return NotificationRequest(
-            producerId = writerId,
-            infos = notificationInfos,
-        )
-    }
-
-    private val notificationInfos: List<NotificationRequest.Info> get() {
-        val createdInfo = listOf(
-            NotificationRequest.Info(
-                consumerId = postUserId,
-                kind = "POST_COMMENT",
-                body = content,
-                linkUrl = "/api/v1/posts/$postId",
-                isAnonymousEvent = isAnonymous,
-            )
-        )
-
-        val mentionInfos = mentionIds.map { consumerId ->
-            NotificationRequest.Info(
-                consumerId = consumerId,
-                kind = "POST_COMMENT_MENTION",
-                body = content,
-                linkUrl = "/api/v1/posts/$postId",
-                isAnonymousEvent = isAnonymous,
-            )
-        }
-
-        return createdInfo + mentionInfos
-    }
-}
+) : NotifyingEventResult

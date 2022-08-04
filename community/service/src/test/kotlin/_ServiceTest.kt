@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
-import waffle.guam.community.service.client.NotificationRequest
-import waffle.guam.community.service.client.NotificationService
+import waffle.guam.community.service.CommunityKafkaProducer
+import waffle.guam.community.service.command.NotifyingEventResult
 import waffle.guam.community.service.command.image.ImageListUploaded
 import waffle.guam.community.service.command.image.ImagePath
 import waffle.guam.community.service.command.image.UploadImageList
@@ -27,9 +27,7 @@ class TestApplication {
 
     @Primary
     @Service
-    class MockNotificationService : NotificationService {
-        override fun notify(request: NotificationRequest) {
-            return
-        }
+    class TestKafkaProducer : CommunityKafkaProducer {
+        override suspend fun send(event: NotifyingEventResult) {}
     }
 }
