@@ -57,7 +57,11 @@ allprojects {
 
 // docker
 task("dockerBuild") {
-    dependsOn("app:api:bootJar")
+    doBuild("api" to "pfcjeong/guam-user", "notification-consumer" to "kangjirm/guam-notification-consumer")
+}
+
+fun Task.doBuild(vararg appName: Pair<String, String>) = appName.forEach { (name, containerName) ->
+    dependsOn("app:$name:bootJar")
 
     doLast {
         val dir = project.mkdir(File(project.buildDir, "tmp"))
@@ -72,7 +76,7 @@ task("dockerBuild") {
         project.copy {
             val jar = project
                 .childProjects["app"]!!
-                .childProjects["api"]!!
+                .childProjects[name]!!
                 .tasks.getByName<Jar>("bootJar")
 
             from(jar.archiveFile) {
@@ -84,8 +88,8 @@ task("dockerBuild") {
 
         project.exec {
             workingDir(dir)
-            commandLine("docker", "build", "-t", "pfcjeong/guam-user:${project.version}", ".")
-            commandLine("docker", "build", "-t", "pfcjeong/guam-user:latest", ".")
+            commandLine("docker", "build", "-t", "$containerName:${project.version}", ".")
+            commandLine("docker", "build", "-t", "$containerName:latest", ".")
         }
     }
 }
@@ -93,10 +97,14 @@ task("dockerBuild") {
 task("dockerPush") {
     dependsOn("dockerBuild")
 
+    doPush("api" to "pfcjeong/guam-user", "notification-consumer" to "kangjirm/guam-notification-consumer")
+}
+
+fun Task.doPush(vararg appName: Pair<String, String>) = appName.forEach { (_, containerName) ->
     doLast {
         project.exec {
-            commandLine("docker", "push", "pfcjeong/guam-user:${project.version}")
-            commandLine("docker", "push", "pfcjeong/guam-user:latest")
+            commandLine("docker", "push", "$containerName:${project.version}")
+            commandLine("docker", "push", "$containerName:latest")
         }
     }
 }
