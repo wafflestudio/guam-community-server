@@ -44,6 +44,7 @@ interface PostPreviewService {
 
     fun getFavoritePostPreviews(
         userId: Long,
+        boardId: Long?,
         rankFrom: Int,
     ): PostPreviewList
 
@@ -94,8 +95,8 @@ class PostPreviewServiceImpl(
         return getCategoryAndComments(userId, postIds)
     }
 
-    override fun getFavoritePostPreviews(userId: Long, rankFrom: Int): PostPreviewList {
-        val postIds = favoriteService.getRankedPosts(userId, rankFrom, rankFrom + PAGE_SIZE - 1)
+    override fun getFavoritePostPreviews(userId: Long, boardId: Long?, rankFrom: Int): PostPreviewList {
+        val postIds = favoriteService.getRankedPosts(userId, boardId, rankFrom, rankFrom + PAGE_SIZE - 1)
         val postList = getCategoryAndComments(userId, postIds.toPage())
         val postMap = postList.content.associateBy { it.id }
         return postIds
@@ -109,7 +110,8 @@ class PostPreviewServiceImpl(
         userId: Long,
         before: PostId?,
     ): PostPreviewList {
-        val spec = categoryIdMatching(categoryId, fetchCategories = true) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        val spec = categoryIdMatching(categoryId,
+            fetchCategories = true) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
         val postIds = postRepository.findAll(spec, SORT).map { it.id }
 
         return getCategoryAndComments(userId, postIds.toPage())
@@ -120,7 +122,8 @@ class PostPreviewServiceImpl(
         keyword: String,
         before: PostId?,
     ): Long {
-        val spec = categoryIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        val spec =
+            categoryIdMatching(categoryId) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
         return postRepository.count(spec)
     }
 
@@ -140,7 +143,8 @@ class PostPreviewServiceImpl(
             return@runBlocking PostPreviewList(emptyList(), false)
         }
 
-        val posts = postRepository.findAll(spec = postIds(postIds.toList()) * fetchCategories() * fetchComments(), sort = SORT)
+        val posts =
+            postRepository.findAll(spec = postIds(postIds.toList()) * fetchCategories() * fetchComments(), sort = SORT)
         val users = async { userService.multiGet(posts.filterNot { post -> post.isAnonymous }.map { it.userId }) }
         val favorites = async { favoriteService.getPostFavorite(userId, posts.map { it.id }) }
 

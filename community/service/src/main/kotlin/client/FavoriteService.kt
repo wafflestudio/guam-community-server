@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import waffle.guam.community.service.PostId
+import java.util.Optional
 
 interface FavoriteService {
-    fun getRankedPosts(userId: Long, rankFrom: Int, rankTo: Int): List<PostId>
+    fun getRankedPosts(userId: Long, boardId: Long?, rankFrom: Int, rankTo: Int): List<PostId>
     fun getPostFavorite(userId: Long, postId: Long): PostFavorite
     fun getPostFavorite(userId: Long, postIds: List<Long>): Map<Long, PostFavorite>
     fun getCommentFavorite(userId: Long, commentId: Long): CommentFavorite
@@ -27,9 +28,21 @@ class FavoriteServiceImpl(
 
     private val webClient = webClientBuilder.baseUrl(favoriteServiceProperties.baseUrl).build()
 
-    override fun getRankedPosts(userId: Long, rankFrom: Int, rankTo: Int): List<PostId> = runBlocking {
+    override fun getRankedPosts(
+        userId: Long,
+        boardId: Long?,
+        rankFrom: Int,
+        rankTo: Int,
+    ): List<PostId> = runBlocking {
         webClient.get()
-            .uri("/api/v1/views/rank?from=$rankFrom&to=$rankTo&userId=$userId")
+            .uri {
+                it.path("/api/v1/views/rank")
+                    .queryParamIfPresent("boardId", Optional.ofNullable(boardId))
+                    .queryParam("userId", userId)
+                    .queryParam("from", rankFrom)
+                    .queryParam("to", rankTo)
+                    .build()
+            }
             .accept()
             .retrieve()
             .awaitBody<LikeScrapFavoriteResponse>()
@@ -89,7 +102,7 @@ class FavoriteServiceImpl(
     }
 
     private data class LikeScrapFavoriteResponse(
-        val data: List<LikeScrapResponse>
+        val data: List<LikeScrapResponse>,
     )
 
     private data class PostFavoriteResponse(
@@ -130,5 +143,5 @@ data class CommentFavorite(
 @ConstructorBinding
 @ConfigurationProperties("guam.services.favorite")
 data class FavoriteServiceProperties(
-    val baseUrl: String = ""
+    val baseUrl: String = "",
 )
