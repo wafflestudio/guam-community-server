@@ -68,9 +68,12 @@ abstract class ScrapCommandHandler : CommandHandler<Scrap, ScrapEvent> {
     protected abstract suspend fun internalHandle(scrap: Scrap): ScrapEvent
 }
 
-sealed class ScrapEvent(override val eventTime: Instant = Instant.now()) : Event
-data class ScrapCreated(val scrap: Scrap, val post: Post) : ScrapEvent()
-data class ScrapDeleted(val scrap: Scrap) : ScrapEvent()
+sealed class ScrapEvent(override val eventTime: Instant = Instant.now()) : Event {
+    abstract val scrap: Scrap
+}
+
+data class ScrapCreated(override val scrap: Scrap, val post: Post) : ScrapEvent()
+data class ScrapDeleted(override val scrap: Scrap) : ScrapEvent()
 
 class DuplicateScrapException(
     override val status: Int = 409,

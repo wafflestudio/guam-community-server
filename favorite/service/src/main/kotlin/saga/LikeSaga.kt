@@ -23,10 +23,10 @@ class LikeSagaImpl(
                 // produce event
                 kafka.send(event)
                 // increment like
-                likeCountStore.increment(event.like.postId)
+                likeCountStore.increment(boardId = event.post.boardId, postId = event.post.id, delta = 1.0)
             }
             is LikeDeleted -> {
-                likeCountStore.decrement(event.like.postId)
+                likeCountStore.increment(boardId = event.post.boardId, postId = event.post.id, delta = -1.0)
             }
         }
     }

@@ -7,6 +7,7 @@ import waffle.guam.favorite.service.ServiceProperties
 
 interface CommunityService {
     suspend fun getPost(postId: Long): Post?
+    suspend fun getPosts(postIds: List<Long>): Map<Long, Post>
     suspend fun getComment(commentId: Long): Comment?
 }
 
@@ -20,12 +21,16 @@ class CommunityServiceImpl(
         .build()
 
     override suspend fun getPost(postId: Long): Post? {
+        return getPosts(listOf(postId))[postId]
+    }
+
+    override suspend fun getPosts(postIds: List<Long>): Map<Long, Post> {
         return community.get()
-            .uri("/papi/v1/posts?postIds={postId}", postId)
+            .uri("/papi/v1/posts?postIds={postId}", postIds.joinToString(","))
             .retrieve()
             .awaitBody<PostResponse>()
-            .posts[postId]
-            ?.takeIf { it.status == "VALID" }
+            .posts
+            .filter { (_, post) -> post.status == "VALID" }
     }
 
     override suspend fun getComment(commentId: Long): Comment? {
@@ -47,6 +52,7 @@ class CommunityServiceImpl(
 
 data class Post(
     val id: Long,
+    val boardId: Long,
     val userId: Long,
     val title: String,
     val content: String,

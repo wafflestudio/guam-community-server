@@ -2,6 +2,7 @@ package waffle.guam.favorite.api.controller
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -11,6 +12,7 @@ import waffle.guam.favorite.service.query.LikeCountStore
 import waffle.guam.favorite.service.query.LikeUserStore
 import waffle.guam.favorite.service.query.ScrapCountStore
 import waffle.guam.favorite.service.query.ScrapUserStore
+import javax.annotation.PostConstruct
 
 @RequestMapping("/api/v1/views")
 @RestController
@@ -48,11 +50,12 @@ class ViewsController(
 
     @GetMapping("/rank")
     suspend fun getRankedPostLikeScrap(
+        @RequestParam(required = false) boardId: Long? = null,
         @RequestParam from: Int, // inclusive
         @RequestParam to: Int, // inclusive
         @RequestParam userId: Long,
     ): SuccessResponse<List<LikeScrapResponse>> {
-        val rank = likeCountStore.getRank(from = from, to = to)
+        val rank = likeCountStore.getRank(boardId = boardId, from = from, to = to)
 
         return getPostLikeScrap(postIds = rank, userId = userId)
     }

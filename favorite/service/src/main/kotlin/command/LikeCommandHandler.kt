@@ -38,16 +38,21 @@ class LikeCreateHandler(
 class LikeDeleteHandler(
     override val likeRepository: LikeRepository,
     override val likeSaga: LikeSaga,
+    private val community: CommunityService,
 ) : LikeCommandHandler() {
 
-    override suspend fun internalHandle(like: Like): LikeDeleted {
+    override suspend fun internalHandle(like: Like): LikeDeleted = coroutineScope {
+        val post = async {
+            community.getPost(like.postId) ?: throw RuntimeException("Valid Post Not Found")
+        }
+
         val updatedRows = likeRepository.deleteByPostIdAndUserId(postId = like.postId, userId = like.userId)
 
         if (updatedRows < 1) {
             throw LikeNotFoundException()
         }
 
-        return LikeDeleted(like)
+        LikeDeleted(like = like, post = post.await())
     }
 }
 
@@ -68,9 +73,12 @@ abstract class LikeCommandHandler : CommandHandler<Like, LikeEvent> {
     protected abstract suspend fun internalHandle(like: Like): LikeEvent
 }
 
-sealed class LikeEvent(override val eventTime: Instant = Instant.now()) : Event
-data class LikeCreated(val like: Like, val post: Post) : LikeEvent()
-data class LikeDeleted(val like: Like) : LikeEvent()
+sealed class LikeEvent(override val eventTime: Instant = Instant.now()) : Event {
+    abstract val like: Like
+}
+
+data class LikeCreated(override val like: Like, val post: Post) : LikeEvent()
+data class LikeDeleted(override val like: Like, val post: Post) : LikeEvent()
 
 class DuplicateLikeException(
     override val status: Int = 409,

@@ -18,7 +18,7 @@ interface ScrapCountStore {
 
     interface Mutable : ScrapCountStore {
         suspend fun increment(postId: Long)
-        suspend fun decrement(postIds: Long)
+        suspend fun decrement(postId: Long)
     }
 
     interface Rank : ScrapCountStore {
