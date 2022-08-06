@@ -2,6 +2,8 @@ rootProject.name = "guam-community"
 
 include(":data-jdbc")
 project(":data-jdbc").projectDir = file("data/data-jdbc")
+include(":data-r2dbc")
+project(":data-r2dbc").projectDir = file("data/data-r2dbc")
 include(":data-redis")
 project(":data-redis").projectDir = file("data/data-redis")
 include(":data")

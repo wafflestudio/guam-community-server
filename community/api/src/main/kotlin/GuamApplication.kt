@@ -3,7 +3,9 @@ package waffle.guam.community
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.servers.Server
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Import
 import org.springframework.scheduling.annotation.EnableAsync
 
 fun main() {
@@ -12,5 +14,6 @@ fun main() {
 
 @EnableAsync
 @OpenAPIDefinition(servers = [Server(url = "/", description = "Default Server URL")])
+@Import(DataSourceAutoConfiguration::class)
 @SpringBootApplication
 class GuamApplication
