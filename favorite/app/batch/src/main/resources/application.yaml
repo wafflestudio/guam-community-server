@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: ""
+    username: ""
+    password: ""
+  jpa:
+    show-sql: true
+  batch:
+    job:
+      names: ${job.name:NONE}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+spring.config.import:
+  - classpath:application-service.yaml
