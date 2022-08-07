@@ -1,13 +1,16 @@
 spring:
-  profiles:
-    active: dev
+  config:
+    import:
+      - application-db.yaml
+      - application-service.yaml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
   jpa:
     defer-datasource-initialization: true
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
-spring.config.import:
-  - classpath:application-db.yaml
-  - classpath:application-service.yaml
