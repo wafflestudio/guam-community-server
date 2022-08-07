@@ -1,25 +1,33 @@
 package waffle.guam.community.controller.papi
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.runBlocking
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.bodyValueAndAwait
+import org.springframework.web.reactive.function.server.queryParamOrNull
 import waffle.guam.community.data.jdbc.comment.PostCommentRepository
 import waffle.guam.community.data.jdbc.post.PostRepository
 
 // TODO: security 적용
-@RequestMapping("/papi/v1")
-@RestController
-class PapiController(
+@Component
+class PapiHandler(
     private val postRepository: PostRepository,
     private val commentRepository: PostCommentRepository,
+    private val objectMapper: ObjectMapper,
 ) {
+    suspend fun getPosts(
+        request: ServerRequest
+    ): ServerResponse = runBlocking {
+        // FIXME 이렇게 하는게 진짜 맞나?
+        val postIds = request.queryParamOrNull("postIds")
+            ?.let { objectMapper.readValue(it, List::class.java) }
+            ?.map { (it as Int).toLong() }
+            ?: throw IllegalArgumentException("postIds are required")
 
-    @GetMapping("/posts")
-    fun getPosts(
-        @RequestParam postIds: List<Long>,
-    ): PostsGetResponse {
-        return postRepository.findAllById(postIds)
+        // FIXME use R2dbc
+        val result = postRepository.findAllById(postIds)
             .map {
                 PostGetResponse(
                     id = it.id,
@@ -33,13 +41,19 @@ class PapiController(
             }
             .associateBy { it.id }
             .let(::PostsGetResponse)
+
+        ServerResponse.ok().bodyValueAndAwait(result)
     }
 
-    @GetMapping("/comments")
-    fun getComments(
-        @RequestParam commentIds: List<Long>,
-    ): CommentsGetResponse {
-        return commentRepository.findAllById(commentIds)
+    suspend fun getComments(
+        request: ServerRequest
+    ): ServerResponse {
+        val commentIds = request.queryParamOrNull("commentIds")
+            ?.let { objectMapper.readValue(it, List::class.java) }
+            ?.map { (it as Int).toLong() }
+            ?: throw IllegalArgumentException("commentIds are required")
+
+        val result = commentRepository.findAllById(commentIds)
             .map {
                 CommentGetResponse(
                     id = it.id,
@@ -52,6 +66,8 @@ class PapiController(
             }
             .associateBy { it.id }
             .let(::CommentsGetResponse)
+
+        return ServerResponse.ok().bodyValueAndAwait(result)
     }
 
     data class PostsGetResponse(

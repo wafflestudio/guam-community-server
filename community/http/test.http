@@ -30,3 +30,15 @@ X-GATEWAY-USER-ID: 48
 {
   "content": "카프카를 테스트 하고 있습니다 ^^"
 }
+
+### GET PAPI POSTS
+
+GET {{ papi }}/posts?postIds=[285]
+Content-Type: application/json
+X-GATEWAY-USER-ID: 1
+
+### GET PAPI COMMENTS
+
+GET {{ papi }}/comments?commentIds=[1,2]
+Content-Type: application/json
+X-GATEWAY-USER-ID: 1

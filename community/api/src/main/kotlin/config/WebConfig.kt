@@ -1,45 +1,56 @@
 package waffle.guam.community.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.MDC
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter
-import org.springframework.web.bind.support.WebDataBinderFactory
-import org.springframework.web.context.request.NativeWebRequest
-import org.springframework.web.method.support.HandlerMethodArgumentResolver
-import org.springframework.web.method.support.ModelAndViewContainer
-import org.springframework.web.servlet.HandlerInterceptor
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.BindingContext
+import org.springframework.web.reactive.config.WebFluxConfigurer
+import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver
+import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilter
+import org.springframework.web.server.WebFilterChain
+import reactor.core.publisher.Mono
 import waffle.guam.community.UserContext
 import waffle.guam.community.service.GuamUnAuthorized
 import waffle.guam.community.service.Log
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Configuration
-class WebConfig : WebMvcConfigurer {
-    override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
-        resolvers.add(UserContextResolver())
+class WebConfig : WebFluxConfigurer {
+    override fun configureArgumentResolvers(configurer: ArgumentResolverConfigurer) {
+        configurer.addCustomResolver(UserContextResolver())
     }
 
-    override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(GuamRequestInterceptor())
+    @Bean
+    fun objectMapper(): ObjectMapper {
+        return jacksonObjectMapper().registerModules(
+            JavaTimeModule(),
+            KotlinModule.Builder().build(),
+        )
     }
 }
 
-class GuamRequestInterceptor : HandlerInterceptor {
+@Component
+class GuamRequestFilter : WebFilter {
     companion object : Log
 
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        request.getHeader("X-REQUEST-ID")?.let { MDC.put("X-REQUEST-ID", it) }
+    override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
+        val request = exchange.request
+        request.headers["X-REQUEST-ID"]?.let { MDC.put("X-REQUEST-ID", it.single()) }
 
-        val userId = request.getHeader("X-GATEWAY-USER-ID")
-        val uri = request.requestURI
-        val params = request.parameterMap.map { it.key to it.value.toList() }
+        val userId = request.headers["X-GATEWAY-USER-ID"]
+        val uri = request.uri
+        val params = request.queryParams.map { it.key to it.value.toList() }
 
         log.info("userId: $userId, uri: $uri, params: $params")
 
-        return super.preHandle(request, response, handler)
+        return chain.filter(exchange)
     }
 }
 
@@ -49,14 +60,13 @@ class UserContextResolver : HandlerMethodArgumentResolver {
 
     override fun resolveArgument(
         parameter: MethodParameter,
-        mavContainer: ModelAndViewContainer?,
-        webRequest: NativeWebRequest,
-        binderFactory: WebDataBinderFactory?,
-    ): UserContext {
-        val req = (webRequest.nativeRequest as HttpServletRequest)
-
-        return req.getHeader(GATEWAY_HEADER_NAME)?.toLong()?.let(::UserContext)
+        bindingContext: BindingContext,
+        exchange: ServerWebExchange
+    ): Mono<Any> {
+        val header = exchange.request.headers[GATEWAY_HEADER_NAME]?.singleOrNull()
             ?: throw MissingHeaderException()
+
+        return Mono.just(header.toLong().let(::UserContext))
     }
 }
 
