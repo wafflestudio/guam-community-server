@@ -33,12 +33,12 @@ X-GATEWAY-USER-ID: 48
 
 ### GET PAPI POSTS
 
-GET {{ papi }}/posts?postIds=[285]
+GET {{ papi }}/posts?postIds=[285,286]
 Content-Type: application/json
 X-GATEWAY-USER-ID: 1
 
 ### GET PAPI COMMENTS
 
-GET {{ papi }}/comments?commentIds=[1,2]
+GET {{ papi }}/comments?commentIds=[300]
 Content-Type: application/json
 X-GATEWAY-USER-ID: 1
