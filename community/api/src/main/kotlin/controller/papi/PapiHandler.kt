@@ -1,20 +1,21 @@
 package waffle.guam.community.controller.papi
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.queryParamOrNull
-import waffle.guam.community.data.jdbc.comment.PostCommentRepository
-import waffle.guam.community.data.jdbc.post.PostRepository
+import waffle.guam.community.data.r2dbc.comment.PostCommentR2dbcRepository
+import waffle.guam.community.data.r2dbc.post.PostR2dbcRepository
 
 // TODO: security 적용
 @Component
 class PapiHandler(
-    private val postRepository: PostRepository,
-    private val commentRepository: PostCommentRepository,
+    private val postRepository: PostR2dbcRepository,
+    private val commentRepository: PostCommentR2dbcRepository,
     private val objectMapper: ObjectMapper,
 ) {
     suspend fun getPosts(
@@ -26,8 +27,8 @@ class PapiHandler(
             ?.map { (it as Int).toLong() }
             ?: throw IllegalArgumentException("postIds are required")
 
-        // FIXME use R2dbc
         val result = postRepository.findAllById(postIds)
+            .toList()
             .map {
                 PostGetResponse(
                     id = it.id,
@@ -54,14 +55,15 @@ class PapiHandler(
             ?: throw IllegalArgumentException("commentIds are required")
 
         val result = commentRepository.findAllById(commentIds)
+            .toList()
             .map {
                 CommentGetResponse(
                     id = it.id,
-                    postId = it.post.id,
+                    postId = it.postId,
                     userId = it.userId,
                     content = it.content,
                     status = it.status.name,
-                    isAnonymous = it.post.boardId == 1L // FIXME: N + 1
+                    isAnonymous = it.isAnonymous
                 )
             }
             .associateBy { it.id }
