@@ -1,13 +1,11 @@
 spring:
-  datasource:
-    url: ""
-    username: ""
-    password: ""
   jpa:
     show-sql: true
   batch:
     job:
       names: ${job.name:NONE}
+  config:
+    import: application-service.yaml
 
 ---
 
@@ -15,6 +13,5 @@ spring:
   config:
     activate:
       on-profile: dev
-
-spring.config.import:
-  - classpath:application-service.yaml
+  jpa:
+    show-sql: false
