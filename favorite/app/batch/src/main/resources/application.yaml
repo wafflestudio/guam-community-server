@@ -3,18 +3,15 @@ spring:
     url: ""
     username: ""
     password: ""
-  jpa:
-    show-sql: true
   batch:
     job:
       names: ${job.name:NONE}
-
+      chunkSize: ${job.chunkSize:100}
+  config:
+    import: application-service.yaml
 ---
 
 spring:
   config:
     activate:
       on-profile: dev
-
-spring.config.import:
-  - classpath:application-service.yaml
