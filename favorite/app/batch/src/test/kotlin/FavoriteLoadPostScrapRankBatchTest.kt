@@ -10,7 +10,7 @@ import waffle.guam.favorite.batch.job.FavoriteLoadScrapRankBatch
 import waffle.guam.favorite.data.redis.RedisConfig
 
 @BatchTest
-@Sql("classpath:data/test.sql")
+@Sql("classpath:data/scrap.sql")
 class FavoriteLoadPostScrapRankBatchTest @Autowired constructor(
     private val batchTestHelper: BatchTestHelper,
     private val redisTemplate: RedisTemplate<String, String>,

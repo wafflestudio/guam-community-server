@@ -19,7 +19,8 @@ class PostLikeBatchServiceImpl(
     private val community: CommunityService,
 ) : PostLikeBatchService {
     override fun clearRank() {
-        listOf(null, 1L, 2L, 3L, 4L, 5L).forEach { redisTemplate.delete(LIKE_KEY + it) }
+        redisTemplate.delete(LIKE_KEY)
+        listOf(1L, 2L, 3L, 4L, 5L).forEach { redisTemplate.delete(LIKE_KEY + it) }
     }
 
     override fun loadRank(data: List<PostLikeCount>) {

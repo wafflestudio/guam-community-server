@@ -10,7 +10,7 @@ import waffle.guam.favorite.batch.job.FavoriteLoadPostLikeRankBatch
 import waffle.guam.favorite.data.redis.RedisConfig
 
 @BatchTest
-@Sql("classpath:data/test.sql")
+@Sql("classpath:data/post.sql")
 class FavoriteLoadPostLikeRankBatchTest @Autowired constructor(
     private val batchTestHelper: BatchTestHelper,
     private val redisTemplate: RedisTemplate<String, String>,
@@ -40,8 +40,8 @@ class FavoriteLoadPostLikeRankBatchTest @Autowired constructor(
         // postId: 1, count: 4
         // postId: 2, count: 1
         community.setBoardIdOfPostForNextCall(
-            1L to 100L,
-            2L to 200L
+            1L to 5L,
+            2L to 3L,
         )
 
         // when
@@ -49,9 +49,9 @@ class FavoriteLoadPostLikeRankBatchTest @Autowired constructor(
 
         // then
         batchResult.shouldComplete()
-        assertThat(redisTemplate.opsForZSet().size(RedisConfig.LIKE_KEY + "100")).isEqualTo(1)
-        assertThat(redisTemplate.opsForZSet().size(RedisConfig.LIKE_KEY + "200")).isEqualTo(1)
-        assertThat(redisTemplate.opsForZSet().score(RedisConfig.LIKE_KEY + "100", "1")).isEqualTo(4.0)
-        assertThat(redisTemplate.opsForZSet().score(RedisConfig.LIKE_KEY + "200", "2")).isEqualTo(1.0)
+        assertThat(redisTemplate.opsForZSet().size(RedisConfig.LIKE_KEY + "5")).isEqualTo(1)
+        assertThat(redisTemplate.opsForZSet().size(RedisConfig.LIKE_KEY + "3")).isEqualTo(1)
+        assertThat(redisTemplate.opsForZSet().score(RedisConfig.LIKE_KEY + "5", "1")).isEqualTo(4.0)
+        assertThat(redisTemplate.opsForZSet().score(RedisConfig.LIKE_KEY + "3", "2")).isEqualTo(1.0)
     }
 }
