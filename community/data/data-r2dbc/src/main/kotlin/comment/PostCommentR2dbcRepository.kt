@@ -27,12 +27,12 @@ class PostCommentR2dbcRepositoryImpl(
 
     private fun PostCommentDto(row: Row): PostCommentDto {
         return PostCommentDto(
-            id = row["id"] as Long,
-            userId = row["user_id"] as Long,
+            id = (row.get("id") as Number).toLong(),
+            userId = (row.get("user_id") as Number).toLong(),
             content = row.get("content", String::class.java)!!,
             status = row.get("status", String::class.java)!!.let(PostCommentEntity.Status::valueOf),
-            postId = row["post_id"] as Long,
-            postBoardId = row["board_id"] as Long,
+            postId = (row.get("post_id") as Number).toLong(),
+            postBoardId = (row.get("board_id") as Number).toLong(),
         )
     }
 }

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
-import org.springframework.web.reactive.function.server.queryParamOrNull
 import waffle.guam.community.data.r2dbc.comment.PostCommentR2dbcRepository
 import waffle.guam.community.data.r2dbc.post.PostR2dbcRepository
+import waffle.guam.community.listQuery
 
 // TODO: security 적용
 @Component
@@ -21,12 +21,7 @@ class PapiHandler(
     suspend fun getPosts(
         request: ServerRequest
     ): ServerResponse = runBlocking {
-        // FIXME 이렇게 하는게 진짜 맞나?
-        val postIds = request.queryParamOrNull("postIds")
-            ?.let { objectMapper.readValue(it, List::class.java) }
-            ?.map { (it as Int).toLong() }
-            ?: throw IllegalArgumentException("postIds are required")
-
+        val postIds = request.listQuery("postIds" to Long::class)
         val result = postRepository.findAllById(postIds)
             .toList()
             .map {
@@ -49,11 +44,7 @@ class PapiHandler(
     suspend fun getComments(
         request: ServerRequest
     ): ServerResponse {
-        val commentIds = request.queryParamOrNull("commentIds")
-            ?.let { objectMapper.readValue(it, List::class.java) }
-            ?.map { (it as Int).toLong() }
-            ?: throw IllegalArgumentException("commentIds are required")
-
+        val commentIds = request.listQuery("commentIds" to Long::class)
         val result = commentRepository.findAllById(commentIds)
             .toList()
             .map {
