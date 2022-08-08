@@ -103,9 +103,11 @@ class PostController(
     @GetMapping("/favorites")
     fun getFavoritePosts(
         userContext: UserContext,
+        @RequestParam(required = false) boardId: Long? = null,
         @RequestParam(required = false, defaultValue = "0") rankFrom: Int,
     ) = postPreviewService.getFavoritePostPreviews(
         userId = userContext.id,
+        boardId = boardId,
         rankFrom = rankFrom,
     )
 }
