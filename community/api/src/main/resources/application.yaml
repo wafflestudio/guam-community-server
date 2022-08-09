@@ -8,6 +8,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+slack:
+  app:
+    channel: "#team-괌_guam-log"
+    token: ""
+
 spring.config.import:
   - classpath:application-db.yaml
   - classpath:application-service.yaml

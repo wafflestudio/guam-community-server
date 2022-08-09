@@ -11,7 +11,10 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
-    implementation("org.springdoc:springdoc-openapi-ui:1.5.+")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.9")
+
+    implementation("com.slack.api:slack-api-client:1.24.0")
 
     compileOnly("ch.qos.logback:logback-classic")
 }

@@ -1,5 +1,6 @@
 package waffle.guam.community.config
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
@@ -11,8 +12,12 @@ import waffle.guam.community.service.GuamException
 import waffle.guam.community.service.Log
 import javax.persistence.EntityExistsException
 
+data class ExceptionHappened(val throwable: Throwable)
+
 @ControllerAdvice
-class ExceptionHandler {
+class ExceptionHandler(
+    private val eventPublisher: ApplicationEventPublisher,
+) {
     companion object : Log
 
     @ExceptionHandler(value = [MaxUploadSizeExceededException::class])
@@ -30,4 +35,10 @@ class ExceptionHandler {
     @ExceptionHandler(value = [GuamException::class])
     fun guamError(e: GuamException) =
         ResponseEntity(e.message, HttpStatus.valueOf(e.status))
+
+    @ExceptionHandler(value = [RuntimeException::class])
+    fun unknownError(e: RuntimeException) {
+        eventPublisher.publishEvent(ExceptionHappened(e))
+        throw e
+    }
 }
