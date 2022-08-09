@@ -62,6 +62,7 @@ class FavoriteLoadCommentLikeRankBatch(
     @StepScope
     fun writer() = ItemWriter<PostCommentLikeCount> { postCommentLikeCounts ->
         postCommentLikeCounts
+            .ifEmpty { return@ItemWriter }
             .associate { it.postCommentId to it.count }
             .map { ZSetOperations.TypedTuple.of("${it.key}", it.value.toDouble()) }
             .let { redisTemplate.opsForZSet().add(RedisConfig.COMMENT_LIKE_KEY, it.toSet()) }

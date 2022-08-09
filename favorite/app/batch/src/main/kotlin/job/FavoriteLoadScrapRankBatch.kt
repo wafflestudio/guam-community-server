@@ -63,6 +63,7 @@ class FavoriteLoadScrapRankBatch(
     fun writer() = ItemWriter<PostScrapCount> { postScrapCounts ->
         // insert all
         postScrapCounts
+            .ifEmpty { return@ItemWriter }
             .associate { it.postId to it.count }
             .map { ZSetOperations.TypedTuple.of("${it.key}", it.value.toDouble()) }
             .let { redisTemplate.opsForZSet().add(RedisConfig.SCRAP_KEY, it.toSet()) }

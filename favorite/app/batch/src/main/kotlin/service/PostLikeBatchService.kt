@@ -30,6 +30,7 @@ class PostLikeBatchServiceImpl(
 
     private fun insertAll(data: List<PostLikeCount>) {
         data
+            .ifEmpty { return }
             .associate { it.postId to it.count }
             .map { (postId, likeCount) -> TypedTuple.of("$postId", likeCount.toDouble()) }
             .apply { redisTemplate.opsForZSet().add(LIKE_KEY, this.toSet()) }
