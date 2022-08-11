@@ -20,17 +20,20 @@ class FavoriteLoadCommentLikeRankBatch(
         redisTemplate.delete(RedisConfig.COMMENT_LIKE_KEY)
     }
 
-    override fun doRead(page: Int, pageSize: Int): List<PostCommentLikeCount> = runBlocking {
+    override fun doRead(lastId: Long, chunkSize: Int): Chunk<PostCommentLikeCount> = runBlocking {
         dbClient
             .sql(
                 """
                 select post_comment_id, count(id) as cnt
-                from post_comment_likes group by post_comment_id
-                limit :pageSize offset :offset
+                from post_comment_likes 
+                where post_comment_id > :lastId
+                group by post_comment_id
+                order by post_comment_id
+                limit :chunkSize
                 """.trimIndent()
             )
-            .bind("pageSize", pageSize)
-            .bind("offset", page)
+            .bind("chunkSize", chunkSize)
+            .bind("lastId", lastId)
             .map { row ->
                 PostCommentLikeCount(
                     postCommentId = (row.get("post_comment_id") as Number).toLong(),
@@ -39,10 +42,11 @@ class FavoriteLoadCommentLikeRankBatch(
             }
             .flow()
             .toList()
+            .let { result -> Chunk(result, result.lastOrNull()?.postCommentId) }
     }
 
-    override fun List<PostCommentLikeCount>.writeToRedis() {
-        this.ifEmpty { return }
+    override fun doWrite(result: List<PostCommentLikeCount>) {
+        result.ifEmpty { return }
             .associate { it.postCommentId to it.count }
             .map { ZSetOperations.TypedTuple.of("${it.key}", it.value.toDouble()) }
             .let { redisTemplate.opsForZSet().add(RedisConfig.COMMENT_LIKE_KEY, it.toSet()) }

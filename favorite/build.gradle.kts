@@ -109,4 +109,3 @@ fun Task.doPush(vararg appName: Pair<String, String>) = appName.forEach { (_, co
         }
     }
 }
-

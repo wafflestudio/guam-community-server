@@ -1,11 +1,12 @@
 package waffle.guam.favorite.batch.job
 
 import org.slf4j.LoggerFactory
+import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
-import javax.annotation.PostConstruct
 
 @Component
 @EnableConfigurationProperties(BatchJobProperty::class)
@@ -20,8 +21,10 @@ class BatchRunner(
         log.info("REGISTERED JOBS: $batchJobs..")
     }
 
-    @PostConstruct
+    @EventListener(ApplicationStartedEvent::class)
     fun executeBatchJob() {
+        // context 만들고
+        //
         batchJobs[jobProperty.names]
             ?.run(jobProperty.chunkSize)
             ?: throw IllegalArgumentException("${jobProperty.names} is not defined.")
