@@ -1,0 +1,7 @@
+spring:
+  batch:
+    job:
+      names: ${job.name:NONE}
+      chunkSize: ${job.chunkSize:100}
+  config:
+    import: application-service.yaml

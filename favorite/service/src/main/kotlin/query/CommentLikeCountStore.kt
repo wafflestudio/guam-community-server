@@ -6,7 +6,6 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.data.domain.Range
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
-import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.data.redis.core.reverseRangeAsFlow
 import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.r2dbc.CommentLikeRepository
@@ -23,7 +22,6 @@ interface CommentLikeCountStore {
 
     interface Rank : CommentLikeCountStore {
         suspend fun getRank(from: Int, to: Int): List<Long>
-        suspend fun loadRank()
     }
 }
 
@@ -72,18 +70,5 @@ class CommentLikeCountStoreRedisImpl(
             .reverseRangeAsFlow(COMMENT_LIKE_KEY, Range.closed(from.toLong(), to.toLong()))
             .map { it.toLong() }
             .toList()
-    }
-
-    override suspend fun loadRank() {
-        // clear all
-        redisTemplate.delete(COMMENT_LIKE_KEY).awaitSingle()
-
-        // insert all
-        commentLikeRepository.findAll()
-            .toList()
-            .groupBy { it.postCommentId }
-            .mapValues { it.value.size }
-            .map { ZSetOperations.TypedTuple.of("${it.key}", it.value.toDouble()) }
-            .let { redisTemplate.opsForZSet().addAll(COMMENT_LIKE_KEY, it).awaitSingle() }
     }
 }

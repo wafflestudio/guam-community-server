@@ -2,7 +2,6 @@ package waffle.guam.favorite.api.controller
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -12,7 +11,6 @@ import waffle.guam.favorite.service.query.LikeCountStore
 import waffle.guam.favorite.service.query.LikeUserStore
 import waffle.guam.favorite.service.query.ScrapCountStore
 import waffle.guam.favorite.service.query.ScrapUserStore
-import javax.annotation.PostConstruct
 
 @RequestMapping("/api/v1/views")
 @RestController

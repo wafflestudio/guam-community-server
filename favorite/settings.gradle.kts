@@ -1,8 +1,9 @@
 rootProject.name = "favorite"
 
 include(
-    "api",
-    "service"
+    "app:api",
+    "app:batch",
+    "service",
 )
 
 // data
