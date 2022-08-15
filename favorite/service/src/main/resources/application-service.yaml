@@ -17,6 +17,11 @@ favorite:
   infra:
     community:
       url: http://guam-community.jon-snow-korea.com
+
+slack:
+  notification:
+    token: # in vault
+    channel_name: "#team-괌_server"
 ---
 spring.config.activate.on-profile: dev
 

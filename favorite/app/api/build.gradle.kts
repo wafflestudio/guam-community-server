@@ -12,4 +12,5 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("com.github.wafflestudio.kotlin-lib:slack-notification-spring-boot-starter:0.0.1-SNAPSHOT")
 }
