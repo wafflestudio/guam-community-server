@@ -1,10 +1,12 @@
 spring:
-  profiles:
-    active: dev
+  config:
+    import: application-service.yaml
+---
+spring:
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
-spring.config.import:
-  - classpath:application-service.yaml
+  config:
+    activate:
+      on-profile: dev
