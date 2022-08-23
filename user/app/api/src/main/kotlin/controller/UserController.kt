@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import waffle.guam.user.api.request.CreateInterestRequest
+import waffle.guam.user.api.request.UpdateUserRequest
 import waffle.guam.user.service.UnAuthorized
 import waffle.guam.user.service.UserNotFound
 import waffle.guam.user.service.user.Interest

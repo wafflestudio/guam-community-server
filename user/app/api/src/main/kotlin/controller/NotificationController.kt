@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import waffle.guam.user.api.request.ReadNotification
+import waffle.guam.user.api.request.ReadNotificationRequest
 import waffle.guam.user.service.UnAuthorized
 import waffle.guam.user.service.notification.Notification
 import waffle.guam.user.service.notification.NotificationCommandService

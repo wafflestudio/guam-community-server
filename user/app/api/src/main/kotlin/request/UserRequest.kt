@@ -1,4 +1,4 @@
-package waffle.guam.user.api.controller
+package waffle.guam.user.api.request
 
 import org.springframework.web.multipart.MultipartFile
 import javax.validation.constraints.Min
