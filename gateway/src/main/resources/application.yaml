@@ -1,3 +1,7 @@
+spring:
+  profiles:
+    active: dev
+---
 spring.config.activate.on-profile: dev
 
 spring:
@@ -28,7 +32,7 @@ spring:
         - id: letter_auth_route
           uri: http://guam-letter.jon-snow-korea.com
           predicates:
-            - Path=/community/api/v1/letters/**, /community/api/v1/blocks/**
+            - Path=/community/api/v1/letters/**
           filters:
             - RewritePath=/community(?<segment>/?.*), $\{segment}
             - Guam
