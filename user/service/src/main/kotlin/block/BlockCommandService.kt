@@ -1,6 +1,7 @@
 package waffle.guam.user.service.block
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import waffle.guam.user.infra.db.BlockEntity
 import waffle.guam.user.infra.db.BlockRepository
 import waffle.guam.user.service.Command
@@ -29,6 +30,7 @@ class BlockCommandServiceImpl(
     private val blockRepository: BlockRepository,
 ) : BlockCommandService {
 
+    @Transactional
     override fun createBlock(command: CreateBlock): Block {
         return blockRepository.save(
             BlockEntity(
@@ -38,6 +40,7 @@ class BlockCommandServiceImpl(
         ).let(::Block)
     }
 
+    @Transactional
     override fun deleteBlock(command: DeleteBlock) {
         blockRepository.deleteByUserIdAndBlockUserId(
             userId = command.userId,
