@@ -1,6 +1,7 @@
 package waffle.guam.user.service.block
 
 import waffle.guam.user.infra.db.BlockEntity
+import waffle.guam.user.service.user.User
 
 data class Block(
     val userId: Long,
@@ -14,5 +15,5 @@ fun Block(entity: BlockEntity) = Block(
 
 data class BlockList(
     val userId: Long,
-    val blockUserIds: List<Long>,
+    val blockUsers: List<User>,
 )
