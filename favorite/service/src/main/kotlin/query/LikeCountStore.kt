@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.reverseRangeAsFlow
 import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.r2dbc.repository.LikeRepository
-import waffle.guam.favorite.data.redis.RedisConfig.Companion.LIKE_KEY
+import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_LIKE_KEY
 import waffle.guam.favorite.service.infra.CommunityService
 
 interface LikeCountStore {
@@ -33,9 +33,9 @@ class LikeCountStoreRedisImpl(
 ) : LikeCountStore, LikeCountStore.Mutable, LikeCountStore.Rank {
 
     private fun key(boardId: Long? = null) = if (boardId == null) {
-        LIKE_KEY
+        POST_LIKE_KEY
     } else {
-        "$LIKE_KEY$boardId"
+        "$POST_LIKE_KEY$boardId"
     }
 
     override suspend fun getCount(postId: Long): Int {

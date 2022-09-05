@@ -15,8 +15,8 @@ import org.springframework.test.context.event.AfterTestExecutionEvent
 import org.springframework.test.context.event.BeforeTestExecutionEvent
 import redis.embedded.RedisServer
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.COMMENT_LIKE_KEY
-import waffle.guam.favorite.data.redis.RedisConfig.Companion.LIKE_KEY
-import waffle.guam.favorite.data.redis.RedisConfig.Companion.SCRAP_KEY
+import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_LIKE_KEY
+import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_SCRAP_KEY
 import waffle.guam.favorite.service.command.Event
 import waffle.guam.favorite.service.infra.Comment
 import waffle.guam.favorite.service.infra.CommunityService
@@ -70,9 +70,9 @@ annotation class ServiceTest {
                 redisServer.start()
             }
 
-            redisTemplate.delete(LIKE_KEY).awaitSingle()
+            redisTemplate.delete(POST_LIKE_KEY).awaitSingle()
             redisTemplate.delete(COMMENT_LIKE_KEY).awaitSingle()
-            redisTemplate.delete(SCRAP_KEY).awaitSingle()
+            redisTemplate.delete(POST_SCRAP_KEY).awaitSingle()
         }
 
         @EventListener(AfterTestExecutionEvent::class)

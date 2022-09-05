@@ -19,7 +19,7 @@ class FavoriteLoadScrapRankBatch(
 ) : BatchJob<PostScrapCount>() {
 
     override fun initStep() = runBlocking {
-        redisTemplate.deleteAndAwait(RedisConfig.SCRAP_KEY); Unit
+        redisTemplate.deleteAndAwait(RedisConfig.POST_SCRAP_KEY); Unit
     }
 
     override fun doRead(lastId: Long, chunkSize: Int): Chunk<PostScrapCount> = runBlocking {
@@ -52,7 +52,7 @@ class FavoriteLoadScrapRankBatch(
         result.ifEmpty { return@runBlocking }
             .associate { it.postId to it.count }
             .map { ZSetOperations.TypedTuple.of("${it.key}", it.value.toDouble()) }
-            .apply { redisTemplate.opsForZSet().addAllAndAwait(RedisConfig.SCRAP_KEY, this.toSet()) }
+            .apply { redisTemplate.opsForZSet().addAllAndAwait(RedisConfig.POST_SCRAP_KEY, this.toSet()) }
     }
 }
 

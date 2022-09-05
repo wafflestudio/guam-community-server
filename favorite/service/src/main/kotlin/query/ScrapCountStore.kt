@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.reverseRangeAsFlow
 import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.r2dbc.repository.ScrapRepository
-import waffle.guam.favorite.data.redis.RedisConfig.Companion.SCRAP_KEY
+import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_SCRAP_KEY
 
 interface ScrapCountStore {
     suspend fun getCount(postId: Long): Int
@@ -33,7 +33,7 @@ class ScrapCountStoreRedisImpl(
 
     override suspend fun getCount(postId: Long): Int {
         return redisTemplate.opsForZSet()
-            .score(SCRAP_KEY, "$postId")
+            .score(POST_SCRAP_KEY, "$postId")
             .awaitFirstOrNull()
             ?.toInt()
             ?: 0
@@ -45,7 +45,7 @@ class ScrapCountStoreRedisImpl(
         }
 
         val scores = redisTemplate.opsForZSet()
-            .score(SCRAP_KEY, *(postIds.map { "$it" }.toTypedArray()))
+            .score(POST_SCRAP_KEY, *(postIds.map { "$it" }.toTypedArray()))
             .awaitSingle()
 
         return postIds.zip(scores)
@@ -55,19 +55,19 @@ class ScrapCountStoreRedisImpl(
 
     override suspend fun increment(postId: Long) {
         redisTemplate.opsForZSet()
-            .incrementScore(SCRAP_KEY, "$postId", 1.0)
+            .incrementScore(POST_SCRAP_KEY, "$postId", 1.0)
             .awaitSingle()
     }
 
     override suspend fun decrement(postId: Long) {
         redisTemplate.opsForZSet()
-            .incrementScore(SCRAP_KEY, "$postId", -1.0)
+            .incrementScore(POST_SCRAP_KEY, "$postId", -1.0)
             .awaitSingle()
     }
 
     override suspend fun getRank(from: Int, to: Int): List<Long> {
         return redisTemplate.opsForZSet()
-            .reverseRangeAsFlow(SCRAP_KEY, Range.closed(from.toLong(), to.toLong()))
+            .reverseRangeAsFlow(POST_SCRAP_KEY, Range.closed(from.toLong(), to.toLong()))
             .map { it.toLong() }
             .toList()
     }

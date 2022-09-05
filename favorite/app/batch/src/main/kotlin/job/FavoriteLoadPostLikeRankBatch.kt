@@ -23,7 +23,7 @@ class FavoriteLoadPostLikeRankBatch(
 ) : BatchJob<PostLikeCount>() {
 
     override fun initStep() = runBlocking {
-        val redisKeys = listOf("", 1L, 2L, 3L, 4L, 5L).map { RedisConfig.LIKE_KEY + it }
+        val redisKeys = listOf("", 1L, 2L, 3L, 4L, 5L).map { RedisConfig.POST_LIKE_KEY + it }
         redisTemplate.deleteAndAwait(*redisKeys.toTypedArray()); Unit
     }
 
@@ -61,7 +61,7 @@ class FavoriteLoadPostLikeRankBatch(
         data.ifEmpty { return@runBlocking }
             .associate { it.postId to it.count }
             .map { (postId, likeCount) -> ZSetOperations.TypedTuple.of("$postId", likeCount.toDouble()) }
-            .apply { redisTemplate.opsForZSet().addAllAndAwait(RedisConfig.LIKE_KEY, this.toSet()) }
+            .apply { redisTemplate.opsForZSet().addAllAndAwait(RedisConfig.POST_LIKE_KEY, this.toSet()) }
     }
 
     private fun insertPerBoard(data: List<PostLikeCount>) = runBlocking {
@@ -69,12 +69,12 @@ class FavoriteLoadPostLikeRankBatch(
             .getPosts(postIds = data.map { it.postId })
             .mapValues { (_, post) -> post.boardId }
 
-        redisTemplate.opsForZSet().rangeWithScoresAsFlow(RedisConfig.LIKE_KEY, Range.closed(0, -1))
+        redisTemplate.opsForZSet().rangeWithScoresAsFlow(RedisConfig.POST_LIKE_KEY, Range.closed(0, -1))
             .toList()
             .mapNotNull { tuple -> PostScore(tuple, postBoards) }
             .groupBy { postScore -> postScore.boardId }
             .forEach { (boardId, postScores) ->
-                val key = RedisConfig.LIKE_KEY + boardId
+                val key = RedisConfig.POST_LIKE_KEY + boardId
                 val boardOps = postScores.map { ZSetOperations.TypedTuple.of("${it.postId}", it.score) }.toSet()
                 redisTemplate.opsForZSet().addAllAndAwait(key, boardOps)
             }
