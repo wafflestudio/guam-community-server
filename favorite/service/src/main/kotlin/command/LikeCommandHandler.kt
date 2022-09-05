@@ -4,8 +4,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.favorite.data.r2dbc.LikeEntity
-import waffle.guam.favorite.data.r2dbc.LikeRepository
+import waffle.guam.favorite.data.r2dbc.entity.LikeEntity
+import waffle.guam.favorite.data.r2dbc.repository.LikeRepository
 import waffle.guam.favorite.service.ServiceError
 import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.infra.Post

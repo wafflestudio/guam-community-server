@@ -8,7 +8,7 @@ import org.springframework.data.domain.Range
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.reverseRangeAsFlow
 import org.springframework.stereotype.Service
-import waffle.guam.favorite.data.r2dbc.CommentLikeRepository
+import waffle.guam.favorite.data.r2dbc.repository.CommentLikeRepository
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.COMMENT_LIKE_KEY
 
 interface CommentLikeCountStore {

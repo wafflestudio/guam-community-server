@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.reactive.server.WebTestClient
 import waffle.guam.favorite.api.IntegrationTest
 import waffle.guam.favorite.api.withUser
-import waffle.guam.favorite.data.r2dbc.LikeEntity
-import waffle.guam.favorite.data.r2dbc.LikeRepository
+import waffle.guam.favorite.data.r2dbc.entity.LikeEntity
+import waffle.guam.favorite.data.r2dbc.repository.LikeRepository
 
 @IntegrationTest
 class LikeControllerTest @Autowired constructor(

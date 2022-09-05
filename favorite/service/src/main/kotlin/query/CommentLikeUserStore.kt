@@ -2,7 +2,7 @@ package waffle.guam.favorite.service.query
 
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
-import waffle.guam.favorite.data.r2dbc.CommentLikeRepository
+import waffle.guam.favorite.data.r2dbc.repository.CommentLikeRepository
 
 interface CommentLikeUserStore {
     suspend fun getLiked(postCommentId: Long, userId: Long): Boolean

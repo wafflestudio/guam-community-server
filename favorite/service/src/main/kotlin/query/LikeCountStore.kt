@@ -8,7 +8,7 @@ import org.springframework.data.domain.Range
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.reverseRangeAsFlow
 import org.springframework.stereotype.Service
-import waffle.guam.favorite.data.r2dbc.LikeRepository
+import waffle.guam.favorite.data.r2dbc.repository.LikeRepository
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.LIKE_KEY
 import waffle.guam.favorite.service.infra.CommunityService
 

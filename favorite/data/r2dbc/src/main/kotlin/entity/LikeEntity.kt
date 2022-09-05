@@ -1,4 +1,4 @@
-package waffle.guam.favorite.data.r2dbc
+package waffle.guam.favorite.data.r2dbc.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table

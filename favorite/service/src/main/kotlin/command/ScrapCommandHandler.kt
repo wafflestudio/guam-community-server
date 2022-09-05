@@ -4,8 +4,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.favorite.data.r2dbc.ScrapEntity
-import waffle.guam.favorite.data.r2dbc.ScrapRepository
+import waffle.guam.favorite.data.r2dbc.entity.ScrapEntity
+import waffle.guam.favorite.data.r2dbc.repository.ScrapRepository
 import waffle.guam.favorite.service.ServiceError
 import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.infra.Post

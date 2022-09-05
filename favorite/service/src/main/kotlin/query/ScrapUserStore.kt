@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import waffle.guam.favorite.data.r2dbc.ScrapRepository
+import waffle.guam.favorite.data.r2dbc.repository.ScrapRepository
 
 interface ScrapUserStore {
     suspend fun getScraped(postId: Long, userId: Long): Boolean
