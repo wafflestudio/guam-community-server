@@ -34,11 +34,11 @@ class FavoriteLoadScrapRankBatch(
                 limit :chunkSize
                 """.trimIndent()
             )
-            .bind("pageSize", chunkSize)
-            .bind("offset", lastId)
+            .bind("chunkSize", chunkSize)
+            .bind("lastId", lastId)
             .map { row ->
                 PostScrapCount(
-                    postId = (row.get("postId") as Number).toLong(),
+                    postId = (row.get("post_id") as Number).toLong(),
                     count = (row.get("cnt") as Number).toLong(),
                 )
             }
