@@ -17,6 +17,7 @@ spec:
         - command:
             - redis-server
             - /etc/redis-config.conf
+          args: ["--requirepass", "$(REDIS_PASS)"]
           image: redis:latest
           name: redis
           ports:
@@ -34,6 +35,12 @@ spec:
               name: redis-data
             - mountPath: /etc
               name: redis-claim
+          env:
+            - name: REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: REDIS_PASS
       initContainers:
         - command:
             - bash

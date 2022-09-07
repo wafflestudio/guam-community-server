@@ -6,7 +6,7 @@ metadata:
     app: redis
 data:
   master.conf: |
-    maxmemory 1000mb
+    maxmemory 200mb
     maxmemory-policy allkeys-lru
     maxclients 1000
     timeout 300
@@ -15,7 +15,7 @@ data:
     dir /data
   slave.conf: |
     slaveof redis-ss-0.redis-ss.redis 6379
-    maxmemory 1000mb
+    maxmemory 200mb
     maxmemory-policy allkeys-lru
     maxclients 1000
     timeout 300
