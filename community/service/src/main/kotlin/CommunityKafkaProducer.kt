@@ -27,7 +27,7 @@ class CommunityKafkaProducerImpl : CommunityKafkaProducer {
     private val kafkaProducer = KafkaTemplate<String, String>(
         DefaultKafkaProducerFactory(
             mapOf(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to listOf("34.64.147.36:9092"),
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to listOf("heywaffle.jon-snow-korea.com:9092"),
                 ProducerConfig.CLIENT_ID_CONFIG to "guam-community-dev",
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java

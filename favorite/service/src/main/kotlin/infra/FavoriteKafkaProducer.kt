@@ -29,7 +29,7 @@ class FavoriteKafkaProducerImpl : FavoriteKafkaProducer {
     private val kafkaProducer = ReactiveKafkaProducerTemplate<String, String>(
         SenderOptions.create(
             KafkaProperties().apply {
-                this.bootstrapServers = listOf("34.64.147.36:9092")
+                this.bootstrapServers = listOf("heywaffle.jon-snow-korea.com:9092")
                 this.clientId = "guam-favorite-dev"
             }
                 .buildProducerProperties()
