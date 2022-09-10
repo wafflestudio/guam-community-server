@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - command:
+            - redis-server
+            - /etc/redis-config.conf
+          args: ["--requirepass", "$(REDIS_PASS)"]
+          image: redis:latest
+          name: redis
+          ports:
+            - containerPort: 6379
+              name: redis-ss
+          resources:
+            limits:
+              cpu: 256m
+              memory: 512Mi
+            requests:
+              cpu: 128m
+              memory: 256Mi
+          volumeMounts:
+            - mountPath: /data
+              name: redis-data
+            - mountPath: /etc
+              name: redis-claim
+          env:
+            - name: REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: REDIS_PASS
+      initContainers:
+        - command:
+            - bash
+            - -c
+            - |
+              set -ex
+              # Generate redis server-id from pod ordinal index.
+              [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+              ordinal=${BASH_REMATCH[1]}
+              # Copy appropriate redis config files from config-map to respective directories.
+              if [[ $ordinal -eq 0 ]]; then
+                cp /mnt/master.conf /etc/redis-config.conf
+              else
+                cp /mnt/slave.conf /etc/redis-config.conf
+              fi
+          image: redis:latest
+          name: init-redis
+          volumeMounts:
+            - mountPath: /etc
+              name: redis-claim
+            - mountPath: /mnt/
+              name: config-map
+      volumes:
+        - configMap:
+            name: redis-config
+          name: config-map
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-claim
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

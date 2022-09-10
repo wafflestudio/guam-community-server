@@ -8,7 +8,7 @@ spec:
       containers:
         - name: post-like-loader
           image: kangjirm/guam-favorite-batch
-          command: ["--job.name=LOAD_POST_LIKE_RANK"]
+          args: ["--job.name=LOAD_POST_LIKE_RANK"]
       restartPolicy: Never
 ---
 apiVersion: batch/v1
@@ -21,7 +21,7 @@ spec:
       containers:
         - name: post-comment-like-loader
           image: kangjirm/guam-favorite-batch
-          command: ["--job.name=LOAD_POST_COMMENT_LIKE_RANK"]
+          args: ["--job.name=LOAD_POST_COMMENT_LIKE_RANK"]
       restartPolicy: Never
 ---
 apiVersion: batch/v1
@@ -34,6 +34,6 @@ spec:
       containers:
         - name: post-scrap-loader
           image: kangjirm/guam-favorite-batch
-          command: ["--job.name=LOAD_POST_SCRAP_RANK"]
+          args: ["--job.name=LOAD_POST_SCRAP_RANK"]
       restartPolicy: Never
 ---

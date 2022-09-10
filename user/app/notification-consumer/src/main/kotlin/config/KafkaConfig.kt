@@ -16,7 +16,7 @@ class KafkaConfig {
     fun consumerFactory(): ConsumerFactory<String, String> =
         DefaultKafkaConsumerFactory(
             mapOf(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "34.64.147.36:9092",
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "heywaffle.jon-snow-korea.com:9092",
                 ConsumerConfig.GROUP_ID_CONFIG to "notification-consumer",
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,

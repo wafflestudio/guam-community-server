@@ -49,7 +49,7 @@ spec:
             - name: KAFKA_LISTENERS
               value: PLAINTEXT://:9092
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: PLAINTEXT://34.64.147.36:9092
+              value: PLAINTEXT://34.64.47.164:9092
           image: wurstmeister/kafka
           imagePullPolicy: IfNotPresent
           name: kafka-broker
