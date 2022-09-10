@@ -13,5 +13,7 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-ui:1.5.+")
 
+    implementation("com.github.wafflestudio.kotlin-lib:slack-notification-spring-boot-starter:0.0.1-SNAPSHOT")
+
     compileOnly("ch.qos.logback:logback-classic")
 }

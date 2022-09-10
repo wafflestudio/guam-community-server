@@ -3,6 +3,7 @@ rootProject.name = "favorite"
 include(
     "app:api",
     "app:batch",
+    "client",
     "service",
 )
 
