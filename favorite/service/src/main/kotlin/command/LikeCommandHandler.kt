@@ -6,79 +6,69 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.data.r2dbc.entity.LikeEntity
 import waffle.guam.favorite.data.r2dbc.repository.LikeRepository
+import waffle.guam.favorite.data.redis.repository.PostLikeCountRepository
+import waffle.guam.favorite.service.CommandHandler
+import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.ServiceError
 import waffle.guam.favorite.service.infra.CommunityService
-import waffle.guam.favorite.service.infra.Post
 import waffle.guam.favorite.service.model.Like
-import waffle.guam.favorite.service.saga.LikeSaga
 import java.time.Instant
 
 @Service
 class LikeCreateHandler(
-    override val likeRepository: LikeRepository,
-    override val likeSaga: LikeSaga,
+    private val likeRepository: LikeRepository,
+    private val likeCountRepository: PostLikeCountRepository,
     private val community: CommunityService,
-) : LikeCommandHandler() {
-    override suspend fun internalHandle(like: Like): LikeCreated = coroutineScope {
-        val post = async {
-            community.getPost(like.postId) ?: throw RuntimeException("Valid Post Not Found")
-        }
+) : CommandHandler<Like, LikeCreated> {
 
-        if (like.exists()) {
+    @Transactional
+    override suspend fun handle(command: Like): LikeCreated = coroutineScope {
+        val postId = command.postId
+        val userId = command.userId
+
+        val post = async { community.getPost(command.postId).let(::requireNotNull) }
+
+        if (likeRepository.existsByPostIdAndUserId(postId = postId, userId = userId)) {
             throw DuplicateLikeException()
         }
 
-        likeRepository.save(LikeEntity(postId = like.postId, userId = like.userId))
+        likeRepository.save(LikeEntity(postId = postId, userId = userId))
 
-        LikeCreated(like = like, post = post.await())
+        likeCountRepository.increment(boardId = post.await().boardId, postId = postId)
+
+        LikeCreated(postId = postId, userId = userId)
     }
 }
 
 @Service
 class LikeDeleteHandler(
-    override val likeRepository: LikeRepository,
-    override val likeSaga: LikeSaga,
+    private val likeRepository: LikeRepository,
+    private val likeCountRepository: PostLikeCountRepository,
     private val community: CommunityService,
-) : LikeCommandHandler() {
 
-    override suspend fun internalHandle(like: Like): LikeDeleted = coroutineScope {
-        val post = async {
-            community.getPost(like.postId) ?: throw RuntimeException("Valid Post Not Found")
-        }
+) : CommandHandler<Like, LikeDeleted> {
 
-        val updatedRows = likeRepository.deleteByPostIdAndUserId(postId = like.postId, userId = like.userId)
+    @Transactional
+    override suspend fun handle(command: Like): LikeDeleted = coroutineScope {
+        val postId = command.postId
+        val userId = command.userId
+
+        val post = async { community.getPost(command.postId).let(::requireNotNull) }
+
+        val updatedRows = likeRepository.deleteByPostIdAndUserId(postId = postId, userId = userId)
 
         if (updatedRows < 1) {
             throw LikeNotFoundException()
         }
 
-        LikeDeleted(like = like, post = post.await())
+        likeCountRepository.decrement(boardId = post.await().boardId, postId = postId)
+
+        LikeDeleted(postId = postId, userId = userId)
     }
 }
 
-abstract class LikeCommandHandler : CommandHandler<Like, LikeEvent> {
-    abstract val likeRepository: LikeRepository
-    abstract val likeSaga: LikeSaga
-
-    @Transactional
-    override suspend fun handle(command: Like): LikeEvent {
-        // TODO: 더 느슨하게 불가능..?
-        return internalHandle(command).also { likeSaga.handleEvent(it) }
-    }
-
-    protected suspend fun Like.exists(): Boolean {
-        return likeRepository.existsByPostIdAndUserId(postId = postId, userId = userId)
-    }
-
-    protected abstract suspend fun internalHandle(like: Like): LikeEvent
-}
-
-sealed class LikeEvent(override val eventTime: Instant = Instant.now()) : Event {
-    abstract val like: Like
-}
-
-data class LikeCreated(override val like: Like, val post: Post) : LikeEvent()
-data class LikeDeleted(override val like: Like, val post: Post) : LikeEvent()
+data class LikeCreated(val postId: Long, val userId: Long, override val eventTime: Instant = Instant.now()) : Event
+data class LikeDeleted(val postId: Long, val userId: Long, override val eventTime: Instant = Instant.now()) : Event
 
 class DuplicateLikeException(
     override val status: Int = 409,

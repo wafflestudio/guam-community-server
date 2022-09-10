@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_SCRAP_KEY
 
 interface PostScrapCountRepository {
-    suspend fun gets(postIds: List<Long>): Map<Long, Int>
+    suspend fun gets(postIds: List<Long>): Map<Long, Long>
     suspend fun increment(postId: Long)
     suspend fun decrement(postId: Long)
 }
@@ -15,7 +15,7 @@ class PostScrapCountRepositoryImpl(
     private val redis: ReactiveStringRedisTemplate,
 ) : PostScrapCountRepository {
 
-    override suspend fun gets(postIds: List<Long>): Map<Long, Int> =
+    override suspend fun gets(postIds: List<Long>): Map<Long, Long> =
         redis.zGets(POST_SCRAP_KEY, postIds)
 
     override suspend fun increment(postId: Long) {

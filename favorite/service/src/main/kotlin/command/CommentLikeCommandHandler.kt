@@ -1,87 +1,76 @@
 package waffle.guam.favorite.service.command
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.data.r2dbc.entity.CommentLikeEntity
 import waffle.guam.favorite.data.r2dbc.repository.CommentLikeRepository
+import waffle.guam.favorite.data.redis.repository.CommentLikeCountRepository
+import waffle.guam.favorite.service.CommandHandler
+import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.ServiceError
-import waffle.guam.favorite.service.infra.Comment
-import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.model.CommentLike
-import waffle.guam.favorite.service.saga.CommentLikeSaga
 import java.time.Instant
 
 @Service
 class CommentLikeCreateHandler(
-    override val commentLikeRepository: CommentLikeRepository,
-    override val commentLikeSaga: CommentLikeSaga,
-    private val community: CommunityService,
-) : CommentLikeCommandHandler() {
+    private val commentLikeRepository: CommentLikeRepository,
+    private val commentLikeCountRepository: CommentLikeCountRepository,
+) : CommandHandler<CommentLike, CommentLikeCreated> {
 
-    override suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent = coroutineScope {
-        val comment = async {
-            community.getComment(commentLike.postCommentId) ?: throw RuntimeException("Valid Comment Not Found.")
-        }
+    @Transactional
+    override suspend fun handle(command: CommentLike): CommentLikeCreated {
+        val postCommentId = command.postCommentId
+        val userId = command.userId
 
-        if (commentLike.exists()) {
+        if (commentLikeRepository.existsByPostCommentIdAndUserId(postCommentId = postCommentId, userId = userId)) {
             throw DuplicateCommentLikeException()
         }
 
-        commentLikeRepository.save(
-            CommentLikeEntity(
-                postCommentId = commentLike.postCommentId,
-                userId = commentLike.userId
-            )
-        )
+        commentLikeRepository.save(CommentLikeEntity(postCommentId = postCommentId, userId = userId))
 
-        CommentLikeCreated(commentLike = commentLike, comment = comment.await())
+        commentLikeCountRepository.increment(postCommentId)
+
+        return CommentLikeCreated(postCommentId = postCommentId, userId = userId)
     }
 }
 
 @Service
 class CommentLikeDeleteHandler(
-    override val commentLikeRepository: CommentLikeRepository,
-    override val commentLikeSaga: CommentLikeSaga,
-) : CommentLikeCommandHandler() {
+    private val commentLikeRepository: CommentLikeRepository,
+    private val commentLikeCountRepository: CommentLikeCountRepository,
+) : CommandHandler<CommentLike, CommentLikeDeleted> {
 
-    override suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent {
+    @Transactional
+    override suspend fun handle(command: CommentLike): CommentLikeDeleted {
+        val postCommentId = command.postCommentId
+        val userId = command.userId
+
         val updatedRows = commentLikeRepository.deleteByPostCommentIdAndUserId(
-            postCommentId = commentLike.postCommentId,
-            userId = commentLike.userId
+            postCommentId = postCommentId,
+            userId = userId
         )
 
         if (updatedRows < 1) {
             throw CommentLikeNotFoundException()
         }
 
-        return CommentLikeDeleted(commentLike)
+        commentLikeCountRepository.decrement(postCommentId)
+
+        return CommentLikeDeleted(postCommentId = postCommentId, userId = userId)
     }
 }
 
-abstract class CommentLikeCommandHandler : CommandHandler<CommentLike, CommentLikeEvent> {
-    abstract val commentLikeRepository: CommentLikeRepository
-    abstract val commentLikeSaga: CommentLikeSaga
+data class CommentLikeCreated(
+    val postCommentId: Long,
+    val userId: Long,
+    override val eventTime: Instant = Instant.now(),
+) : Event
 
-    @Transactional
-    override suspend fun handle(command: CommentLike): CommentLikeEvent {
-        // TODO: 더 느슨하게 불가능..?
-        return internalHandle(command).also { commentLikeSaga.handleEvent(it) }
-    }
-
-    protected suspend fun CommentLike.exists(): Boolean {
-        return commentLikeRepository.existsByPostCommentIdAndUserId(postCommentId = postCommentId, userId = userId)
-    }
-
-    protected abstract suspend fun internalHandle(commentLike: CommentLike): CommentLikeEvent
-}
-
-sealed class CommentLikeEvent(override val eventTime: Instant = Instant.now()) : Event {
-    abstract val commentLike: CommentLike
-}
-data class CommentLikeCreated(override val commentLike: CommentLike, val comment: Comment) : CommentLikeEvent()
-data class CommentLikeDeleted(override val commentLike: CommentLike) : CommentLikeEvent()
+data class CommentLikeDeleted(
+    val postCommentId: Long,
+    val userId: Long,
+    override val eventTime: Instant = Instant.now(),
+) : Event
 
 class DuplicateCommentLikeException(
     override val status: Int = 409,

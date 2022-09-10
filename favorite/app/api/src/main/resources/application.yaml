@@ -1,3 +1,5 @@
 spring:
+  profiles:
+    active: dev
   config:
     import: application-service.yaml

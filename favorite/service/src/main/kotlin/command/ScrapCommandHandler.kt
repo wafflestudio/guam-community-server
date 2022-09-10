@@ -1,79 +1,76 @@
 package waffle.guam.favorite.service.command
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.guam.favorite.data.r2dbc.entity.ScrapEntity
 import waffle.guam.favorite.data.r2dbc.repository.ScrapRepository
+import waffle.guam.favorite.data.redis.repository.PostScrapCountRepository
+import waffle.guam.favorite.service.CommandHandler
+import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.ServiceError
-import waffle.guam.favorite.service.infra.CommunityService
-import waffle.guam.favorite.service.infra.Post
 import waffle.guam.favorite.service.model.Scrap
-import waffle.guam.favorite.service.saga.ScrapSaga
 import java.time.Instant
 
 @Service
 class ScrapCreateHandler(
-    override val scrapRepository: ScrapRepository,
-    override val scrapSaga: ScrapSaga,
-    private val community: CommunityService,
-) : ScrapCommandHandler() {
-    override suspend fun internalHandle(scrap: Scrap): ScrapCreated = coroutineScope {
-        val post = async {
-            community.getPost(scrap.postId) ?: throw RuntimeException("Valid Post Not Found")
-        }
+    private val scrapRepository: ScrapRepository,
+    private val scrapCountRepository: PostScrapCountRepository,
+) : CommandHandler<Scrap, ScrapCreated> {
 
-        if (scrap.exists()) {
+    @Transactional
+    override suspend fun handle(command: Scrap): ScrapCreated {
+        val postId = command.postId
+        val userId = command.userId
+
+        if (scrapRepository.existsByPostIdAndUserId(postId = postId, userId = userId)) {
             throw DuplicateScrapException()
         }
 
-        scrapRepository.save(ScrapEntity(postId = scrap.postId, userId = scrap.userId))
+        scrapRepository.save(ScrapEntity(postId = postId, userId = userId))
 
-        ScrapCreated(scrap = scrap, post = post.await())
+        scrapCountRepository.increment(postId)
+
+        return ScrapCreated(postId = postId, userId = userId)
     }
 }
 
 @Service
 class ScrapDeleteHandler(
-    override val scrapRepository: ScrapRepository,
-    override val scrapSaga: ScrapSaga,
-) : ScrapCommandHandler() {
+    private val scrapRepository: ScrapRepository,
+    private val scrapCountRepository: PostScrapCountRepository,
+) : CommandHandler<Scrap, ScrapDeleted> {
 
-    override suspend fun internalHandle(scrap: Scrap): ScrapDeleted {
-        val updatedRows = scrapRepository.deleteByPostIdAndUserId(postId = scrap.postId, userId = scrap.userId)
+    @Transactional
+    override suspend fun handle(command: Scrap): ScrapDeleted {
+        val postId = command.postId
+        val userId = command.userId
+
+        val updatedRows = scrapRepository.deleteByPostIdAndUserId(
+            postId = postId,
+            userId = userId
+        )
 
         if (updatedRows < 1) {
             throw ScrapNotFoundException()
         }
 
-        return ScrapDeleted(scrap)
+        scrapCountRepository.decrement(postId)
+
+        return ScrapDeleted(postId = postId, userId = userId)
     }
 }
 
-abstract class ScrapCommandHandler : CommandHandler<Scrap, ScrapEvent> {
-    abstract val scrapRepository: ScrapRepository
-    abstract val scrapSaga: ScrapSaga
+data class ScrapCreated(
+    val postId: Long,
+    val userId: Long,
+    override val eventTime: Instant = Instant.now(),
+) : Event
 
-    @Transactional
-    override suspend fun handle(command: Scrap): ScrapEvent {
-        // TODO: 더 느슨하게 불가능..?
-        return internalHandle(command).also { scrapSaga.handleEvent(it) }
-    }
-
-    protected suspend fun Scrap.exists(): Boolean {
-        return scrapRepository.existsByPostIdAndUserId(postId = postId, userId = userId)
-    }
-
-    protected abstract suspend fun internalHandle(scrap: Scrap): ScrapEvent
-}
-
-sealed class ScrapEvent(override val eventTime: Instant = Instant.now()) : Event {
-    abstract val scrap: Scrap
-}
-
-data class ScrapCreated(override val scrap: Scrap, val post: Post) : ScrapEvent()
-data class ScrapDeleted(override val scrap: Scrap) : ScrapEvent()
+data class ScrapDeleted(
+    val postId: Long,
+    val userId: Long,
+    override val eventTime: Instant = Instant.now(),
+) : Event
 
 class DuplicateScrapException(
     override val status: Int = 409,

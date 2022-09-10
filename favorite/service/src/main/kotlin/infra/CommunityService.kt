@@ -30,7 +30,6 @@ class CommunityServiceImpl(
             .retrieve()
             .awaitBody<PostResponse>()
             .posts
-            .filter { (_, post) -> post.status == "VALID" }
     }
 
     override suspend fun getComment(commentId: Long): Comment? {

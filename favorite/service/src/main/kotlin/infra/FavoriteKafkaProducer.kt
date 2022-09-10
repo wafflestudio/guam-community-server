@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
 import org.springframework.stereotype.Service
 import reactor.kafka.sender.SenderOptions
+import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.command.CommentLikeCreated
-import waffle.guam.favorite.service.command.Event
 import waffle.guam.favorite.service.command.LikeCreated
 import waffle.guam.favorite.service.command.ScrapCreated
 

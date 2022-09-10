@@ -7,18 +7,18 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
+import waffle.guam.favorite.data.redis.repository.CommentLikeCountRepository
 import waffle.guam.favorite.service.command.CommentLikeCreateHandler
 import waffle.guam.favorite.service.command.CommentLikeDeleteHandler
 import waffle.guam.favorite.service.command.CommentLikeNotFoundException
 import waffle.guam.favorite.service.command.DuplicateCommentLikeException
 import waffle.guam.favorite.service.model.CommentLike
-import waffle.guam.favorite.service.query.CommentLikeCountStore
 
 @ServiceTest
 class CommentLikeTest @Autowired constructor(
     private val createHandler: CommentLikeCreateHandler,
     private val deleteHandler: CommentLikeDeleteHandler,
-    private val likeCountStore: CommentLikeCountStore.Rank,
+    private val likeCountRepository: CommentLikeCountRepository,
     private val tx: TransactionalOperator,
 ) {
 
@@ -56,17 +56,13 @@ class CommentLikeTest @Autowired constructor(
             createHandler.handle(CommentLike(postCommentId = 3L, userId = 1L))
             createHandler.handle(CommentLike(postCommentId = 3L, userId = 2L))
 
-            Assertions.assertThat(likeCountStore.getCount(1L)).isEqualTo(1)
-            Assertions.assertThat(likeCountStore.getCount(2L)).isEqualTo(1)
-            Assertions.assertThat(likeCountStore.getCount(3L)).isEqualTo(2)
-            Assertions.assertThat(likeCountStore.getCount(listOf(1L, 2L, 3L))).isEqualTo(mapOf(1L to 1, 2L to 1, 3L to 2))
+            Assertions.assertThat(likeCountRepository.gets(listOf(1L, 2L, 3L)))
+                .isEqualTo(mapOf(1L to 1L, 2L to 1L, 3L to 2L))
 
             deleteHandler.handle(CommentLike(postCommentId = 3L, userId = 2L))
 
-            Assertions.assertThat(likeCountStore.getCount(1L)).isEqualTo(1)
-            Assertions.assertThat(likeCountStore.getCount(2L)).isEqualTo(1)
-            Assertions.assertThat(likeCountStore.getCount(3L)).isEqualTo(1)
-            Assertions.assertThat(likeCountStore.getCount(listOf(1L, 2L, 3L))).isEqualTo(mapOf(1L to 1, 2L to 1, 3L to 1))
+            Assertions.assertThat(likeCountRepository.gets(listOf(1L, 2L, 3L)))
+                .isEqualTo(mapOf(1L to 1L, 2L to 1L, 3L to 1L))
         }
     }
 }

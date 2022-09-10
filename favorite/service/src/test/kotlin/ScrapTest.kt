@@ -7,18 +7,18 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
+import waffle.guam.favorite.data.redis.repository.PostScrapCountRepository
 import waffle.guam.favorite.service.command.DuplicateScrapException
 import waffle.guam.favorite.service.command.ScrapCreateHandler
 import waffle.guam.favorite.service.command.ScrapDeleteHandler
 import waffle.guam.favorite.service.command.ScrapNotFoundException
 import waffle.guam.favorite.service.model.Scrap
-import waffle.guam.favorite.service.query.ScrapCountStore
 
 @ServiceTest
 class ScrapTest @Autowired constructor(
     private val createHandler: ScrapCreateHandler,
     private val deleteHandler: ScrapDeleteHandler,
-    private val scrapCountStore: ScrapCountStore.Rank,
+    private val scrapCountRepository: PostScrapCountRepository,
     private val tx: TransactionalOperator,
 ) {
     @Test
@@ -55,19 +55,13 @@ class ScrapTest @Autowired constructor(
             createHandler.handle(Scrap(postId = 3L, userId = 1L))
             createHandler.handle(Scrap(postId = 3L, userId = 2L))
 
-            Assertions.assertThat(scrapCountStore.getCount(1L)).isEqualTo(1)
-            Assertions.assertThat(scrapCountStore.getCount(2L)).isEqualTo(1)
-            Assertions.assertThat(scrapCountStore.getCount(3L)).isEqualTo(2)
-            Assertions.assertThat(scrapCountStore.getCount(listOf(1L, 2L, 3L)))
-                .isEqualTo(mapOf(1L to 1, 2L to 1, 3L to 2))
+            Assertions.assertThat(scrapCountRepository.gets(listOf(1L, 2L, 3L)))
+                .isEqualTo(mapOf(1L to 1L, 2L to 1L, 3L to 2L))
 
             deleteHandler.handle(Scrap(postId = 3L, userId = 2L))
 
-            Assertions.assertThat(scrapCountStore.getCount(1L)).isEqualTo(1)
-            Assertions.assertThat(scrapCountStore.getCount(2L)).isEqualTo(1)
-            Assertions.assertThat(scrapCountStore.getCount(3L)).isEqualTo(1)
-            Assertions.assertThat(scrapCountStore.getCount(listOf(1L, 2L, 3L)))
-                .isEqualTo(mapOf(1L to 1, 2L to 1, 3L to 1))
+            Assertions.assertThat(scrapCountRepository.gets(listOf(1L, 2L, 3L)))
+                .isEqualTo(mapOf(1L to 1L, 2L to 1L, 3L to 1L))
         }
     }
 }

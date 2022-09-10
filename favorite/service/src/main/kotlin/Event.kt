@@ -1,4 +1,4 @@
-package waffle.guam.favorite.service.command
+package waffle.guam.favorite.service
 
 import java.time.Instant
 

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 class RedisConfig {
     companion object {
         const val POST_LIKE_KEY = "POST_LIKE"
-        const val COMMENT_LIKE_KEY = "POST_COMMENT_LIKE_KEY"
         const val POST_SCRAP_KEY = "POST_SCRAP"
+        const val COMMENT_LIKE_KEY = "POST_COMMENT_LIKE_KEY"
     }
 }

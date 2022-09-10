@@ -17,7 +17,6 @@ import redis.embedded.RedisServer
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.COMMENT_LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_SCRAP_KEY
-import waffle.guam.favorite.service.command.Event
 import waffle.guam.favorite.service.infra.Comment
 import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.infra.FavoriteKafkaProducer
