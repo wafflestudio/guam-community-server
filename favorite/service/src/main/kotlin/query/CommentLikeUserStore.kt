@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.r2dbc.repository.CommentLikeRepository
 
+// FIXME
 interface CommentLikeUserStore {
     suspend fun getLiked(postCommentId: Long, userId: Long): Boolean
     suspend fun getLiked(postCommentIds: List<Long>, userId: Long): Map<Long, Boolean>

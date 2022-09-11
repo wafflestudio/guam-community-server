@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.r2dbc.repository.LikeRepository
 
+// FIXME
 interface LikeUserStore {
     suspend fun getLiked(postId: Long, userId: Long): Boolean
     suspend fun getLiked(postIds: List<Long>, userId: Long): Map<Long, Boolean>

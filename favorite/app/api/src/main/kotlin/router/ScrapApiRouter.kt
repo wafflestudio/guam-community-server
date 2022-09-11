@@ -1,4 +1,4 @@
-package waffle.guam.favorite.api.handler
+package waffle.guam.favorite.api.router
 
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -10,7 +10,7 @@ import waffle.guam.favorite.service.model.Scrap
 import waffle.guam.favorite.service.query.ScrapUserStore
 
 @Service
-class ScrapApiHandler(
+class ScrapApiRouter(
     private val scrapCreateHandler: ScrapCreateHandler,
     private val scrapDeleteHandler: ScrapDeleteHandler,
     private val scrapUserStore: ScrapUserStore,

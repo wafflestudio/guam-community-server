@@ -1,4 +1,4 @@
-package waffle.guam.favorite.api.handler
+package waffle.guam.favorite.api.router
 
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -11,7 +11,7 @@ import waffle.guam.favorite.service.model.Like
 
 @RequestMapping("/api/v1/likes/posts")
 @RestController
-class LikeApiHandler(
+class LikeApiRouter(
     private val likeCreateHandler: LikeCreateHandler,
     private val likeDeleteHandler: LikeDeleteHandler,
 ) {

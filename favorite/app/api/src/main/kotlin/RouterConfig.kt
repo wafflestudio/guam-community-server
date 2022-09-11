@@ -10,10 +10,10 @@ import org.springframework.web.reactive.function.server.buildAndAwait
 import org.springframework.web.reactive.function.server.coRouter
 import org.springframework.web.server.WebFilter
 import reactor.core.publisher.Flux
-import waffle.guam.favorite.api.handler.CommentLikeApiHandler
-import waffle.guam.favorite.api.handler.LikeApiHandler
-import waffle.guam.favorite.api.handler.ScrapApiHandler
-import waffle.guam.favorite.api.handler.ViewApiHandler
+import waffle.guam.favorite.api.router.CommentLikeApiRouter
+import waffle.guam.favorite.api.router.LikeApiRouter
+import waffle.guam.favorite.api.router.ScrapApiRouter
+import waffle.guam.favorite.api.router.ViewApiRouter
 import waffle.guam.favorite.service.ServiceError
 import java.net.URI
 
@@ -21,10 +21,10 @@ import java.net.URI
 @Configuration
 @OpenAPIDefinition(info = Info(title = "guam-favorite API", version = "v1"))
 class RouterConfig(
-    private val like: LikeApiHandler,
-    private val scrap: ScrapApiHandler,
-    private val commentLike: CommentLikeApiHandler,
-    private val view: ViewApiHandler,
+    private val like: LikeApiRouter,
+    private val scrap: ScrapApiRouter,
+    private val commentLike: CommentLikeApiRouter,
+    private val view: ViewApiRouter,
 ) {
     private val mapper = Jackson2ObjectMapperBuilder.json().build<ObjectMapper>()
 

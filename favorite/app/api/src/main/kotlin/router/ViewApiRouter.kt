@@ -1,4 +1,4 @@
-package waffle.guam.favorite.api.handler
+package waffle.guam.favorite.api.router
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -15,7 +15,7 @@ import waffle.guam.favorite.service.query.ScrapUserStore
 
 @RequestMapping("/api/v1/views")
 @RestController
-class ViewApiHandler(
+class ViewApiRouter(
     private val likeCountRepository: PostLikeCountRepository,
     private val likeUserStore: LikeUserStore,
     private val scrapCountRepository: PostScrapCountRepository,

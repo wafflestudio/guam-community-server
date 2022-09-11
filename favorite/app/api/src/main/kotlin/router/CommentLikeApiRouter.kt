@@ -1,4 +1,4 @@
-package waffle.guam.favorite.api.handler
+package waffle.guam.favorite.api.router
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -13,7 +13,7 @@ import waffle.guam.favorite.service.model.CommentLike
 import waffle.guam.favorite.service.query.CommentLikeUserStore
 
 @Service
-class CommentLikeApiHandler(
+class CommentLikeApiRouter(
     private val commentLikeCreateHandler: CommentLikeCreateHandler,
     private val commentLikeDeleteHandler: CommentLikeDeleteHandler,
     private val commentLikeCountRepository: CommentLikeCountRepository,

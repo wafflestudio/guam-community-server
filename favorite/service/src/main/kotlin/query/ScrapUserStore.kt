@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import waffle.guam.favorite.data.r2dbc.repository.ScrapRepository
 
+// FIXME
 interface ScrapUserStore {
     suspend fun getScraped(postId: Long, userId: Long): Boolean
     suspend fun getScraped(postIds: List<Long>, userId: Long): Map<Long, Boolean>
