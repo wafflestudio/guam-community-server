@@ -3,3 +3,8 @@ spring:
     active: dev
   config:
     import: application-service.yaml
+
+slack:
+  notification:
+    token: # in vault
+    channel_name: # in vault

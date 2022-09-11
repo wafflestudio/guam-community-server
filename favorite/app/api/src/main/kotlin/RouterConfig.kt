@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.server.buildAndAwait
 import org.springframework.web.reactive.function.server.coRouter
 import org.springframework.web.server.WebFilter
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import waffle.guam.favorite.api.router.CommentLikeApiRouter
 import waffle.guam.favorite.api.router.LikeApiRouter
 import waffle.guam.favorite.api.router.ScrapApiRouter
@@ -42,7 +43,7 @@ class RouterConfig(
         // scrap
         POST("/api/v1/scraps/posts/{postId}", scrap::create)
         DELETE("/api/v1/scraps/posts/{postId}", scrap::delete)
-        GET("/api/v1/scraps/users", scrap::getUsers)
+        GET("/api/v1/scraps/user", scrap::getUsers)
 
         // comment like
         POST("/api/v1/likes/comments/{postCommentId}", commentLike::create)
@@ -68,8 +69,7 @@ class RouterConfig(
                         )
                     )
                 } else {
-                    exchange.response.rawStatusCode = 500
-                    exchange.response.setComplete()
+                    Mono.error(it)
                 }
             }
     }

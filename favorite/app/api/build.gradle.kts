@@ -15,4 +15,6 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.11")
     implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
+
+    implementation("com.github.wafflestudio.kotlin-lib:slack-notification-spring-boot-starter:0.0.1")
 }
