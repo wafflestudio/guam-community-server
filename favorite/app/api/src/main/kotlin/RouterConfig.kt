@@ -60,9 +60,11 @@ class RouterConfig(
                 if (it is ServiceError) {
                     exchange.response.rawStatusCode = it.status
                     exchange.response.writeWith(
-                        exchange.response.bufferFactory()
-                            .wrap(mapper.writeValueAsBytes(it.msg))
-                            .let { Flux.just(it) }
+                        Flux.just(
+                            exchange.response
+                                .bufferFactory()
+                                .wrap(mapper.writeValueAsBytes(it.msg))
+                        )
                     )
                 } else {
                     exchange.response.rawStatusCode = 500
