@@ -11,6 +11,7 @@ import waffle.guam.favorite.service.CommandHandler
 import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.ServiceError
 import waffle.guam.favorite.service.infra.CommunityService
+import waffle.guam.favorite.service.infra.FavoriteKafkaProducer
 import waffle.guam.favorite.service.model.Like
 import java.time.Instant
 
@@ -19,6 +20,7 @@ class LikeCreateHandler(
     private val likeRepository: LikeRepository,
     private val likeCountRepository: PostLikeCountRepository,
     private val community: CommunityService,
+    private val kafka: FavoriteKafkaProducer
 ) : CommandHandler<Like, LikeCreated> {
 
     @Transactional
@@ -36,7 +38,7 @@ class LikeCreateHandler(
 
         likeCountRepository.increment(boardId = post.await().boardId, postId = postId)
 
-        LikeCreated(postId = postId, userId = userId)
+        LikeCreated(postId = postId, userId = userId).also(kafka::send)
     }
 }
 

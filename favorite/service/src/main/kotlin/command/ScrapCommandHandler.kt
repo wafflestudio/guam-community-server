@@ -8,6 +8,7 @@ import waffle.guam.favorite.data.redis.repository.PostScrapCountRepository
 import waffle.guam.favorite.service.CommandHandler
 import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.ServiceError
+import waffle.guam.favorite.service.infra.FavoriteKafkaProducer
 import waffle.guam.favorite.service.model.Scrap
 import java.time.Instant
 
@@ -15,6 +16,7 @@ import java.time.Instant
 class ScrapCreateHandler(
     private val scrapRepository: ScrapRepository,
     private val scrapCountRepository: PostScrapCountRepository,
+    private val kafka: FavoriteKafkaProducer
 ) : CommandHandler<Scrap, ScrapCreated> {
 
     @Transactional
@@ -30,7 +32,7 @@ class ScrapCreateHandler(
 
         scrapCountRepository.increment(postId)
 
-        return ScrapCreated(postId = postId, userId = userId)
+        return ScrapCreated(postId = postId, userId = userId).also(kafka::send)
     }
 }
 

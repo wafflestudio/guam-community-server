@@ -14,9 +14,15 @@ class ServiceConfig
 @ConfigurationProperties("favorite.infra")
 @ConstructorBinding
 data class ServiceProperties(
-    val community: Community
+    val community: Community,
+    val kafka: Kafka,
 ) {
     data class Community(
-        val url: String
+        val url: String,
+    )
+
+    data class Kafka(
+        val url: String,
+        val clientId: String = "guam-favorite-dev",
     )
 }

@@ -8,6 +8,7 @@ import waffle.guam.favorite.data.redis.repository.CommentLikeCountRepository
 import waffle.guam.favorite.service.CommandHandler
 import waffle.guam.favorite.service.Event
 import waffle.guam.favorite.service.ServiceError
+import waffle.guam.favorite.service.infra.FavoriteKafkaProducer
 import waffle.guam.favorite.service.model.CommentLike
 import java.time.Instant
 
@@ -15,6 +16,7 @@ import java.time.Instant
 class CommentLikeCreateHandler(
     private val commentLikeRepository: CommentLikeRepository,
     private val commentLikeCountRepository: CommentLikeCountRepository,
+    private val kafka: FavoriteKafkaProducer
 ) : CommandHandler<CommentLike, CommentLikeCreated> {
 
     @Transactional
@@ -30,7 +32,7 @@ class CommentLikeCreateHandler(
 
         commentLikeCountRepository.increment(postCommentId)
 
-        return CommentLikeCreated(postCommentId = postCommentId, userId = userId)
+        return CommentLikeCreated(postCommentId = postCommentId, userId = userId).also(kafka::send)
     }
 }
 

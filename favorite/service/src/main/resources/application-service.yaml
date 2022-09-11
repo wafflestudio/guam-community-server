@@ -17,6 +17,8 @@ favorite:
   infra:
     community:
       url: http://guam-community.jon-snow-korea.com
+    kafka:
+      url: heywaffle.jon-snow-korea.com:9092
 ---
 spring.config.activate.on-profile: dev
 
