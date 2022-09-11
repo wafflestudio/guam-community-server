@@ -17,7 +17,6 @@ import redis.embedded.RedisServer
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.COMMENT_LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_LIKE_KEY
 import waffle.guam.favorite.data.redis.RedisConfig.Companion.POST_SCRAP_KEY
-import waffle.guam.favorite.service.infra.Comment
 import waffle.guam.favorite.service.infra.CommunityService
 import waffle.guam.favorite.service.infra.FavoriteKafkaProducer
 import waffle.guam.favorite.service.infra.Post
@@ -30,7 +29,7 @@ annotation class ServiceTest {
     @Primary
     @Service
     class TestKafkaProducer : FavoriteKafkaProducer {
-        override suspend fun send(event: Event) {}
+        override fun send(event: Event) {}
     }
 
     @Primary
@@ -38,16 +37,10 @@ annotation class ServiceTest {
     class TestCommunity : CommunityService {
         override suspend fun getPost(postId: Long): Post? = basePost.copy(id = postId)
 
-        override suspend fun getComment(commentId: Long): Comment? = baseComment.copy(id = commentId)
-
         override suspend fun getPosts(postIds: List<Long>): Map<Long, Post> =
             postIds.associateWith { basePost.copy(id = it) }
 
-        private val basePost: Post =
-            Post(id = 0, boardId = 1, userId = 0, title = "", content = "", status = "", isAnonymous = false)
-
-        private val baseComment: Comment =
-            Comment(id = 0, postId = 1, userId = 0, content = "", status = "", isAnonymous = false)
+        private val basePost: Post = Post(id = 0, boardId = 1)
     }
 
     @Service

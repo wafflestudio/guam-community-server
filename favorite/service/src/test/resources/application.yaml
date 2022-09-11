@@ -2,5 +2,5 @@ favorite:
   infra:
     community:
       url: ""
-    notification:
+    kafka:
       url: ""

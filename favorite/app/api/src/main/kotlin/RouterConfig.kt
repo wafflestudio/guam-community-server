@@ -17,6 +17,7 @@ import waffle.guam.favorite.api.handler.ViewApiHandler
 import waffle.guam.favorite.service.ServiceError
 import java.net.URI
 
+// TODO: ApiDoc
 @Configuration
 @OpenAPIDefinition(info = Info(title = "guam-favorite API", version = "v1"))
 class RouterConfig(
