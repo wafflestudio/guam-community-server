@@ -11,6 +11,6 @@ data class BlockEntity(
     @Id
     val id: Long = 0L,
     val userId: Long,
-    val targetId: Long,
+    val blockUserId: Long,
     val createdAt: LocalDateTime = LocalDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")),
 )

@@ -17,9 +17,9 @@ class BlockCommandServiceImpl(
     @Transactional
     override suspend fun createBlock(command: CreateBlock): Block {
         return blockRepository.save(
-            BlockEntity(userId = command.userId, targetId = command.targetId)
+            BlockEntity(userId = command.userId, blockUserId = command.targetId)
         ).let {
-            Block(userId = it.userId, targetId = it.targetId)
+            Block(userId = it.userId, targetId = it.blockUserId)
         }
     }
 }

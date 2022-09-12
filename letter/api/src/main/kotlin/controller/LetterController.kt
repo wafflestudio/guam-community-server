@@ -17,6 +17,7 @@ import waffle.guam.favorite.service.command.ReadLetterBox
 import waffle.guam.favorite.service.domain.Letter
 import waffle.guam.favorite.service.domain.LetterBoxPreview
 import waffle.guam.favorite.service.query.LetterQueryService
+import waffle.guam.letter.api.config.BlockFilter
 import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 
 @RequestMapping("/api/v1/letters")
@@ -39,7 +40,9 @@ class LetterController(
     @GetMapping("")
     suspend fun getLetterBoxPreviews(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
+        blockedIds: BlockFilter,
     ): LetterBoxResponse {
+        println(blockedIds.blockedPairs)
         return LetterBoxResponse(
             userId = userId,
             letterBoxes = letterQueryService.getLetterBoxPreviews(userId)
