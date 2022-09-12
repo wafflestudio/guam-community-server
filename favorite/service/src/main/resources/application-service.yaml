@@ -12,6 +12,7 @@ spring:
   redis:
     host: # in vault
     port: # in vault
+    password: # in vault
 
 favorite:
   infra:
