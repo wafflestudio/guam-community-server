@@ -1,9 +1,11 @@
-package waffle.guam.favorite.service.query
+package waffle.guam.letter.service.query
 
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import waffle.guam.favorite.service.domain.User
+import waffle.guam.letter.service.domain.User
 
 interface UserQueryService {
     suspend fun get(userId: Long): User
@@ -13,11 +15,9 @@ interface UserQueryService {
 @Service
 class UserQueryServiceImpl(
     webClientBuilder: WebClient.Builder,
+    userServiceProperties: UserServiceProperties,
 ) : UserQueryService {
-
-    // FIXME: baseUrl 프로퍼티로 등록, 어느 패키지로 보낼까
-    private val webClient = webClientBuilder.baseUrl("http://guam-user.jon-snow-korea.com")
-        .build()
+    private val webClient = webClientBuilder.baseUrl(userServiceProperties.baseUrl).build()
 
     override suspend fun get(userId: Long): User {
         return webClient.get()
