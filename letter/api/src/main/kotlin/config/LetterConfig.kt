@@ -26,8 +26,11 @@ class LetterArgumentResolver(
         bindingContext: BindingContext,
         exchange: ServerWebExchange
     ): Mono<Any> {
-        val header = exchange.request.headers["X-GATEWAY-USER-ID"] ?: throw IllegalArgumentException()
-        val userId = header.single().toLong()
+        val userId = exchange.request.headers
+            .getFirst("X-GATEWAY-USER-ID")
+            .let(::requireNotNull)
+            .toLong()
+
         return blockQueryService.getBlockList(userId).map { BlockFilter(it.blockUsers.map(User::id)) }
     }
 
