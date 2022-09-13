@@ -6,9 +6,13 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 
 @Entity
-@Table(name = "reports")
+@Table(
+    name = "reports",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["postId", "reportedUserId"])]
+)
 class ReportEntity(
     val postId: Long,
     val reportedUserId: Long,
