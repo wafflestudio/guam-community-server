@@ -11,14 +11,6 @@ spring:
         response-timeout: 5s
       enabled: true
       routes:
-        # user
-        - id: user_auth_route
-          uri: http://guam-user.jon-snow-korea.com
-          predicates:
-            - Path=/community/api/v1/users/**, /community/api/v1/push/**, /community/api/v1/blocks/**
-          filters:
-            - RewritePath=/community(?<segment>/?.*), $\{segment}
-            - Guam
         # favorite
         - id: favorite_auth_route
           uri: http://guam-favorite.jon-snow-korea.com

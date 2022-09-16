@@ -4,12 +4,48 @@ metadata:
   name: user-api
 spec:
   hosts:
+    - "guam.jon-snow-korea.com"
     - "guam-user.jon-snow-korea.com"
     - "guam-immigration.jon-snow-korea.com"
   gateways:
     - istio-system/waffle-ingressgateway
   http:
-    - route:
+    - name: "direct-user" # TODO: 클라와 협의해서 api path 정리좀 필요할듯
+      match:
+        - uri:
+            prefix: "/community/api/v1/users"
+      rewrite:
+        uri: "/api/v1/users"
+      route:
+        - destination:
+            host: user-api
+    - name: "direct-blocks"
+      match:
+        - uri:
+            prefix: "/community/api/v1/blocks"
+      rewrite:
+        uri: "/api/v1/blocks"
+      route:
+        - destination:
+            host: user-api
+    - name: "direct-push"
+      match:
+        - uri:
+            prefix: "/community/api/v1/push"
+      rewrite:
+        uri: "/api/v1/push"
+      route:
+        - destination:
+            host: user-api
+    - name: "gateway"
+      match:
+        - uri:
+            prefix: "/api/v1/users"
+        - uri:
+            prefix: "/api/v1/auth"
+        - uri:
+            prefix: "/api/v1/user/token"
+      route:
         - destination:
             host: user-api
 ---
