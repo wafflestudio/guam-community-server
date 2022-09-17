@@ -12,9 +12,9 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
 import org.springframework.stereotype.Service
 import org.springframework.test.context.event.BeforeTestExecutionEvent
-import waffle.guam.favorite.service.command.ImageCommandService
-import waffle.guam.favorite.service.domain.User
-import waffle.guam.favorite.service.query.UserQueryService
+import waffle.guam.letter.service.command.ImageCommandService
+import waffle.guam.letter.service.domain.User
+import waffle.guam.letter.service.query.UserQueryService
 
 @SpringBootTest(properties = ["spring.cloud.vault.enabled=false"])
 annotation class ServiceTest
