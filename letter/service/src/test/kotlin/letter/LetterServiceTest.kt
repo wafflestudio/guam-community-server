@@ -5,12 +5,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import waffle.guam.favorite.service.ServiceTest
-import waffle.guam.favorite.service.command.ClearLetterBox
-import waffle.guam.favorite.service.command.CreateLetter
-import waffle.guam.favorite.service.command.LetterCommandService
-import waffle.guam.favorite.service.command.ReadLetterBox
-import waffle.guam.favorite.service.query.LetterQueryService
 import waffle.guam.letter.data.r2dbc.repository.LetterRepository
+import waffle.guam.letter.service.command.ClearLetterBox
+import waffle.guam.letter.service.command.CreateLetter
+import waffle.guam.letter.service.command.LetterCommandService
+import waffle.guam.letter.service.command.ReadLetterBox
+import waffle.guam.letter.service.query.LetterQueryService
 
 @ServiceTest
 class LetterServiceTest @Autowired constructor(

@@ -12,7 +12,7 @@ import waffle.guam.letter.service.domain.User
 import waffle.guam.letter.service.query.BlockQueryService
 
 @Configuration
-class LetterConfig(private val blockQueryService: BlockQueryService): WebFluxConfigurer {
+class LetterConfig(private val blockQueryService: BlockQueryService) : WebFluxConfigurer {
     override fun configureArgumentResolvers(configurer: ArgumentResolverConfigurer) {
         configurer.addCustomResolver(LetterArgumentResolver(blockQueryService))
     }
@@ -20,7 +20,7 @@ class LetterConfig(private val blockQueryService: BlockQueryService): WebFluxCon
 
 class LetterArgumentResolver(
     private val blockQueryService: BlockQueryService,
-): HandlerMethodArgumentResolver {
+) : HandlerMethodArgumentResolver {
     override fun resolveArgument(
         parameter: MethodParameter,
         bindingContext: BindingContext,

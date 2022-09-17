@@ -3,12 +3,12 @@ package waffle.guam.letter.service.command
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import waffle.guam.letter.service.domain.Letter
-import waffle.guam.letter.service.domain.toDomain
 import waffle.guam.letter.data.r2dbc.data.LetterEntity
 import waffle.guam.letter.data.r2dbc.data.clear
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxRepository
 import waffle.guam.letter.data.r2dbc.repository.LetterRepository
+import waffle.guam.letter.service.domain.Letter
+import waffle.guam.letter.service.domain.toDomain
 
 interface LetterCommandService {
     suspend fun createLetter(command: CreateLetter): Letter

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import waffle.guam.letter.api.config.BlockFilter
+import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 import waffle.guam.letter.service.command.ClearLetterBox
 import waffle.guam.letter.service.command.CreateLetter
 import waffle.guam.letter.service.command.LetterCommandService
@@ -17,8 +19,6 @@ import waffle.guam.letter.service.command.ReadLetterBox
 import waffle.guam.letter.service.domain.Letter
 import waffle.guam.letter.service.domain.LetterBoxPreview
 import waffle.guam.letter.service.query.LetterQueryService
-import waffle.guam.letter.api.config.BlockFilter
-import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 
 @RequestMapping("/api/v1/letters")
 @RestController

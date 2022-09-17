@@ -1,13 +1,13 @@
 package waffle.guam.letter.service.query
 
 import org.springframework.stereotype.Service
-import waffle.guam.letter.service.domain.LetterBox
-import waffle.guam.letter.service.domain.LetterBoxPreview
-import waffle.guam.letter.service.domain.toDomain
 import waffle.guam.letter.data.r2dbc.data.isDeleted
 import waffle.guam.letter.data.r2dbc.data.pairId
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxPreviewRepository
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxRepository
+import waffle.guam.letter.service.domain.LetterBox
+import waffle.guam.letter.service.domain.LetterBoxPreview
+import waffle.guam.letter.service.domain.toDomain
 
 interface LetterQueryService {
     suspend fun getLetterBoxPreviews(
