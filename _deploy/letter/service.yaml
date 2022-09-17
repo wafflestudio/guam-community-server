@@ -23,12 +23,3 @@ spec:
     - name: http
       port: 80
       targetPort: 8080
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: guam-secret
-type: Opaque
-stringData:
-  vaulttoken: s.5T8EEGtEdcdgJNj7Z6qE8UIR
-  slacktoken: xoxb-6971793892-2926327856006-9vsOkKbYNVaJ78sgdvQpWudD
