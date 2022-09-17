@@ -1,21 +1,14 @@
 package waffle.guam.community.data.jdbc.report
 
 import waffle.guam.community.data.jdbc.BaseTimeEntity
-import javax.persistence.DiscriminatorColumn
-import javax.persistence.DiscriminatorType
-import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
-import javax.persistence.Inheritance
-import javax.persistence.InheritanceType
-import javax.persistence.MappedSuperclass
 import javax.persistence.Table
 import javax.persistence.UniqueConstraint
-
 
 @Entity
 @Table(
@@ -28,7 +21,7 @@ class ReportEntity(
     val reason: String,
     @Enumerated(EnumType.STRING)
     val kind: Kind,
-): BaseTimeEntity() {
+) : BaseTimeEntity() {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L
 

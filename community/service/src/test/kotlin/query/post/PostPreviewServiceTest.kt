@@ -69,13 +69,13 @@ internal class PostPreviewServiceTest @Autowired constructor(
         // given
         val rankSlot = slot<Int>()
         every {
-            favoriteService.getRankedPosts(any(), rankFrom = capture(rankSlot), any())
+            favoriteService.getRankedPosts(any(), null, capture(rankSlot), any())
         } answers {
             listOf(2L, 3L, 1L).filter { it <= rankSlot.captured }
         }
 
         // when
-        val result = sut.getFavoritePostPreviews(userId = 1L, rankFrom = rankFrom)
+        val result = sut.getFavoritePostPreviews(userId = 1L, boardId = null, rankFrom = rankFrom)
 
         // then
         // preserves fav service response order

@@ -1,6 +1,5 @@
 package waffle.guam.community.controller.report
 
-import waffle.guam.community.data.jdbc.report.ReportEntity
 import waffle.guam.community.service.command.report.CreatePostCommentReport
 import waffle.guam.community.service.command.report.CreatePostReport
 

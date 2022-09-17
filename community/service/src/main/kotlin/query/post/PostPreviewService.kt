@@ -110,8 +110,10 @@ class PostPreviewServiceImpl(
         userId: Long,
         before: PostId?,
     ): PostPreviewList {
-        val spec = categoryIdMatching(categoryId,
-            fetchCategories = true) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
+        val spec = categoryIdMatching(
+            categoryId,
+            fetchCategories = true
+        ) * beforePostId(before) * status(PostEntity.Status.VALID) * fulltext(keyword)
         val postIds = postRepository.findAll(spec, SORT).map { it.id }
 
         return getCategoryAndComments(userId, postIds.toPage())
