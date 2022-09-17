@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import waffle.guam.favorite.service.command.ClearLetterBox
-import waffle.guam.favorite.service.command.CreateLetter
-import waffle.guam.favorite.service.command.LetterCommandService
-import waffle.guam.favorite.service.command.ReadLetterBox
-import waffle.guam.favorite.service.domain.Letter
-import waffle.guam.favorite.service.domain.LetterBoxPreview
-import waffle.guam.favorite.service.query.LetterQueryService
+import waffle.guam.letter.service.command.ClearLetterBox
+import waffle.guam.letter.service.command.CreateLetter
+import waffle.guam.letter.service.command.LetterCommandService
+import waffle.guam.letter.service.command.ReadLetterBox
+import waffle.guam.letter.service.domain.Letter
+import waffle.guam.letter.service.domain.LetterBoxPreview
+import waffle.guam.letter.service.query.LetterQueryService
+import waffle.guam.letter.api.config.BlockFilter
 import waffle.guam.letter.data.r2dbc.repository.LetterRepository
 
 @RequestMapping("/api/v1/letters")
@@ -39,10 +40,11 @@ class LetterController(
     @GetMapping("")
     suspend fun getLetterBoxPreviews(
         @RequestHeader("X-GATEWAY-USER-ID") userId: Long,
+        blockedIds: BlockFilter,
     ): LetterBoxResponse {
         return LetterBoxResponse(
             userId = userId,
-            letterBoxes = letterQueryService.getLetterBoxPreviews(userId)
+            letterBoxes = letterQueryService.getLetterBoxPreviews(userId, blockedIds.blockedPairs)
         )
     }
 

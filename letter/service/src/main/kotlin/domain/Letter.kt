@@ -1,4 +1,4 @@
-package waffle.guam.favorite.service.domain
+package waffle.guam.letter.service.domain
 
 import waffle.guam.letter.data.r2dbc.data.LetterEntity
 import java.time.Instant

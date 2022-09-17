@@ -30,3 +30,24 @@ X-GATEWAY-USER-ID: 48
 {
   "content": "카프카를 테스트 하고 있습니다 ^^"
 }
+
+### 신고
+POST localhost:8080/api/v1/posts/report
+Content-Type: application/json
+X-GATEWAY-USER-ID: 48
+
+{
+  "postId": 111,
+  "reason": "신고신고"
+}
+
+### 신고
+POST localhost:8080/api/v1/comments/report
+Content-Type: application/json
+X-GATEWAY-USER-ID: 48
+
+{
+  "commentId": 111,
+  "reason": "신고신고"
+}
+

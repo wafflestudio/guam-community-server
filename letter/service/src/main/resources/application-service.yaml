@@ -10,6 +10,11 @@ spring:
     username: # in vault
     password: # in vault
 
+guam:
+  services:
+    user:
+      baseUrl: http://guam-user.jon-snow-korea.com
+
 letter:
   aws:
     s3:

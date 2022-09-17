@@ -1,16 +1,19 @@
-package waffle.guam.favorite.service.query
+package waffle.guam.letter.service.query
 
 import org.springframework.stereotype.Service
-import waffle.guam.favorite.service.domain.LetterBox
-import waffle.guam.favorite.service.domain.LetterBoxPreview
-import waffle.guam.favorite.service.domain.toDomain
+import waffle.guam.letter.service.domain.LetterBox
+import waffle.guam.letter.service.domain.LetterBoxPreview
+import waffle.guam.letter.service.domain.toDomain
 import waffle.guam.letter.data.r2dbc.data.isDeleted
 import waffle.guam.letter.data.r2dbc.data.pairId
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxPreviewRepository
 import waffle.guam.letter.data.r2dbc.repository.LetterBoxRepository
 
 interface LetterQueryService {
-    suspend fun getLetterBoxPreviews(userId: Long): List<LetterBoxPreview>
+    suspend fun getLetterBoxPreviews(
+        userId: Long,
+        blockedUserIds: List<Long>,
+    ): List<LetterBoxPreview>
 
     suspend fun getLetterBox(
         userId: Long,
@@ -27,10 +30,9 @@ class LetterQueryServiceImpl(
     private val userQueryService: UserQueryService,
 ) : LetterQueryService {
 
-    // TODO: block
-    override suspend fun getLetterBoxPreviews(userId: Long): List<LetterBoxPreview> {
+    override suspend fun getLetterBoxPreviews(userId: Long, blockedUserIds: List<Long>): List<LetterBoxPreview> {
         val entities = letterBoxPreviewRepository.findAll(userId = userId)
-            .filterNot { it.isDeleted(userId) }
+            .filterNot { it.isDeleted(userId) || it.pairId(userId) in blockedUserIds }
 
         val pairUsers = userQueryService.get(userIds = entities.map { it.pairId(userId) })
 

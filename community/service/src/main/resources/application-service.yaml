@@ -4,7 +4,6 @@ spring:
       enabled: true
       uri: http://guam-vault.jon-snow-korea.com:8200
       authentication: TOKEN
-      token: s.53RQSdXUr77gqzLyuWRaY092
 cloud:
   aws:
     credentials:

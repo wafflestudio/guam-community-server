@@ -1,4 +1,4 @@
-package waffle.guam.favorite.service.command
+package waffle.guam.letter.service.command
 
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull

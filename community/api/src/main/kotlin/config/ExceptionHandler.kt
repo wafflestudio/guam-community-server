@@ -20,7 +20,7 @@ class ExceptionHandler {
         ResponseEntity("파일 사이즈가 너무 큽니다.", HttpStatus.PAYLOAD_TOO_LARGE)
 
     @ExceptionHandler(value = [EntityExistsException::class, DataIntegrityViolationException::class])
-    fun entityExists(e: EntityExistsException) =
+    fun entityExists(e: Exception) =
         ResponseEntity("이미 존재하는 값입니다.", HttpStatus.CONFLICT)
 
     @ExceptionHandler(value = [EmptyResultDataAccessException::class])

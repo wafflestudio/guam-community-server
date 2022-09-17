@@ -1,4 +1,4 @@
-package waffle.guam.favorite.service.domain
+package waffle.guam.letter.service.domain
 
 data class User(
     val id: Long,

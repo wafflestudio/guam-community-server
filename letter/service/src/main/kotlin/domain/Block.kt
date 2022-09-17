@@ -1,6 +1,6 @@
-package waffle.guam.favorite.service.domain
+package waffle.guam.letter.service.domain
 
 data class Block(
     val userId: Long,
-    val targetId: Long,
+    val blockUsers: List<User>,
 )

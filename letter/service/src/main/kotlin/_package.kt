@@ -1,1 +1,1 @@
-package waffle.guam.favorite.service
+package waffle.guam.letter.service
