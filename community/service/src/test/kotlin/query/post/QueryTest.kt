@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import waffle.guam.community.service.CommentId
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.client.CommentFavorite
-import waffle.guam.community.service.client.FavoriteService
-import waffle.guam.community.service.client.PostFavorite
+import waffle.guam.favorite.api.model.CommentFavoriteInfo
+import waffle.guam.favorite.api.model.PostFavoriteInfo
+import waffle.guam.favorite.client.GuamFavoriteClient
 import waffle.guam.user.client.GuamUserClient
 import waffle.guam.user.domain.UserInfo
 
@@ -20,7 +20,7 @@ abstract class QueryTest {
     protected lateinit var userClient: GuamUserClient.Blocking
 
     @MockkBean
-    protected lateinit var favoriteService: FavoriteService
+    protected lateinit var favoriteClient: GuamFavoriteClient.Blocking
 
     @BeforeEach
     fun setUp() {
@@ -30,11 +30,11 @@ abstract class QueryTest {
         val commentIds = slot<List<Long>>()
 
         every {
-            favoriteService.getPostFavorite(userId = any(), postId = capture(postId))
+            favoriteClient.getPostInfo(userId = any(), postId = capture(postId))
         } answers { stubPostFavorite(postId.captured) }
 
         every {
-            favoriteService.getCommentFavorite(userId = any(), commentIds = capture(commentIds))
+            favoriteClient.getCommentInfos(userId = any(), commentIds = capture(commentIds))
         } answers { commentIds.captured.associateWith { stubPostCommentFavorite(it) } }
 
         every {
@@ -46,15 +46,15 @@ abstract class QueryTest {
         } answers { userIds.captured.associateWith { stubUser(it) } }
     }
 
-    protected fun stubPostFavorite(postId: PostId) = PostFavorite(
+    protected fun stubPostFavorite(postId: PostId) = PostFavoriteInfo(
         postId = postId,
-        likeCnt = (postId * 10).toInt(),
-        scrapCnt = (postId * 10).toInt(),
+        likeCnt = postId * 10,
+        scrapCnt = postId * 10,
         like = (postId % 2).toInt() == 0,
         scrap = (postId % 2).toInt() == 0,
     )
 
-    protected fun stubCommentFavorite(commentId: CommentId) = CommentFavorite(
+    protected fun stubCommentFavorite(commentId: CommentId) = CommentFavoriteInfo(
         postCommentId = commentId,
         count = 0,
         like = false,
@@ -71,7 +71,7 @@ abstract class QueryTest {
         interests = listOf(),
     )
 
-    protected fun stubPostCommentFavorite(commentId: CommentId) = CommentFavorite(
+    protected fun stubPostCommentFavorite(commentId: CommentId) = CommentFavoriteInfo(
         postCommentId = commentId,
         count = 0,
         like = false,

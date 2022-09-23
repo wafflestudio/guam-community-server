@@ -8,23 +8,23 @@ import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.client.FavoriteService
 import waffle.guam.community.service.domain.comment.PostCommentDetail
 import waffle.guam.community.service.domain.comment.PostCommentDetailList
 import waffle.guam.community.service.domain.comment.PostCommentList
+import waffle.guam.favorite.client.GuamFavoriteClient
 import waffle.guam.user.client.GuamUserClient
 
 @Service
 class PostCommentService(
     private val postRepository: PostRepository,
     private val userClient: GuamUserClient.Blocking,
-    private val favoriteService: FavoriteService,
+    private val favoriteClient: GuamFavoriteClient.Blocking,
 ) {
 
     fun fetchPostCommentList(postId: PostId, callerId: UserId): PostCommentDetailList {
         val commentList = fetchList(id = postId)
         val commentIds = commentList.content.map { it.id }
-        val commentFavorite = favoriteService.getCommentFavorite(userId = callerId, commentIds = commentIds)
+        val commentFavorite = favoriteClient.getCommentInfos(userId = callerId, commentIds = commentIds)
         val commentDetailList = commentList.content.map { PostCommentDetail(it, commentFavorite[it.id]!!, callerId) }
 
         return PostCommentDetailList(

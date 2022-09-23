@@ -20,9 +20,8 @@ cloud:
 guam:
   user:
     fallback: true
-  services:
-    favorite:
-      baseUrl: http://guam-favorite.jon-snow-korea.com
+  favorite:
+    fallback: true
 ---
 spring.config.activate.on-profile: dev
 

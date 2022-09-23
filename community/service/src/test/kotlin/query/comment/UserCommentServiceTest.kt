@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 import waffle.guam.community.query.post.QueryTest
 import waffle.guam.community.query.post.ServiceTest
 import waffle.guam.community.service.CommentId
-import waffle.guam.community.service.client.CommentFavorite
 import waffle.guam.community.service.query.comment.UserCommentService
+import waffle.guam.favorite.api.model.CommentFavoriteInfo
 
 @Sql("classpath:/query/comment/test.sql")
 @ServiceTest
@@ -44,10 +44,10 @@ internal class UserCommentServiceTest @Autowired constructor(
         // given test.sql
         val commentIdSlot = slot<List<CommentId>>()
         every {
-            favoriteService.getCommentFavorite(2L, capture(commentIdSlot))
+            favoriteClient.getCommentInfos(2L, capture(commentIdSlot))
         } answers {
             val idAscSorted = commentIdSlot.captured.sorted()
-            idAscSorted.associateWith { CommentFavorite(it, 10 - it.toInt(), false) }
+            idAscSorted.associateWith { CommentFavoriteInfo(it, 10 - it, false) }
         }
 
         // when

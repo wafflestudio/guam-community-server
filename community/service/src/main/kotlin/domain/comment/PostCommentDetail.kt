@@ -3,7 +3,7 @@ package waffle.guam.community.service.domain.comment
 import com.fasterxml.jackson.annotation.JsonIgnore
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.client.CommentFavorite
+import waffle.guam.favorite.api.model.CommentFavoriteInfo
 import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
@@ -14,7 +14,7 @@ data class PostCommentDetail(
     val content: String,
     val imagePaths: List<String>,
     val mentionIds: List<Long>,
-    val likeCount: Int,
+    val likeCount: Long,
     val createdAt: Instant,
     val updatedAt: Instant,
     val isMine: Boolean,
@@ -25,7 +25,7 @@ data class PostCommentDetail(
         get() = user.isAnonymous
 }
 
-fun PostCommentDetail(d: PostComment, favorite: CommentFavorite, callerId: UserId) =
+fun PostCommentDetail(d: PostComment, favorite: CommentFavoriteInfo, callerId: UserId) =
     PostCommentDetail(
         postId = d.postId,
         id = d.id,

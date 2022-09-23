@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
-import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.user.AnonymousUser
+import waffle.guam.favorite.api.model.PostFavoriteInfo
 import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
@@ -18,9 +18,9 @@ data class PostPreview(
     val content: String,
     val imagePaths: List<String>,
     val category: PostCategory?,
-    val likeCount: Int,
+    val likeCount: Long,
     val commentCount: Int,
-    val scrapCount: Int,
+    val scrapCount: Long,
     val status: String,
     val createdAt: Instant,
     val updatedAt: Instant,
@@ -37,7 +37,7 @@ fun PostPreview(
     userId: Long,
     post: PostEntity,
     user: UserInfo,
-    favorite: PostFavorite,
+    favorite: PostFavoriteInfo,
 ): PostPreview {
     require(!post.isAnonymous)
     return PostPreview(
@@ -63,7 +63,7 @@ fun PostPreview(
 fun AnonymousPostPreview(
     userId: Long,
     post: PostEntity,
-    favorite: PostFavorite,
+    favorite: PostFavoriteInfo,
 ): PostPreview {
     require(post.isAnonymous)
     return PostPreview(

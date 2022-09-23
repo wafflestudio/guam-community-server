@@ -21,11 +21,11 @@ import waffle.guam.community.data.jdbc.post.userId
 import waffle.guam.community.data.jdbc.times
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.client.FavoriteService
-import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.post.AnonymousPostPreview
 import waffle.guam.community.service.domain.post.PostPreview
 import waffle.guam.community.service.domain.post.PostPreviewList
+import waffle.guam.favorite.api.model.PostFavoriteInfo
+import waffle.guam.favorite.client.GuamFavoriteClient
 import waffle.guam.user.client.GuamUserClient
 import waffle.guam.user.domain.UserInfo
 
@@ -75,7 +75,7 @@ interface PostPreviewService {
 @Service
 class PostPreviewServiceImpl(
     private val postRepository: PostRepository,
-    private val favoriteService: FavoriteService,
+    private val favoriteClient: GuamFavoriteClient.Blocking,
     private val userClient: GuamUserClient.Blocking,
 ) : PostPreviewService {
 
@@ -96,7 +96,7 @@ class PostPreviewServiceImpl(
     }
 
     override fun getFavoritePostPreviews(userId: Long, boardId: Long?, rankFrom: Int): PostPreviewList {
-        val postIds = favoriteService.getRankedPosts(userId, boardId, rankFrom, rankFrom + PAGE_SIZE - 1)
+        val postIds = favoriteClient.getRankedPostIds(boardId, rankFrom, rankFrom + PAGE_SIZE - 1)
         val postList = getCategoryAndComments(userId, postIds.toPage())
         val postMap = postList.content.associateBy { it.id }
         return postIds
@@ -136,7 +136,7 @@ class PostPreviewServiceImpl(
     }
 
     override fun getUserScrappedPostPreviews(userId: Long, page: Int): PostPreviewList {
-        val postIds = favoriteService.getUserScrappedPosts(userId, page = page)
+        val postIds = favoriteClient.getScrappedPostIds(userId, page = page)
         return getCategoryAndComments(userId, postIds.toPage())
     }
 
@@ -148,7 +148,7 @@ class PostPreviewServiceImpl(
         val posts =
             postRepository.findAll(spec = postIds(postIds.toList()) * fetchCategories() * fetchComments(), sort = SORT)
         val users = async { userClient.getUsers(posts.filterNot { post -> post.isAnonymous }.map { it.userId }) }
-        val favorites = async { favoriteService.getPostFavorite(userId, posts.map { it.id }) }
+        val favorites = async { favoriteClient.getPostInfos(userId, posts.map { it.id }) }
 
         posts
             .map { post -> post.toPreview(userId, users.await(), favorites.await()) }
@@ -158,7 +158,7 @@ class PostPreviewServiceImpl(
     private fun PostEntity.toPreview(
         callerId: Long,
         users: Map<UserId, UserInfo>,
-        favorites: Map<UserId, PostFavorite>,
+        favorites: Map<UserId, PostFavoriteInfo>,
     ): PostPreview = when (isAnonymous) {
         true -> AnonymousPostPreview(callerId, this, favorites[id]!!)
         false -> PostPreview(callerId, this, users[userId]!!, favorites[id]!!)

@@ -1,7 +1,7 @@
 package waffle.guam.community.service.domain.comment
 
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
-import waffle.guam.community.service.client.CommentFavorite
+import waffle.guam.favorite.api.model.CommentFavoriteInfo
 import java.time.Instant
 
 data class MyCommentView(
@@ -9,12 +9,12 @@ data class MyCommentView(
     val postId: Long,
     val content: String,
     val imageCount: Int,
-    val likeCount: Int,
+    val likeCount: Long,
     val createdAt: Instant,
     val updatedAt: Instant,
 )
 
-fun MyCommentView(comment: PostCommentEntity, favorite: CommentFavorite) =
+fun MyCommentView(comment: PostCommentEntity, favorite: CommentFavoriteInfo) =
     MyCommentView(
         id = comment.id,
         postId = comment.post.id,

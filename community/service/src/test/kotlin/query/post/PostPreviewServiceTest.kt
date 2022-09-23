@@ -36,7 +36,7 @@ internal class PostPreviewServiceTest @Autowired constructor(
         val postIdsSlot = slot<List<PostId>>()
 
         every {
-            favoriteService.getPostFavorite(userId = any(), postIds = capture(postIdsSlot))
+            favoriteClient.getPostInfos(userId = any(), postIds = capture(postIdsSlot))
         } answers {
             postIdsSlot.captured.associateWith { stubPostFavorite(it) }
         }
@@ -69,7 +69,7 @@ internal class PostPreviewServiceTest @Autowired constructor(
         // given
         val rankSlot = slot<Int>()
         every {
-            favoriteService.getRankedPosts(any(), null, capture(rankSlot), any())
+            favoriteClient.getRankedPostIds(null, capture(rankSlot), any())
         } answers {
             listOf(2L, 3L, 1L).filter { it <= rankSlot.captured }
         }
@@ -87,7 +87,7 @@ internal class PostPreviewServiceTest @Autowired constructor(
     fun getUserScrappedPostPreviews() {
         // given
         every {
-            favoriteService.getUserScrappedPosts(any(), any())
+            favoriteClient.getScrappedPostIds(any(), any())
         } answers {
             listOf(1L, 2L)
         }

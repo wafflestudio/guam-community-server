@@ -3,9 +3,9 @@ package waffle.guam.community.service.domain.post
 import waffle.guam.community.data.jdbc.board.BoardName
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
-import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.comment.PostCommentDetail
+import waffle.guam.favorite.api.model.PostFavoriteInfo
 import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
@@ -17,9 +17,9 @@ data class PostDetail(
     val content: String,
     val imagePaths: List<String>,
     val category: PostCategory?,
-    val likeCount: Int,
+    val likeCount: Long,
     val commentCount: Int,
-    val scrapCount: Int,
+    val scrapCount: Long,
     val comments: List<PostCommentDetail>,
     val status: String,
     val createdAt: Instant,
@@ -37,7 +37,7 @@ fun PostDetail(
     category: PostCategory?,
     comments: List<PostCommentDetail>,
     callerId: Long,
-    favorite: PostFavorite,
+    favorite: PostFavoriteInfo,
 ): PostDetail {
     require(post.isAnonymous == user.isAnonymous)
     if (comments.isNotEmpty()) {
