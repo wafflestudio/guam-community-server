@@ -10,42 +10,7 @@ spec:
   gateways:
     - istio-system/waffle-ingressgateway
   http:
-    - name: "direct-user" # TODO: 클라와 협의해서 api path 정리좀 필요할듯
-      match:
-        - uri:
-            prefix: "/community/api/v1/users"
-      rewrite:
-        uri: "/api/v1/users"
-      route:
-        - destination:
-            host: user-api
-    - name: "direct-blocks"
-      match:
-        - uri:
-            prefix: "/community/api/v1/blocks"
-      rewrite:
-        uri: "/api/v1/blocks"
-      route:
-        - destination:
-            host: user-api
-    - name: "direct-push"
-      match:
-        - uri:
-            prefix: "/community/api/v1/push"
-      rewrite:
-        uri: "/api/v1/push"
-      route:
-        - destination:
-            host: user-api
-    - name: "gateway"
-      match:
-        - uri:
-            prefix: "/api/v1/users"
-        - uri:
-            prefix: "/api/v1/auth"
-        - uri:
-            prefix: "/api/v1/user/token"
-      route:
+    - route:
         - destination:
             host: user-api
 ---
