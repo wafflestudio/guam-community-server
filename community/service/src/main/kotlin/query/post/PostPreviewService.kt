@@ -23,11 +23,11 @@ import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.client.FavoriteService
 import waffle.guam.community.service.client.PostFavorite
-import waffle.guam.community.service.client.UserService
 import waffle.guam.community.service.domain.post.AnonymousPostPreview
 import waffle.guam.community.service.domain.post.PostPreview
 import waffle.guam.community.service.domain.post.PostPreviewList
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.client.GuamUserClient
+import waffle.guam.user.domain.UserInfo
 
 interface PostPreviewService {
     fun getRecentPreviews(
@@ -76,7 +76,7 @@ interface PostPreviewService {
 class PostPreviewServiceImpl(
     private val postRepository: PostRepository,
     private val favoriteService: FavoriteService,
-    private val userService: UserService,
+    private val userClient: GuamUserClient.Blocking,
 ) : PostPreviewService {
 
     override fun getRecentPreviews(userId: Long, boardId: Long?, before: PostId?): PostPreviewList {
@@ -147,7 +147,7 @@ class PostPreviewServiceImpl(
 
         val posts =
             postRepository.findAll(spec = postIds(postIds.toList()) * fetchCategories() * fetchComments(), sort = SORT)
-        val users = async { userService.multiGet(posts.filterNot { post -> post.isAnonymous }.map { it.userId }) }
+        val users = async { userClient.getUsers(posts.filterNot { post -> post.isAnonymous }.map { it.userId }) }
         val favorites = async { favoriteService.getPostFavorite(userId, posts.map { it.id }) }
 
         posts
@@ -157,7 +157,7 @@ class PostPreviewServiceImpl(
 
     private fun PostEntity.toPreview(
         callerId: Long,
-        users: Map<UserId, User>,
+        users: Map<UserId, UserInfo>,
         favorites: Map<UserId, PostFavorite>,
     ): PostPreview = when (isAnonymous) {
         true -> AnonymousPostPreview(callerId, this, favorites[id]!!)

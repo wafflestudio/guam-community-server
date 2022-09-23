@@ -6,13 +6,13 @@ import waffle.guam.community.service.PostId
 import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.comment.PostCommentDetail
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
 data class PostDetail(
     val id: PostId,
     val boardId: BoardId,
-    val user: User,
+    val user: UserInfo,
     val title: String,
     val content: String,
     val imagePaths: List<String>,
@@ -33,7 +33,7 @@ data class PostDetail(
 
 fun PostDetail(
     post: Post,
-    user: User,
+    user: UserInfo,
     category: PostCategory?,
     comments: List<PostCommentDetail>,
     callerId: Long,

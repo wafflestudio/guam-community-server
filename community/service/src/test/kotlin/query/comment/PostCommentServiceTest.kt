@@ -15,8 +15,8 @@ import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.domain.comment.PostCommentDetail
 import waffle.guam.community.service.domain.user.AnonymousUser
-import waffle.guam.community.service.domain.user.User
 import waffle.guam.community.service.query.comment.PostCommentService
+import waffle.guam.user.domain.UserInfo
 
 @Sql("classpath:/query/comment/test.sql")
 @ServiceTest
@@ -68,7 +68,7 @@ internal class PostCommentServiceTest @Autowired constructor(
         )
     }
 
-    private fun getAnswer(postId: PostId, callerId: UserId, users: Map<CommentId, User>): List<PostCommentDetail> {
+    private fun getAnswer(postId: PostId, callerId: UserId, users: Map<CommentId, UserInfo>): List<PostCommentDetail> {
         return postRepository.getById(postId).comments
             .filter { it.status == PostCommentEntity.Status.VALID }
             .sortedBy { it.id }

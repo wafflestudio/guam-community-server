@@ -7,13 +7,13 @@ import waffle.guam.community.service.PostId
 import waffle.guam.community.service.client.PostFavorite
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.user.AnonymousUser
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
 data class PostPreview(
     val id: PostId,
     val boardId: BoardId,
-    val user: User,
+    val user: UserInfo,
     val title: String,
     val content: String,
     val imagePaths: List<String>,
@@ -36,7 +36,7 @@ data class PostPreview(
 fun PostPreview(
     userId: Long,
     post: PostEntity,
-    user: User,
+    user: UserInfo,
     favorite: PostFavorite,
 ): PostPreview {
     require(!post.isAnonymous)

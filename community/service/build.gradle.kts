@@ -10,4 +10,5 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-vault-config:3.1.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("com.github.wafflestudio.guam-user:client:0.0.6-SNAPSHOT")
 }

@@ -4,6 +4,7 @@ spring:
       enabled: true
       uri: http://guam-vault.jon-snow-korea.com:8200
       authentication: TOKEN
+      token: s.5T8EEGtEdcdgJNj7Z6qE8UIR
 cloud:
   aws:
     credentials:
@@ -17,9 +18,9 @@ cloud:
     stack:
       auto: false
 guam:
+  user:
+    fallback: true
   services:
-    user:
-      baseUrl: http://guam-user.jon-snow-korea.com
     favorite:
       baseUrl: http://guam-favorite.jon-snow-korea.com
 ---

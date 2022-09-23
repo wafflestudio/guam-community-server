@@ -13,17 +13,17 @@ import waffle.guam.community.service.PostId
 import waffle.guam.community.service.PostNotFound
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.client.FavoriteService
-import waffle.guam.community.service.client.UserService
 import waffle.guam.community.service.domain.category.PostCategory
 import waffle.guam.community.service.domain.post.Post
 import waffle.guam.community.service.domain.post.PostDetail
 import waffle.guam.community.service.domain.user.AnonymousUser
 import waffle.guam.community.service.query.comment.PostCommentService
+import waffle.guam.user.client.GuamUserClient
 
 @Service
 class PostDetailService(
     private val postRepository: PostRepository,
-    private val userService: UserService,
+    private val userClient: GuamUserClient.Blocking,
     private val favoriteService: FavoriteService,
     private val postCommentService: PostCommentService,
 ) {
@@ -38,7 +38,7 @@ class PostDetailService(
     private fun PostEntity.fillData(callerId: Long): PostDetail = runBlocking {
         val favorite = async { favoriteService.getPostFavorite(userId = callerId, postId = id) }
         val comments = async { postCommentService.fetchPostCommentList(callerId = callerId, postId = id) }
-        val user = if (isAnonymous) AnonymousUser() else userService.get(id = userId)
+        val user = if (isAnonymous) AnonymousUser() else userClient.getUser(userId = userId)
 
         PostDetail(
             post = Post(this@fillData),

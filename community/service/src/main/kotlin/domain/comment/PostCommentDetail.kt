@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
 import waffle.guam.community.service.client.CommentFavorite
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
 data class PostCommentDetail(
     val id: Long,
     val postId: PostId,
-    val user: User,
+    val user: UserInfo,
     val content: String,
     val imagePaths: List<String>,
     val mentionIds: List<Long>,

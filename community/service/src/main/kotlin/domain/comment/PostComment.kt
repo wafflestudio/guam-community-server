@@ -2,13 +2,13 @@ package waffle.guam.community.service.domain.comment
 
 import waffle.guam.community.data.jdbc.comment.PostCommentEntity
 import waffle.guam.community.service.PostId
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.domain.UserInfo
 import java.time.Instant
 
 data class PostComment(
     val id: Long,
     val postId: PostId,
-    val user: User,
+    val user: UserInfo,
     val content: String,
     val imagePaths: List<String>,
     val mentionIds: List<Long>,
@@ -16,7 +16,7 @@ data class PostComment(
     val updatedAt: Instant,
 )
 
-fun PostComment(e: PostCommentEntity, user: User) =
+fun PostComment(e: PostCommentEntity, user: UserInfo) =
     PostComment(
         postId = e.post.id,
         id = e.id,

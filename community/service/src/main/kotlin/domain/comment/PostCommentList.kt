@@ -5,7 +5,7 @@ import waffle.guam.community.data.jdbc.post.PostEntity
 import waffle.guam.community.service.BoardId
 import waffle.guam.community.service.PostId
 import waffle.guam.community.service.UserId
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.domain.UserInfo
 
 data class PostCommentList(
     val postId: PostId,
@@ -19,7 +19,7 @@ data class PostCommentList(
 
 fun PostCommentList(
     e: PostEntity,
-    userMap: Map<Long, User>,
+    userMap: Map<Long, UserInfo>,
 ): PostCommentList {
     return PostCommentList(
         postId = e.id,

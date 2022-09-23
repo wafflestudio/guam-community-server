@@ -11,13 +11,13 @@ import waffle.guam.community.service.UserId
 import waffle.guam.community.service.client.CommentFavorite
 import waffle.guam.community.service.client.FavoriteService
 import waffle.guam.community.service.client.PostFavorite
-import waffle.guam.community.service.client.UserService
-import waffle.guam.community.service.domain.user.User
+import waffle.guam.user.client.GuamUserClient
+import waffle.guam.user.domain.UserInfo
 
 abstract class QueryTest {
 
     @MockkBean
-    protected lateinit var userService: UserService
+    protected lateinit var userClient: GuamUserClient.Blocking
 
     @MockkBean
     protected lateinit var favoriteService: FavoriteService
@@ -38,11 +38,11 @@ abstract class QueryTest {
         } answers { commentIds.captured.associateWith { stubPostCommentFavorite(it) } }
 
         every {
-            userService.get(capture(userId))
+            userClient.getUser(capture(userId))
         } answers { stubUser(userId.captured) }
 
         every {
-            userService.multiGet(capture(userIds))
+            userClient.getUsers(capture(userIds))
         } answers { userIds.captured.associateWith { stubUser(it) } }
     }
 
@@ -60,7 +60,7 @@ abstract class QueryTest {
         like = false,
     )
 
-    protected fun stubUser(userId: UserId) = User(
+    protected fun stubUser(userId: UserId) = UserInfo(
         id = userId,
         nickname = "",
         introduction = null,
