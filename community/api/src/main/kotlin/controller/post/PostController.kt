@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RestController
 import waffle.guam.community.UserContext
 import waffle.guam.community.controller.post.req.CreatePostRequest
 import waffle.guam.community.controller.post.req.UpdatePostRequest
+import waffle.guam.community.service.command.post.CreatePost
 import waffle.guam.community.service.command.post.CreatePostHandler
 import waffle.guam.community.service.command.post.DeletePost
 import waffle.guam.community.service.command.post.DeletePostHandler
 import waffle.guam.community.service.command.post.UpdatePostHandler
 import waffle.guam.community.service.query.post.PostDetailService
 import waffle.guam.community.service.query.post.PostPreviewService
+import javax.annotation.PostConstruct
 
 @RequestMapping("api/v1/posts")
 @RestController
@@ -34,6 +36,10 @@ class PostController(
         @RequestBody req: CreatePostRequest,
     ) = createPostHandler.handle(req.toCommand(userContext.id))
 
+    @PostConstruct
+    fun handle() {
+       createPostHandler.handle(CreatePost(1, 1, "sad", "asddsad", emptyList(), 0))
+    }
     @PatchMapping("/{postId}")
     fun updatePost(
         userContext: UserContext,
