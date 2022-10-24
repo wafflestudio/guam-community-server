@@ -36,3 +36,23 @@ spec:
               memory: 256Mi
             limits:
               memory: 512Mi
+          volumeMounts:
+            - name: pv
+              mountPath: /usr/app/src
+      volumes:
+            - name: pv
+              persistentVolumeClaim:
+                claimName: pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim
+  labels:
+    app: user-api
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

@@ -9,6 +9,7 @@ data class User(
     val email: String?,
     val profileImage: String?,
     val interests: List<Interest>,
+    val status: Status,
 ) {
     val isProfileSet: Boolean
         get() {
@@ -16,4 +17,5 @@ data class User(
         }
 
     data class Interest(val name: String)
+    enum class Status { ACTIVE, INACTIVE }
 }
