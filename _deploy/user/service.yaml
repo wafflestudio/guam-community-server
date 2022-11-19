@@ -8,20 +8,8 @@ spec:
     - "guam-user.jon-snow-korea.com"
     - "guam-immigration.jon-snow-korea.com"
   gateways:
-    - istio-system/waffle-ingressgateway
+    - istio-ingress/waffle-ingressgateway
   http:
     - route:
         - destination:
             host: user-api
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-api
-spec:
-  selector:
-    app: user-api
-  ports:
-    - name: http
-      port: 80
-      targetPort: 8080
