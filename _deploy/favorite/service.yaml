@@ -4,22 +4,10 @@ metadata:
   name: favorite-api
 spec:
   hosts:
-    - "guam-favorite.jon-snow-korea.com"
+    - "guam-favorite.wafflestudio.com"
   gateways:
     - istio-system/waffle-ingressgateway
   http:
     - route:
         - destination:
             host: favorite-api
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: favorite-api
-spec:
-  selector:
-    app: favorite-api
-  ports:
-    - name: http
-      port: 80
-      targetPort: 8080
