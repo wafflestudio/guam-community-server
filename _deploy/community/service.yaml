@@ -4,22 +4,10 @@ metadata:
   name: community-api
 spec:
   hosts:
-    - "guam-community.jon-snow-korea.com"
+    - "guam-community.wafflestudio.com"
   gateways:
     - istio-system/waffle-ingressgateway
   http:
     - route:
         - destination:
             host: community-api
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: community-api
-spec:
-  selector:
-    app: community-api
-  ports:
-    - name: http
-      port: 80
-      targetPort: 8080

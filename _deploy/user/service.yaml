@@ -4,9 +4,7 @@ metadata:
   name: user-api
 spec:
   hosts:
-    - "guam.jon-snow-korea.com"
-    - "guam-user.jon-snow-korea.com"
-    - "guam-immigration.jon-snow-korea.com"
+    - "guam-api.wafflestudio.com"
   gateways:
     - istio-ingress/waffle-ingressgateway
   http:
