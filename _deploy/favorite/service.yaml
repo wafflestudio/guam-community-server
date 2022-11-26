@@ -4,9 +4,9 @@ metadata:
   name: favorite-api
 spec:
   hosts:
-    - "guam-favorite.wafflestudio.com"
+    - "guam-favorite-api.wafflestudio.com"
   gateways:
-    - istio-system/waffle-ingressgateway
+    - istio-ingress/waffle-ingressgateway
   http:
     - route:
         - destination:

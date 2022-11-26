@@ -4,9 +4,9 @@ metadata:
   name: community-api
 spec:
   hosts:
-    - "guam-community.wafflestudio.com"
+    - "guam-community-api.wafflestudio.com"
   gateways:
-    - istio-system/waffle-ingressgateway
+    - istio-ingress/waffle-ingressgateway
   http:
     - route:
         - destination:
